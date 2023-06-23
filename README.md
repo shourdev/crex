@@ -17,7 +17,7 @@ This section will have the different functions of the standard lib.
 Functions:
 [cout:]()
 [cin:]()
-#Cout:
+# Cout:
 Back to [Documentation](https://github.com/shourdev/crex#documentation)
 ```
 var test = "hi"
@@ -25,7 +25,7 @@ cout: "hello world"
 cout: test
 ```
 This code first demonstrates printing "hello world" the second cout prints the data of the variable test defined at the first line.
-#Cin:
+# Cin:
 Back to [Documentation](https://github.com/shourdev/crex#documentation)
 ```
 var input = ""
