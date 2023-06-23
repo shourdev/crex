@@ -3,7 +3,7 @@ A programming language
 ### Documentation
 [Syntax](https://github.com/shourdev/crex#basic-syntax) <br>
 [Standard-lib](https://github.com/shourdev/crex#standard-lib) <br>
-[Data-Types]()
+[Data-Types](https://github.com/shourdev/crex#data-types)
 ### Basic syntax
 Back to [Documentation](https://github.com/shourdev/crex#documentation)
 ```
@@ -15,6 +15,7 @@ cout: name
 ```
 This code uses cout: to print the line "hello, enter your name:" than defines a variable called name, then it uses cin to ask for input and set it's variable to name, then it uses cout again to print "welcome," and then uses cout one last time to print the value of the variable "name"
 ### Data Types
+Back to [Documentation](https://github.com/shourdev/crex#documentation) <br>
 Variables:
 ```
 var test = "hi"
