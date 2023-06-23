@@ -1,7 +1,8 @@
 ### crex
 A programming language
 ### Documentation
-
+[Syntax](https://github.com/shourdev/crex#basic-syntax)
+[Standard-lib](https://github.com/shourdev/crex#standard-lib)
 ### Basic syntax
 Back to [Documentation](https://github.com/shourdev/crex#documentation)
 ```
@@ -11,12 +12,13 @@ cin: name
 cout: "Welcome,"
 cout: name
 ```
+This code uses cout: to print the line "hello, enter your name:" than defines a variable called name, then it uses cin to ask for input and set it's variable to name, then it uses cout again to print "welcome," and then uses cout one last time to print the value of the variable "name"
 ### Standard Lib
 Back to [Documentation](https://github.com/shourdev/crex#documentation)
 This section will have the different functions of the standard lib.
 Functions:
-[cout:]()
-[cin:]()
+[cout:](https://github.com/shourdev/crex#cout)
+[cin:](https://github.com/shourdev/crex#cin)
 # Cout:
 Back to [Documentation](https://github.com/shourdev/crex#documentation)
 ```
