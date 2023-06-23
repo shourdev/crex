@@ -5,7 +5,7 @@
 #define MAX_SIZE 100
 #define MAX_NAME_LENGTH 50
 #define MAX_VALUE_LENGTH 50
-   int hasqu = 0;
+  
 // Global array to store names and values
 char array[MAX_SIZE][MAX_NAME_LENGTH + MAX_VALUE_LENGTH];
 
@@ -146,15 +146,48 @@ void removePrefix(char* str, const char* prefix) {
         memmove(str, str + prefixLen, strLen - prefixLen + 1);  // Shift the remaining characters
     }
 }
+void changeArrayValue(char* name, char* value) {
+    int i = 0;
+    int arraySize = sizeof(array) / sizeof(array[0]);
+
+    // Iterate until the end of the array
+    while (i < arraySize) {
+        if (strcmp(array[i], name) == 0) {
+            // Check if the position is even
+            if (i % 2 == 0) {
+                // Calculate the next position
+                int newPosition = i + 1;
+
+                // Replace the value at the new position
+                if (newPosition < arraySize) {
+                    strcpy(array[newPosition], value);
+                }
+            }
+            break;
+        }
+        i++;
+    }
+}
 
 int main(int argc, char *argv[]) {
+    
     char line[10000];
-    FILE *file = fopen(argv[1], "r");
+    if (argc > 1 && strcmp(argv[1], "--help") == 0) {
+        printf("Crex is a simple programming language designed to do anything! \n");
+        printf("Run a file: ./crex <filename>.crf \n");
+        printf("Documention can be found at: https://github.com/shourdev/crex#documentation \n");
+        return 0;
+    }
 
-    if (file == NULL) {
+FILE *file = fopen(argv[1], "r");
+ if (file == NULL) {
         printf("Failed to open the file.\n");
         return 1;
     }
+
+    
+
+   
 
     while (fgets(line, sizeof(line), file)) {
          if (strstr(line, "var") != NULL) {
@@ -221,6 +254,14 @@ else {
 }
 if (strstr(line, "cin:") != NULL) {
    // In work
+   removeWord(line,"cin:");
+   char opt[2000];
+   scanf("%s",opt);
+   stripWhitespace(opt);
+
+   changeArrayValue(line,opt);  
+
+
   }
 
 
