@@ -106,29 +106,8 @@ int isStringCheck(const char* text) {
 
     return 0;  // String
 }
-void findNameAndUpdateValue(const char* name, const char* newValue) {
-    for (int i = 0; i < currentPosition; i += 2) {
-        if (strcmp(array[i], name) == 0) {
-            // Check if the position is even
-            if (i % 2 == 0) {
-                // Remove the value at the position
-                for (int j = i; j < currentPosition - 2; j++) {
-                    strcpy(array[j], array[j + 2]);
-                }
-                currentPosition -= 2;
 
-                // Insert the new value at the position
-                strcpy(array[i + 1], newValue);
-                return;
-            } else {
-                printf("Error variable not found.\n");
-                return;
-            }
-        }
-    }
 
-    printf("Error variable not found.\n");
-}
 void removeWord(char *str, const char *word) {
     char *pos = strstr(str, word); // Find the first occurrence of the word
 
@@ -159,6 +138,15 @@ void removeWord(char *str, const char *word) {
     }
     str[dst] = '\0'; // Null-terminate the resulting string
 }
+void removePrefix(char* str, const char* prefix) {
+    size_t prefixLen = strlen(prefix);
+    size_t strLen = strlen(str);
+
+    if (strLen >= prefixLen && strncmp(str, prefix, prefixLen) == 0) {
+        memmove(str, str + prefixLen, strLen - prefixLen + 1);  // Shift the remaining characters
+    }
+}
+
 int main(int argc, char *argv[]) {
     char line[10000];
     FILE *file = fopen(argv[1], "r");
@@ -212,6 +200,7 @@ int main(int argc, char *argv[]) {
 
 if (result){
   
+  
    const char* val = findNameAndGetNextValue(line);
         if (val != NULL) {
             char newString[strlen(val) + 1];  // Add 1 for the null terminator
@@ -230,15 +219,12 @@ else {
      
     }
 }
-        if (strstr(line, "cin:") != NULL) {
-            char opt[10000];
-            scanf("%s",opt);
-            removeWord(line,"cin:");
-;
-            stripWhitespace(line);
-            findNameAndUpdateValue(line,opt);
-            
-        }
+if (strstr(line, "cin:") != NULL) {
+   // In work
+  }
+
+
+
        
 
     }
