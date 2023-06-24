@@ -4,12 +4,13 @@
 #include <ctype.h> // Include ctype.h for isspace function
 #define MAX_SIZE 100
 #define MAX_NAME_LENGTH 50
-#define MAX_VALUE_LENGTH 50
+#define MAX_VALUE_LENGTH 100
   
 // Global array to store names and values
 char array[MAX_SIZE][MAX_NAME_LENGTH + MAX_VALUE_LENGTH];
 
 int currentPosition = 0;
+
 
 void addNameAndValue(const char* name, const char* value) {
     // Copy the name to the array
@@ -53,7 +54,22 @@ const char* findNameAndGetNextValue(const char* name) {
 
     return NULL;
 }
+void splitString(const char* input, char* beforeComma, char* afterComma) {
+    const char* commaPosition = strchr(input, ',');
+  
+    if (commaPosition == NULL) {
+        // No comma found, store the entire string in 'beforeComma' and set 'afterComma' as an empty string
+        strcpy(beforeComma, input);
+        strcpy(afterComma, "");
+    } else {
+        // Calculate the length of the string before the comma
+        size_t beforeLength = commaPosition - input;
 
+        // Copy the strings
+        strncpy(beforeComma, input, beforeLength);
+        strcpy(afterComma, commaPosition + 1);
+    }
+}
 int hasQuotes(const char* str) {
     int len = strlen(str);
 
@@ -99,13 +115,14 @@ int isStringCheck(const char* text) {
     int i;
 
     for (i = 0; text[i] != '\0'; i++) {
-        if (!isdigit(text[i])) {
-            return 1;  // Not a string
+        if (!isalpha(text[i])) {
+            return 0;  // Not a string
         }
     }
 
-    return 0;  // String
+    return 1;  // String
 }
+
 
 
 void removeWord(char *str, const char *word) {
@@ -164,7 +181,28 @@ void changeArrayValue(char* name, char* value) {
         i++;
     }
 }
+int countOccurrences(const char *str, const char *substr) {
+    int count = 0;
+    const char *ptr = str;
+    
+    while ((ptr = strstr(ptr, substr)) != NULL) {
+        count++;
+        ptr += strlen(substr);
+    }
+    
+    return count;
+}
+void addQuotationMarks(char* str) {
+    int len = strlen(str);
+    char temp[len + 3]; // Length of original string + 2 (for opening and closing quotation marks) + 1 (for null terminator)
 
+    temp[0] = '"';
+    strcpy(&temp[1], str);
+    temp[len + 1] = '"';
+    temp[len + 2] = '\0';
+
+    strcpy(str, temp);
+}
 int main(int argc, char *argv[]) {
     
     char line[10000];
@@ -188,7 +226,7 @@ FILE *file = fopen(argv[1], "r");
     while (fgets(line, sizeof(line), file)) {
          if (strstr(line, "var") != NULL) {
             char varName[100];
-            char value[100];
+            char value[1000];
 
             // Extracting variable name
             char *pos = strstr(line, "var");
@@ -211,8 +249,53 @@ FILE *file = fopen(argv[1], "r");
                 }
                 strcpy(value, pos);
                    
+if (strcmp(value, "add:") == 0 || countOccurrences(value, "add:") == 1) {
+    char modifiedValue[MAX_VALUE_LENGTH];
+    strcpy(modifiedValue, value);
+    removeWord(modifiedValue, "add:");
+    stripWhitespace(modifiedValue);
 
-   addNameAndValue(varName,value);
+    char beforeComma[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
+    char afterComma[MAX_VALUE_LENGTH];   // Use MAX_VALUE_LENGTH for consistent array size
+    splitString(modifiedValue, beforeComma, afterComma);
+  stripWhitespace(modifiedValue);
+
+    if (isStringCheck(beforeComma) == 0) {
+        int num1 = atoi(beforeComma);
+        int num2 = atoi(afterComma);
+        int sum = num1 + num2;
+
+        char sumChar[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
+        sprintf(sumChar, "%d", sum);
+        stripWhitespace(sumChar);
+
+        char finalvalue[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
+     
+
+
+addQuotationMarks(sumChar);
+   addNameAndValue(varName,sumChar);
+    
+    }
+    else{
+       printf("In work");
+    }
+    
+}
+ else {
+    if (hasQuotes(value)==0)
+    {
+addQuotationMarks(value);
+stripWhitespace(value);
+ addNameAndValue(varName,value);
+    }
+   else{
+     addNameAndValue(varName,value);
+   }
+
+     
+    }
+
       
             }
         }
