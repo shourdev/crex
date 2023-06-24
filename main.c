@@ -138,14 +138,7 @@ void removeWord(char *str, const char *word) {
     }
     str[dst] = '\0'; // Null-terminate the resulting string
 }
-void removePrefix(char* str, const char* prefix) {
-    size_t prefixLen = strlen(prefix);
-    size_t strLen = strlen(str);
 
-    if (strLen >= prefixLen && strncmp(str, prefix, prefixLen) == 0) {
-        memmove(str, str + prefixLen, strLen - prefixLen + 1);  // Shift the remaining characters
-    }
-}
 void changeArrayValue(char* name, char* value) {
     int i = 0;
     int arraySize = sizeof(array) / sizeof(array[0]);
@@ -162,6 +155,9 @@ void changeArrayValue(char* name, char* value) {
                 if (newPosition < arraySize) {
                     strcpy(array[newPosition], value);
                 }
+            }
+            else{
+                printf("Variable %s not found",name);
             }
             break;
         }
@@ -256,8 +252,8 @@ if (strstr(line, "cin:") != NULL) {
    // In work
    removeWord(line,"cin:");
    char opt[2000];
-   scanf("%s",opt);
-   stripWhitespace(opt);
+   scanf(" %[^\n]",opt);
+  
 
    changeArrayValue(line,opt);  
 
