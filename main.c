@@ -278,7 +278,26 @@ addQuotationMarks(sumChar);
     
     }
     else{
-       printf("In work");
+     char bc[2000];
+     char ac [2000];
+     strcpy(bc,beforeComma);
+     strcpy(ac,afterComma);
+     const char* bv = findNameAndGetNextValue(bc);
+      const char* av = findNameAndGetNextValue(ac);
+      char bv1[2000];
+      char av1[2000];
+      strcpy(bv1,bv);
+      strcpy(av1,av);
+
+    removeQuotes(bv1);
+    removeQuotes(av1);
+    int nm = atoi(bv1);
+    int nm2 = atoi(av1);
+    int sum2 = nm + nm2;
+       char sumChar2[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
+        sprintf(sumChar2, "%d", sum2);
+addQuotationMarks(sumChar2);
+ addNameAndValue(varName,sumChar2);
     }
     
 }

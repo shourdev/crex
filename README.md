@@ -1,11 +1,11 @@
 ### crex
 A programming language
 ### Documentation
-[Syntax](https://github.com/shourdev/crex#basic-syntax) <br>
-[Standard-lib](https://github.com/shourdev/crex#standard-lib) <br>
-[Data-Types](https://github.com/shourdev/crex#data-types)
+[Syntax](#basic-syntax) <br>
+[Standard-lib](#standard-lib) <br>
+[Data-Types](#data-types)
 ### Basic syntax
-Back to [Documentation](https://github.com/shourdev/crex#documentation)
+Back to [Documentation](#documentation)
 ```
 cout: "Hello, enter your name:"
 var name = ""
@@ -15,10 +15,14 @@ cout: name
 ```
 This code uses cout: to print the line "hello, enter your name:" than defines a variable called name, then it uses cin to ask for input and set it's variable to name, then it uses cout again to print "welcome," and then uses cout one last time to print the value of the variable "name"
 ### Data Types
-Back to [Documentation](https://github.com/shourdev/crex#documentation) <br>
+Back to [Documentation](#documentation) <br>
 Variables:
 ```
 var test = "hi"
+```
+Note: numbers don't need "" 
+```
+var test2 = 1
 ```
 Output a data type <br>
 Variables:
@@ -28,24 +32,48 @@ cout: test
 ```
 
 ### Standard Lib
-Back to [Documentation](https://github.com/shourdev/crex#documentation) <br>
+Back to [Documentation](#documentation) <br>
 This section will have the different functions of the standard lib. <br>
 Functions: <br>
-[cout:](https://github.com/shourdev/crex#cout) <br>
-[cin:](https://github.com/shourdev/crex#cin)
-# Cout:
-Back to [Documentation](https://github.com/shourdev/crex#documentation)
+[I/O](#io) <br>
+[Maths](#maths)
+
+### io
+This section is for I/O or input and output in the std lib.
+# cout:
+Back to [Documentation](#documentation)
 ```
 var test = "hi"
 cout: "hello world"
 cout: test
 ```
-This code first demonstrates printing "hello world" the second cout prints the data of the variable test defined at the first line.
-# Cin:
-Back to [Documentation](https://github.com/shourdev/crex#documentation)
+This code first demonstrates printing "hello world" the second cout prints the data of the variable test defined at the first line. 
+```
+cout: 1
+```
+Numbers don't need ""
+# cin:
 ```
 var input = ""
 cin: input
 cout: input
 ```
 This code makes an empty variable than uses cin to ask for input and then uses cout to print it to the console.
+### maths
+This section is for the maths module in the std lib.
+# add:
+Use with variable
+```
+var nm = 1
+var nm2 = 2
+var sum = add:nm,nm2
+cout: sum
+```
+Use without variable
+```
+var sum = add:1,2
+cout: sum
+```
+The sum: function is a special function which is to be used with a variable and won't work without it.
+
+
