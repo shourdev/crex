@@ -41,7 +41,8 @@ Functions: <br>
 ### io
 This section is for I/O or input and output in the std lib.
 # cout:
-Back to [Documentation](#documentation)
+Back to [Documentation](#documentation) <br>
+cout: is a function in the I/O module of crex's std lib which is used to output stuff to the console. <br>
 ```
 var test = "hi"
 cout: "hello world"
@@ -53,6 +54,7 @@ cout: 1
 ```
 Numbers don't need ""
 # cin:
+Cin is a std lib function from i/o module which i used to read user input.
 ```
 var input = ""
 cin: input
@@ -62,6 +64,7 @@ This code makes an empty variable than uses cin to ask for input and then uses c
 ### maths
 This section is for the maths module in the std lib.
 # add:
+add: is a std lib function from the maths module, used to add.
 Use with variable
 ```
 var nm = 1
