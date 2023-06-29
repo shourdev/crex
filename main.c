@@ -352,6 +352,13 @@ if (strstr(line, "cin:") != NULL) {
 
 
   }
+  if (strstr(line, "exit:") != NULL) {
+  exit(0);
+ 
+
+
+  }
+
 
 
 
@@ -363,29 +370,35 @@ if (strstr(line, "cin:") != NULL) {
 int main(int argc, char *argv[]) {
     
     char line[10000];
-    if (argc > 1 && strcmp(argv[1], "--help") == 0) {
+ 
+    if (argc <= 1) {
+        printf("Interactive Shell\n");
+       while(1){
+
+       
+   char line2[10000];
+       printf(">>> " );
+          scanf(" %[^\n]",line2);
+          interpreter(line2);
+       }
+    }
+    
+    if (strcmp(argv[1], "--help") == 0) {
         printf("Crex is a simple programming language designed to do anything! \n");
         printf("Run a file: ./crex <filename>.crf \n");
-        printf("Documention can be found at: https://github.com/shourdev/crex#documentation \n");
+        printf("Documentation can be found at: https://github.com/shourdev/crex#documentation \n");
         return 0;
     }
 
-FILE *file = fopen(argv[1], "r");
- if (file == NULL) {
+    FILE *file = fopen(argv[1], "r");
+    if (file == NULL) {
         printf("Failed to open the file.\n");
         return 1;
     }
 
-        while (fgets(line, sizeof(line), file)) {
-        
-interpreter(line);
-       
-
+    while (fgets(line, sizeof(line), file)) {
+        interpreter(line);
     }
-
-
-   
-
 
     fclose(file);
     return 0;
