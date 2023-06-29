@@ -203,29 +203,93 @@ void addQuotationMarks(char* str) {
 
     strcpy(str, temp);
 }
-int main(int argc, char *argv[]) {
-    
-    char line[10000];
-    if (argc > 1 && strcmp(argv[1], "--help") == 0) {
-        printf("Crex is a simple programming language designed to do anything! \n");
-        printf("Run a file: ./crex <filename>.crf \n");
-        printf("Documention can be found at: https://github.com/shourdev/crex#documentation \n");
-        return 0;
+char* add(char* value) {
+    char modifiedValue[MAX_VALUE_LENGTH];
+    strcpy(modifiedValue, value);
+    removeWord(modifiedValue, "add:");
+    stripWhitespace(modifiedValue);
+
+    char beforeComma[MAX_VALUE_LENGTH];
+    char afterComma[MAX_VALUE_LENGTH];
+    splitString(modifiedValue, beforeComma, afterComma);
+    stripWhitespace(modifiedValue);
+
+    if (isStringCheck(beforeComma) == 0) {
+        int num1 = atoi(beforeComma);
+        int num2 = atoi(afterComma);
+        int sum = num1 + num2;
+
+        char* sumChar = malloc(MAX_VALUE_LENGTH);
+        sprintf(sumChar, "%d", sum);
+        stripWhitespace(sumChar);
+
+        return sumChar;
+    } else {
+        char bc[2000];
+        char ac[2000];
+        strcpy(bc, beforeComma);
+        strcpy(ac, afterComma);
+        const char* bv = findNameAndGetNextValue(bc);
+        const char* av = findNameAndGetNextValue(ac);
+        char bv1[2000];
+        char av1[2000];
+        strcpy(bv1, bv);
+        strcpy(av1, av);
+
+        removeQuotes(bv1);
+        removeQuotes(av1);
+        int nm = atoi(bv1);
+        int nm2 = atoi(av1);
+        int sum2 = nm + nm2;
+        char* sumChar2 = malloc(MAX_VALUE_LENGTH);
+        sprintf(sumChar2, "%d", sum2);
+        addQuotationMarks(sumChar2);
+        return sumChar2;
     }
+}
+void cout(char* line){
+        removeWord(line, "cout:");
+  //  stripWhitespace(line);
+    if (hasQuotes(line) == 1) {
+  
+        removeQuotes(line);
+     
+        printf("%s\n", line);
+    } else {
+        int result = isStringCheck(line);
 
-FILE *file = fopen(argv[1], "r");
- if (file == NULL) {
-        printf("Failed to open the file.\n");
-        return 1;
+if (result){
+  
+  
+   const char* val = findNameAndGetNextValue(line);
+        if (val != NULL) {
+            char newString[strlen(val) + 1];  // Add 1 for the null terminator
+            strcpy(newString, val);
+           removeQuotes(newString);
+            
+            printf("%s\n", newString);
+        } else {
+            printf("Variable %s not found.\n",line);
+        
+        }
+}
+else {
+    printf("%s\n",line);
+}
+     
     }
+}
+void cin(char* line){
+      removeWord(line,"cin:");
+   char opt[2000];
+   scanf(" %[^\n]",opt);
+  
 
-    
-
-   
-
-    while (fgets(line, sizeof(line), file)) {
-         if (strstr(line, "var") != NULL) {
-            char varName[100];
+   changeArrayValue(line,opt);  
+ 
+}
+void var(char* line){
+        char varName[100];
             char value[1000];
 
             // Extracting variable name
@@ -250,62 +314,17 @@ FILE *file = fopen(argv[1], "r");
                 strcpy(value, pos);
                    
 if (strcmp(value, "add:") == 0 || countOccurrences(value, "add:") == 1) {
-    char modifiedValue[MAX_VALUE_LENGTH];
-    strcpy(modifiedValue, value);
-    removeWord(modifiedValue, "add:");
-    stripWhitespace(modifiedValue);
 
-    char beforeComma[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
-    char afterComma[MAX_VALUE_LENGTH];   // Use MAX_VALUE_LENGTH for consistent array size
-    splitString(modifiedValue, beforeComma, afterComma);
-  stripWhitespace(modifiedValue);
+char* value2 = add(value);
+addNameAndValue(varName,value2);
 
-    if (isStringCheck(beforeComma) == 0) {
-        int num1 = atoi(beforeComma);
-        int num2 = atoi(afterComma);
-        int sum = num1 + num2;
-
-        char sumChar[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
-        sprintf(sumChar, "%d", sum);
-        stripWhitespace(sumChar);
-
-        char finalvalue[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
-     
-
-
-addQuotationMarks(sumChar);
-   addNameAndValue(varName,sumChar);
-    
-    }
-    else{
-     char bc[2000];
-     char ac [2000];
-     strcpy(bc,beforeComma);
-     strcpy(ac,afterComma);
-     const char* bv = findNameAndGetNextValue(bc);
-      const char* av = findNameAndGetNextValue(ac);
-      char bv1[2000];
-      char av1[2000];
-      strcpy(bv1,bv);
-      strcpy(av1,av);
-
-    removeQuotes(bv1);
-    removeQuotes(av1);
-    int nm = atoi(bv1);
-    int nm2 = atoi(av1);
-    int sum2 = nm + nm2;
-       char sumChar2[MAX_VALUE_LENGTH];  // Use MAX_VALUE_LENGTH for consistent array size
-        sprintf(sumChar2, "%d", sum2);
-addQuotationMarks(sumChar2);
- addNameAndValue(varName,sumChar2);
-    }
     
 }
  else {
     if (hasQuotes(value)==0)
     {
 addQuotationMarks(value);
-stripWhitespace(value);
+stripWhitespace(value); 
  addNameAndValue(varName,value);
     }
    else{
@@ -317,47 +336,19 @@ stripWhitespace(value);
 
       
             }
+}
+char interpreter(char* line)
+{
+        
+     if (strstr(line, "var") != NULL) {
+        var(line);
         }
    if (strstr(line, "cout:") != NULL) {
-    removeWord(line, "cout:");
-  //  stripWhitespace(line);
-    if (hasQuotes(line) == 1) {
-  
-        removeQuotes(line);
-     
-        printf("%s\n", line);
-    } else {
-        int result = isStringCheck(line);
-
-if (result){
-  
-  
-   const char* val = findNameAndGetNextValue(line);
-        if (val != NULL) {
-            char newString[strlen(val) + 1];  // Add 1 for the null terminator
-            strcpy(newString, val);
-           removeQuotes(newString);
-            
-            printf("%s\n", newString);
-        } else {
-            printf("Variable %s not found.\n",line);
-         break;
-        }
-}
-else {
-    printf("%s\n",line);
-}
-     
-    }
+cout(line);
 }
 if (strstr(line, "cin:") != NULL) {
-   // In work
-   removeWord(line,"cin:");
-   char opt[2000];
-   scanf(" %[^\n]",opt);
-  
-
-   changeArrayValue(line,opt);  
+  cin(line);
+ 
 
 
   }
@@ -367,6 +358,34 @@ if (strstr(line, "cin:") != NULL) {
        
 
     }
+
+
+int main(int argc, char *argv[]) {
+    
+    char line[10000];
+    if (argc > 1 && strcmp(argv[1], "--help") == 0) {
+        printf("Crex is a simple programming language designed to do anything! \n");
+        printf("Run a file: ./crex <filename>.crf \n");
+        printf("Documention can be found at: https://github.com/shourdev/crex#documentation \n");
+        return 0;
+    }
+
+FILE *file = fopen(argv[1], "r");
+ if (file == NULL) {
+        printf("Failed to open the file.\n");
+        return 1;
+    }
+
+        while (fgets(line, sizeof(line), file)) {
+        
+interpreter(line);
+       
+
+    }
+
+
+   
+
 
     fclose(file);
     return 0;
