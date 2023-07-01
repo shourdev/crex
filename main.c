@@ -175,10 +175,10 @@ int isStringOrNumber(const char* str) {
 
     if (hasAlpha && !hasDigit)
         return 1; // String (only alphabetic characters)
+    else if (hasAlpha && hasDigit)
+        return 1; // Alphanumeric (contains alphabetic characters and numerals)
     else if (!hasAlpha && hasDigit)
         return 2; // Number (only numeric characters)
-    else if (hasAlpha && hasDigit)
-        return 3; // Mixed (both alphabetic and numeric characters)
     else
         return 0; // Empty string (no valid characters found)
 }
@@ -207,7 +207,31 @@ void changeArrayValue(char* name, char* value) {
         i++;
     }
 }
+int numordec(char* number){
+  
+    int flag = 0;
 
+
+
+    //loop through each character of input
+    for (int i = 0; number[i] != 0; i++) {
+    //if decimal "." is fount, it means it is float
+        if (number[i] == '.') {
+            flag = 1;
+            break;
+        }
+    }
+      
+
+    if (flag)
+    {
+       return 0; //decimal
+    }
+    else{
+      return 1; //int
+    }
+  
+}
 void removeNewline(char* str) {
     int len = strlen(str);
     for (int i = 0; i < len; i++) {
@@ -239,7 +263,7 @@ void addQuotationMarks(char* str) {
 
     strcpy(str, temp);
 }
-char* add(char* value) {
+void add(char* value, char* varname) {
     char modifiedValue[MAX_VALUE_LENGTH];
     strcpy(modifiedValue, value);
     removeWord(modifiedValue, "add:");
@@ -249,43 +273,254 @@ char* add(char* value) {
     char afterComma[MAX_VALUE_LENGTH];
     splitString(modifiedValue, beforeComma, afterComma);
     stripWhitespace(modifiedValue);
+static const char* bfv;
+static const char* afv;
+  char bfvac[1000];
+      char afvac[1000];
+ char* sumChar = malloc(MAX_VALUE_LENGTH);
+if (isStringOrNumber(beforeComma)==1)
+{
 
-    if (isStringCheck(beforeComma) == 0) {
-        int num1 = atoi(beforeComma);
-        int num2 = atoi(afterComma);
+       bfv = findNameAndGetNextValue(beforeComma);
+     
+       
+}
+else if (isStringOrNumber(afterComma)==1)
+{
+
+     afv = findNameAndGetNextValue(afterComma);
+    
+}
+if (isStringOrNumber(beforeComma)==1 && isStringOrNumber(afterComma)==1){
+   bfv = findNameAndGetNextValue(beforeComma);
+      afv = findNameAndGetNextValue(afterComma);
+    
+      strcpy(bfvac,bfv);
+      strcpy(afvac,afv);
+}
+if (numordec(bfvac)==1 && numordec(afvac)==1){
+
+  int num1 = atoi(bfvac);
+        int num2 = atoi(afvac);
         int sum = num1 + num2;
-
-        char* sumChar = malloc(MAX_VALUE_LENGTH);
+      
         sprintf(sumChar, "%d", sum);
         stripWhitespace(sumChar);
+        char varname2[1000];
+        char sumchar2[1000];
+        strcpy(varname2,varname);
+        strcpy(sumchar2,sumChar);
+   addQuotationMarks(sumchar2);
+addNameAndValue(varname2,sumchar2);
+ 
+}
+else if(numordec(bfvac)==0 && numordec(afvac)==1){
+float flb = atof(bfvac);
+float fla = atof(afvac);
 
-        return sumChar;
-    } else {
-        char bc[2000];
-        char ac[2000];
-        strcpy(bc, beforeComma);
-        strcpy(ac, afterComma);
-        const char* bv = findNameAndGetNextValue(bc);
-        const char* av = findNameAndGetNextValue(ac);
-        char bv1[2000];
-        char av1[2000];
-        strcpy(bv1, bv);
-        strcpy(av1, av);
+    float sum = flb + fla;
+    char sum2[2000];
+ sprintf(sum2, "%.2f", sum);
+    addQuotationMarks(sum2);
+    addNameAndValue(varname,sum2);
 
-        removeQuotes(bv1);
-        removeQuotes(av1);
-        int nm = atoi(bv1);
-        int nm2 = atoi(av1);
-        int sum2 = nm + nm2;
-        char* sumChar2 = malloc(MAX_VALUE_LENGTH);
-        sprintf(sumChar2, "%d", sum2);
-        addQuotationMarks(sumChar2);
-        return sumChar2;
-    }
+}
+else if(numordec(bfvac)==1 && numordec(afvac)==0){
+float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float sum = flb + fla;
+    char sum2[2000];
+ sprintf(sum2, "%.2f", sum);
+    addQuotationMarks(sum2);
+    addNameAndValue(varname,sum2);
+}
+else if(numordec(bfvac)==0 && numordec(afvac)==0)
+{
+ float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float sum = flb + fla;
+    char sum2[2000];
+ sprintf(sum2, "%.2f", sum);
+    addQuotationMarks(sum2);
+    addNameAndValue(varname,sum2);
+}
+
+}
+void sub(char* value, char* varname) {
+    char modifiedValue[MAX_VALUE_LENGTH];
+    strcpy(modifiedValue, value);
+    removeWord(modifiedValue, "sub:");
+    stripWhitespace(modifiedValue);
+
+    char beforeComma[MAX_VALUE_LENGTH];
+    char afterComma[MAX_VALUE_LENGTH];
+    splitString(modifiedValue, beforeComma, afterComma);
+    stripWhitespace(modifiedValue);
+static const char* bfv;
+static const char* afv;
+  char bfvac[1000];
+      char afvac[1000];
+ char* subChar = malloc(MAX_VALUE_LENGTH);
+if (isStringOrNumber(beforeComma)==1)
+{
+
+       bfv = findNameAndGetNextValue(beforeComma);
+     
+       
+}
+else if (isStringOrNumber(afterComma)==1)
+{
+
+     afv = findNameAndGetNextValue(afterComma);
+    
+}
+if (isStringOrNumber(beforeComma)==1 && isStringOrNumber(afterComma)==1){
+   bfv = findNameAndGetNextValue(beforeComma);
+      afv = findNameAndGetNextValue(afterComma);
+    
+      strcpy(bfvac,bfv);
+      strcpy(afvac,afv);
+}
+if (numordec(bfvac)==1 && numordec(afvac)==1){
+
+  int num1 = atoi(bfvac);
+        int num2 = atoi(afvac);
+        int sub = num1 - num2;
+      
+        sprintf(subChar, "%d", sub);
+        stripWhitespace(subChar);
+        char varname2[1000];
+        char subchar2[1000];
+        strcpy(varname2,varname);
+        strcpy(subchar2,subChar);
+   addQuotationMarks(subchar2);
+addNameAndValue(varname2,subchar2);
+ 
+}
+else if(numordec(bfvac)==0 && numordec(afvac)==1){
+float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float sub = flb - fla;
+    char sub2[2000];
+ sprintf(sub2, "%.2f", sub);
+    addQuotationMarks(sub2);
+    addNameAndValue(varname,sub2);
+
+}
+else if(numordec(bfvac)==1 && numordec(afvac)==0){
+float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float sub = flb - fla;
+    char sub2[2000];
+ sprintf(sub2, "%.2f", sub);
+    addQuotationMarks(sub2);
+    addNameAndValue(varname,sub2);
+}
+else if(numordec(bfvac)==0 && numordec(afvac)==0)
+{
+ float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float sub = flb - fla;
+    char sub2[2000];
+ sprintf(sub2, "%.2f", sub);
+    addQuotationMarks(sub2);
+    addNameAndValue(varname,sub2);
+}
+
+}
+void mul(char* value, char* varname) {
+    char modifiedValue[MAX_VALUE_LENGTH];
+    strcpy(modifiedValue, value);
+    removeWord(modifiedValue, "mul:");
+    stripWhitespace(modifiedValue);
+
+    char beforeComma[MAX_VALUE_LENGTH];
+    char afterComma[MAX_VALUE_LENGTH];
+    splitString(modifiedValue, beforeComma, afterComma);
+    stripWhitespace(modifiedValue);
+static const char* bfv;
+static const char* afv;
+  char bfvac[1000];
+      char afvac[1000];
+ char* mulChar = malloc(MAX_VALUE_LENGTH);
+if (isStringOrNumber(beforeComma)==1)
+{
+
+       bfv = findNameAndGetNextValue(beforeComma);
+     
+       
+}
+else if (isStringOrNumber(afterComma)==1)
+{
+
+     afv = findNameAndGetNextValue(afterComma);
+    
+}
+if (isStringOrNumber(beforeComma)==1 && isStringOrNumber(afterComma)==1){
+   bfv = findNameAndGetNextValue(beforeComma);
+      afv = findNameAndGetNextValue(afterComma);
+    
+      strcpy(bfvac,bfv);
+      strcpy(afvac,afv);
+}
+if (numordec(bfvac)==1 && numordec(afvac)==1){
+
+  int num1 = atoi(bfvac);
+        int num2 = atoi(afvac);
+        int mul = num1 * num2;
+      
+        sprintf(mulChar, "%d", mul);
+        stripWhitespace(mulChar);
+        char varname2[1000];
+        char mulchar2[1000];
+        strcpy(varname2,varname);
+        strcpy(mulchar2,mulChar);
+   addQuotationMarks(mulchar2);
+addNameAndValue(varname2,mulchar2);
+ 
+}
+else if(numordec(bfvac)==0 && numordec(afvac)==1){
+float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float mul = flb * fla;
+    char mul2[2000];
+ sprintf(mul2, "%.2f", mul);
+    addQuotationMarks(mul2);
+    addNameAndValue(varname,mul2);
+
+}
+else if(numordec(bfvac)==1 && numordec(afvac)==0){
+float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float mul = flb * fla;
+    char mul2[2000];
+ sprintf(mul2, "%.2f", mul);
+    addQuotationMarks(mul2);
+    addNameAndValue(varname,mul2);
+}
+else if(numordec(bfvac)==0 && numordec(afvac)==0)
+{
+ float flb = atof(bfvac);
+float fla = atof(afvac);
+
+    float mul = flb * fla;
+    char mul2[2000];
+ sprintf(mul2, "%.2f", mul);
+    addQuotationMarks(mul2);
+    addNameAndValue(varname,mul2);
+}
+
 }
 void cout(char* line){
         removeWord(line, "cout:");
-  //  stripWhitespace(line);
+
     if (hasQuotes(line) == 1) {
   
         removeQuotes(line);
@@ -323,6 +558,7 @@ else {
 }
      
     }
+    
 }
 void cin(char* line){
       removeWord(line,"cin:");
@@ -360,8 +596,22 @@ void var(char* line){
                    
 if (strcmp(value, "add:") == 0 || countOccurrences(value, "add:") == 1) {
 
-char* value2 = add(value);
-addNameAndValue(varName,value2);
+add(value,varName);
+
+
+    
+}
+if (strcmp(value, "sub:") == 0 || countOccurrences(value, "sub:") == 1) {
+
+sub(value,varName);
+
+
+    
+}
+if (strcmp(value, "mul:") == 0 || countOccurrences(value, "mul:") == 1) {
+
+mul(value,varName);
+
 
     
 }
@@ -380,8 +630,17 @@ addQuotationMarks(value);
 
         }
 else{
-    removeNewline(value);
-    printf("Error: %s not defined.\n",value);
+    if (numordec(value)==0)
+    {
+           removeNewline(value);    
+addQuotationMarks(value);
+
+
+
+
+ addNameAndValue(varName,value);
+    }
+  
 }
     }
    else{
