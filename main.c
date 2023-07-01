@@ -155,7 +155,33 @@ void removeWord(char *str, const char *word) {
     }
     str[dst] = '\0'; // Null-terminate the resulting string
 }
+int isStringOrNumber(const char* str) {
+    int i = 0;
+    int hasAlpha = 0;
+    int hasDigit = 0;
 
+    // Iterate through each character of the string
+    while (str[i] != '\0') {
+        if (!isspace(str[i])) { // Ignore spaces
+            if (isalpha(str[i]))
+                hasAlpha = 1; // At least one alphabetic character found
+            else if (isdigit(str[i]))
+                hasDigit = 1; // At least one digit found
+            else
+                return 0; // Neither alphabetic nor numeric character found
+        }
+        i++;
+    }
+
+    if (hasAlpha && !hasDigit)
+        return 1; // String (only alphabetic characters)
+    else if (!hasAlpha && hasDigit)
+        return 2; // Number (only numeric characters)
+    else if (hasAlpha && hasDigit)
+        return 3; // Mixed (both alphabetic and numeric characters)
+    else
+        return 0; // Empty string (no valid characters found)
+}
 void changeArrayValue(char* name, char* value) {
     int i = 0;
     int arraySize = sizeof(array) / sizeof(array[0]);
@@ -274,7 +300,16 @@ if (result){
         }
 }
 else {
-    printf("%s\n",line);
+  if (isStringOrNumber(line)==2){
+   printf("%s\n",line);
+  }
+  else 
+  {
+    printf("Error: variable %s not found\n",line);
+  }
+
+
+ 
 }
      
     }
