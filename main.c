@@ -207,6 +207,16 @@ void changeArrayValue(char* name, char* value) {
         i++;
     }
 }
+
+void removeNewline(char* str) {
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) {
+        if (str[i] == '\n') {
+            str[i] = '\0';
+            break;  // Assuming you want to remove only the first newline encountered
+        }
+    }
+}
 int countOccurrences(const char *str, const char *substr) {
     int count = 0;
     const char *ptr = str;
@@ -358,9 +368,21 @@ addNameAndValue(varName,value2);
  else {
     if (hasQuotes(value)==0)
     {
+    
+        if (isStringOrNumber(value)==2){
+   removeNewline(value);    
 addQuotationMarks(value);
-stripWhitespace(value); 
+
+
+
+
  addNameAndValue(varName,value);
+
+        }
+else{
+    removeNewline(value);
+    printf("Error: %s not defined.\n",value);
+}
     }
    else{
      addNameAndValue(varName,value);
