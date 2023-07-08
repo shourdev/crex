@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h> // Include ctype.h for isspace function
 char name[1000];
-
+char acname[1000];
 
 char* get_text_between_func_and_over(const char* string, const char* func_name) {
     const char* func_start = strstr(string, func_name);
@@ -165,31 +165,42 @@ void removeAfterAsterisk(const char* filename) {
     fclose(file);
     fclose(tempFile);
 }
-char* translater(char* code){
-    char outputString[100]; 
+char* translater(char* code,char* funcname){
+       FILE *file;
+    char name3[2000];
+    strcpy(name3,name);
+
+ char* name2 = strcat(name3,funcname);
+ 
+  removeCharacters(name2);
+  strcat(name2,".txt");
+ 
+  file = fopen(name2, "w");
+ char outputString[100];
     char* line = strtok(code, "\n");
     while (line != NULL) {
         // Check if the line contains "cout:"
         if (strstr(line, "cout:") != NULL) {
-   
-
-                     // Extract the text after "cout:"
+            // Extract the text after "cout:"
             char* extractedText = strstr(line, "cout:") + strlen("cout:");
             strcpy(outputString, extractedText);  // Copy the extracted text to the output string
-            break;  // Stop further processing as we found the desired line
+            
+               fprintf(file,"printf(%s);\n",outputString);
         }
-        line = strtok(NULL, "\n"); 
-       // Move to the next line
+          
+        line = strtok(NULL, "\n");
+        // Move to the next line
     }
-      printf("%s",outputString);
-
+fclose(file);
+ char* file_content = read_file(name2);
+remove(name2);
+return file_content;
 }
 
 
 void write(const char* code) {
-
-
 strcat(name, ".c");
+strcpy(acname,name);
     FILE* file = fopen(name, "w");  // Open file in write mode
 
     fprintf(file, "#include <stdio.h>\n");
@@ -229,10 +240,11 @@ strcat(name, ".c");
  
 
           
-                fprintf(file, "    //  code goes here\n");
-//printf("%s",result);
-translater(result);
+              
 
+char* returned = translater(result,functionName);
+
+   fprintf(file, "%s\n",returned);
                 fprintf(file, "}\n");
 
                 free(functionName);
@@ -255,11 +267,17 @@ void compstg1(char* code){
 removeAfterAsterisk(name);
 
    char* file_content = read_file(name);
-
-remove(name);
+  remove(name);
 write(file_content);
 free(file_content);
 
+    char command[1024];
+    snprintf(command, sizeof(command), "gcc %s -o program ", acname);
+    system(command);
+ //   remove(acname);
+    snprintf(command, sizeof(command), "./program");
+    system(command);
+  
 }
 int main(int argc, char *argv[]) {
     
@@ -281,6 +299,7 @@ int main(int argc, char *argv[]) {
 
 strcpy(name,argv[1]);
 strcat(name,".txt");
+
 compstg1(file_content);
 
 
