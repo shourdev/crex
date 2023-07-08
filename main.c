@@ -4,6 +4,35 @@
 #include <ctype.h> // Include ctype.h for isspace function
 char name[1000];
 char acname[1000];
+
+char* removeBeforeEquals(char* input) {
+    char* equals = strchr(input, '=');
+
+    if (equals != NULL) {
+        // Move the pointer to the character after the '='
+        equals++;
+
+        // Calculate the length of the remaining string
+        size_t length = strlen(equals) + 1;
+
+        // Move the remaining characters to the beginning of the input string
+        memmove(input, equals, length);
+    }
+
+    return input;
+}
+char* getFirstWord(const char* inputString) {
+    // Find the length of the input string
+    size_t inputLength = strlen(inputString);
+
+    // Allocate memory for a new string (plus 1 for the null terminator)
+    char* firstWord = (char*)malloc((inputLength + 1) * sizeof(char));
+
+    // Copy the first word into the new string
+    sscanf(inputString, "%s", firstWord);
+
+    return firstWord;
+}
 int hasQuotes(const char* str) {
     int len = strlen(str);
 
@@ -216,6 +245,32 @@ fprintf(file, "printf(\"%%s\", %s);\n", outputString);
 
                }
         }
+              if (strstr(line, "var") != NULL) {
+            // Extract the text after "cout:"
+            char* extractedText = strstr(line, "var") + strlen("var");
+            strcpy(outputString, extractedText);  // Copy the extracted text to the output string
+        char* firstWord = getFirstWord(outputString);
+
+
+        
+       char* result = removeBeforeEquals(outputString);
+   char sec[1000];
+   char sec2[1000];
+   strcpy(sec,firstWord);
+    strcpy(sec2,firstWord);
+char* var = strcat(sec,"val");
+char* var2 = strcat(sec2,"sz");
+
+      fprintf(file,"  const char* %s = %s; \n",var,outputString);
+       fprintf(file,"  size_t %s = strlen(%s); \n",var2,var);
+             fprintf(file," char* %s = (char*) malloc((%s + 1) * sizeof(char)); \n",firstWord,var2);
+                fprintf(file,"     strcpy(%s,%s); \n",firstWord,var);   
+          free(firstWord);
+   
+     
+         
+        }
+        
         
           
         line = strtok(NULL, "\n");
@@ -234,6 +289,8 @@ strcpy(acname,name);
     FILE* file = fopen(name, "w");  // Open file in write mode
 
     fprintf(file, "#include <stdio.h>\n");
+      fprintf(file, "#include <stdlib.h>\n");
+           fprintf(file, "#include <string.h>\n");
 
     const char* searchStr = "func";
     const char* delimiter = "()";
