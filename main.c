@@ -3,6 +3,43 @@
 #include <stdlib.h>
 #include <ctype.h> // Include ctype.h for isspace function
 char name[1000];
+
+
+char* get_text_between_func_and_over(const char* string, const char* func_name) {
+    const char* func_start = strstr(string, func_name);
+    if (func_start == NULL) {
+        return NULL; // Function name not found in string
+    }
+
+    const char* func_end = strstr(func_start, "over");
+    if (func_end == NULL) {
+        return NULL; // "over" not found after function name in string
+    }
+
+    const char* target_start = func_start + strlen(func_name);
+    while (target_start < func_end && (*target_start == ' ' || *target_start == '\t' || *target_start == '\n')) {
+        target_start++; // Skip whitespace characters
+    }
+
+    size_t result_size = func_end - target_start;
+    char* result = malloc(result_size + 1);
+    strncpy(result, target_start, result_size);
+    result[result_size] = '\0';
+
+    return result;
+}
+void removeCharacters(char* str) {
+    int i, j = 0;
+    int length = strlen(str);
+
+    for (i = 0; i < length; i++) {
+        if (str[i] != '(' && str[i] != ')' && str[i] != '-') {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
 char* read_file(const char* filename) {
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
@@ -36,6 +73,46 @@ char* read_file(const char* filename) {
 
     fclose(file);
     return buffer;
+}
+
+void removeWordFromString(char *str, const char *wordToRemove) {
+    char *result = NULL;
+    int i, cnt = 0;
+    size_t wordToRemoveLen = strlen(wordToRemove);
+
+    // Count the occurrences of the word to remove
+    for (i = 0; str[i] != '\0'; i++) {
+        if (strstr(&str[i], wordToRemove) == &str[i]) {
+            cnt++;
+            i += wordToRemoveLen - 1;
+        }
+    }
+
+    // Allocate memory for the resulting string
+    result = (char *)malloc(i - cnt * wordToRemoveLen + 1);
+    if (result == NULL) {
+        printf("Memory allocation error.\n");
+        return;
+    }
+
+    // Remove the word from the string
+    i = 0;
+    while (*str) {
+        if (strstr(str, wordToRemove) == str) {
+            strcpy(&result[i], &str[wordToRemoveLen]);
+            i += wordToRemoveLen;
+            str += wordToRemoveLen;
+        } else {
+            result[i++] = *str++;
+        }
+    }
+    result[i] = '\0';
+
+    // Copy the modified string back to the original string
+    strcpy(str, result);
+
+    // Free the allocated memory
+    free(result);
 }
 
 void removeAfterAsterisk(const char* filename) {
@@ -88,41 +165,76 @@ void removeAfterAsterisk(const char* filename) {
     fclose(file);
     fclose(tempFile);
 }
+char* translater(char* code){
+if (strcmp(code,"cout:")==0)
+{
 
-void write(char* code) {
-    char name[100] = "output"; // Set the desired name for the output file
-    strcat(name, ".c");
-    
-    FILE *file = fopen(name, "w");  // Open file in write mode
-    
-    fprintf(file, "#include <stdio.h>\n");
-    fprintf(file, "int main() {\n");
-    
-    char* line = strtok(code, "\n"); // Tokenize the input code by lines
-    
-    while (line != NULL) {
-        char* hiPtr = strstr(line, "cout:"); // Find "cout:" in the line
-        
-        if (hiPtr != NULL) {
-     fprintf(file,"printf(%s);\n",hiPtr + 5); // Extract the text after "cout:"
-        }
-        
-        line = strtok(NULL, "\n"); // Move to the next line
-    }
-    
-    fprintf(file, "return 0;\n");
-    fprintf(file, "}\n");
-    
-    fclose(file);
-    
-    char command[1024];
-    snprintf(command, sizeof(command), "gcc -o program %s ", name);
-    system(command);
-    
-    snprintf(command, sizeof(command), "./program");
-    system(command);
+ char* output = malloc(strlen("printf(\"hello world\");") + 1);
+        strcpy(output, "printf(\"hello world\");");
+        return output;
+
+}else{return NULL;}
 }
 
+
+void write(const char* code) {
+
+
+strcat(name, ".c");
+    FILE* file = fopen(name, "w");  // Open file in write mode
+
+    fprintf(file, "#include <stdio.h>\n");
+
+    const char* searchStr = "func";
+    const char* delimiter = "()";
+    const size_t codeLength = strlen(code);
+
+
+
+
+    size_t pos = 0;
+    while (pos < codeLength) {
+        const char* funcPos = strstr(code + pos, searchStr);
+        if (funcPos == NULL) {
+            break;
+        }
+
+        pos = funcPos - code + strlen(searchStr);
+        const char* endLine = strchr(code + pos, '\n');
+        if (endLine == NULL) {
+            endLine = code + codeLength;  // Reached end of code
+        }
+
+        const char* openingParenthesis = strchr(code + pos, '(');
+        if (openingParenthesis != NULL && openingParenthesis < endLine) {
+            const char* closingParenthesis = strchr(openingParenthesis, ')');
+            if (closingParenthesis != NULL && closingParenthesis < endLine) {
+                const size_t functionNameLength = openingParenthesis - (funcPos + strlen(searchStr) + 1);
+                char* functionName = (char*)malloc(functionNameLength + 1);
+                strncpy(functionName, funcPos + strlen(searchStr) + 1, functionNameLength);
+                functionName[functionNameLength] = '\0';
+                removeCharacters(functionName);
+      fprintf(file, "void %s() {\n", functionName);
+      strcat(functionName,"()-");
+    char* result = get_text_between_func_and_over(code, functionName);
+ 
+
+          
+                fprintf(file, "    //  code goes here\n");
+printf("%s",result);
+
+
+                fprintf(file, "}\n");
+
+                free(functionName);
+            }
+        }
+
+        pos = endLine - code + 1;
+    }
+   fclose(file);
+ 
+}
 void compstg1(char* code){
       FILE *file;
     

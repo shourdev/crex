@@ -1,4 +1,7 @@
 #include <stdio.h>
-int main() {
-printf(""hi \n"");printf(""hi \n"");printf(""hi \n"");return 0;
+void test() {
+    //  code goes here
+}
+void test2() {
+    //  code goes here
 }
