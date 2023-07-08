@@ -166,14 +166,23 @@ void removeAfterAsterisk(const char* filename) {
     fclose(tempFile);
 }
 char* translater(char* code){
-if (strcmp(code,"cout:")==0)
-{
+    char outputString[100]; 
+    char* line = strtok(code, "\n");
+    while (line != NULL) {
+        // Check if the line contains "cout:"
+        if (strstr(line, "cout:") != NULL) {
+   
 
- char* output = malloc(strlen("printf(\"hello world\");") + 1);
-        strcpy(output, "printf(\"hello world\");");
-        return output;
+                     // Extract the text after "cout:"
+            char* extractedText = strstr(line, "cout:") + strlen("cout:");
+            strcpy(outputString, extractedText);  // Copy the extracted text to the output string
+            break;  // Stop further processing as we found the desired line
+        }
+        line = strtok(NULL, "\n"); 
+       // Move to the next line
+    }
+      printf("%s",outputString);
 
-}else{return NULL;}
 }
 
 
@@ -221,8 +230,8 @@ strcat(name, ".c");
 
           
                 fprintf(file, "    //  code goes here\n");
-printf("%s",result);
-
+//printf("%s",result);
+translater(result);
 
                 fprintf(file, "}\n");
 
