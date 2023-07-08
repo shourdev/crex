@@ -4,7 +4,31 @@
 #include <ctype.h> // Include ctype.h for isspace function
 char name[1000];
 char acname[1000];
+int hasQuotes(const char* str) {
+    int len = strlen(str);
 
+    // Skip leading whitespace
+    int start = 0;
+    while (start < len && isspace(str[start])) {
+        start++;
+    }
+
+    // Skip trailing whitespace
+    int end = len - 1;
+    while (end >= start && isspace(str[end])) {
+        end--;
+    }
+
+    // Check if the remaining string has at least two characters
+    if (end - start >= 1) {
+        // Check if the first and last characters are double quotation marks
+        if (str[start] == '"' && str[end] == '"') {
+            return 1; // String has quotes
+        }
+    }
+
+    return 0; // String does not have quotes
+}
 char* get_text_between_func_and_over(const char* string, const char* func_name) {
     const char* func_start = strstr(string, func_name);
     if (func_start == NULL) {
@@ -184,9 +208,15 @@ char* translater(char* code,char* funcname){
             // Extract the text after "cout:"
             char* extractedText = strstr(line, "cout:") + strlen("cout:");
             strcpy(outputString, extractedText);  // Copy the extracted text to the output string
-            
-               fprintf(file,"printf(%s);\n",outputString);
+            if (hasQuotes(outputString)==1){
+      fprintf(file,"printf(%s);\n",outputString);
+            }
+               else{
+fprintf(file, "printf(\"%%s\", %s);\n", outputString);
+
+               }
         }
+        
           
         line = strtok(NULL, "\n");
         // Move to the next line
