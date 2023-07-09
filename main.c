@@ -265,6 +265,7 @@ char* var2 = strcat(sec2,"sz");
        fprintf(file,"  size_t %s = strlen(%s); \n",var2,var);
              fprintf(file," char* %s = (char*) malloc((%s + 1) * sizeof(char)); \n",firstWord,var2);
                 fprintf(file,"     strcpy(%s,%s); \n",firstWord,var);   
+
           free(firstWord);
    
      
@@ -276,6 +277,7 @@ char* var2 = strcat(sec2,"sz");
         line = strtok(NULL, "\n");
         // Move to the next line
     }
+       
 fclose(file);
  char* file_content = read_file(name2);
 remove(name2);
@@ -332,6 +334,7 @@ strcpy(acname,name);
 char* returned = translater(result,functionName);
 
    fprintf(file, "%s\n",returned);
+
                 fprintf(file, "}\n");
 
                 free(functionName);
@@ -359,7 +362,7 @@ write(file_content);
 free(file_content);
 
     char command[1024];
-    snprintf(command, sizeof(command), "gcc %s -o program ", acname);
+    snprintf(command, sizeof(command), "gcc %s -o program --static ", acname);
     system(command);
  //   remove(acname);
     snprintf(command, sizeof(command), "./program");
