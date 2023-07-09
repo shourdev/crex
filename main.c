@@ -5,6 +5,45 @@
 char name[1000];
 char acname[1000];
 
+void stripTrailingWhitespace(char* str) {
+    int i = strlen(str) - 1;
+    while (i >= 0 && isspace((unsigned char)str[i])) {
+        str[i] = '\0';
+        i--;
+    }
+}
+
+char* getFormattedString(const char* str) {
+    int count = 0;
+    int length = strlen(str);
+    
+    // Count the number of commas
+    for (int i = 0; i < length; i++) {
+        if (str[i] == ',') {
+            count++;
+        }
+    }
+    
+    // Calculate the length required for the formatted string
+    int formattedLength = 3 * count + 1;
+    
+    // Allocate memory for the formatted string
+    char* formattedStr = (char*)malloc(formattedLength * sizeof(char));
+    
+    int j = 0;
+    
+    // Add "%s " to the formatted string for each comma
+    for (int i = 0; i < count; i++) {
+        formattedStr[j++] = '%';
+        formattedStr[j++] = 's';
+        formattedStr[j++] = ' ';
+    }
+    
+    // Null-terminate the formatted string
+    formattedStr[j] = '\0';
+    
+    return formattedStr;
+}
 char* removeBeforeEquals(char* input) {
     char* equals = strchr(input, '=');
 
@@ -241,7 +280,12 @@ char* translater(char* code,char* funcname){
       fprintf(file,"printf(%s);\n",outputString);
             }
                else{
-fprintf(file, "printf(\"%%s\", %s);\n", outputString);
+                char optstring2[1000];
+                strcpy(optstring2,outputString);
+                strcat(optstring2,",");
+                   char* formattedString = getFormattedString(optstring2);
+                   stripTrailingWhitespace(formattedString);
+fprintf(file, "printf(\"%s\",%s);\n",formattedString, outputString);
 
                }
         }
