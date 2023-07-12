@@ -1,10 +1,112 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h> // Include ctype.h for isspace function
+#include <ctype.h>
+#include <stdbool.h> 
+
 char name[1000];
 char acname[1000];
+void removeTrailingQuotes(char* str) {
+    int length = strlen(str);
+    
+    if (length > 0 && str[length - 1] == '\"') {
+        str[length - 1] = '\0';
+    }
+}
 
+int hasWhitespaceAtEnd(const char* str) {
+    int len = strlen(str);
+    if (len > 0 && isspace(str[len - 1])) {
+        return 0;
+    }
+    return 1;
+}
+void removeQuotes(char* str) {
+    char* i = str;  // input string pointer
+    char* o = str;  // output string pointer
+
+    while (*i) {
+        if (*i != '"') {
+            *o = *i;
+            o++;
+        }
+        i++;
+    }
+
+    *o = '\0';  // add null terminator to the end of the output string
+}
+char* checkString(const char* input) {
+    const char delimiter = '%';
+    char* words = NULL;
+    bool hasPercentage = false;
+
+    // Check if the input contains '%'
+    if (strchr(input, delimiter) != NULL) {
+        hasPercentage = true;
+
+        // Create a copy of the input string
+        char* inputCopy = strdup(input);
+
+        // Find the words after each '%'
+        char* token = strtok(inputCopy, " ");
+        while (token != NULL) {
+            if (token[0] == delimiter && strlen(token) > 1) {
+                if (words == NULL) {
+                    words = strdup(token + 1); // Exclude the '%' character
+                } else {
+                    // Append the comma and the word to the existing words
+                    size_t len = strlen(words);
+                    words = realloc(words, len + strlen(token) + 2); // +2 for comma and null terminator
+                    strcat(words, ",");
+                    strcat(words, token + 1); // Exclude the '%' character
+                }
+            }
+
+            token = strtok(NULL, " ");
+        }
+
+        // Free the memory allocated for the input copy
+        free(inputCopy);
+    }
+
+    // Return the appropriate value
+    if (hasPercentage && words != NULL) {
+        return words;
+    } else {
+        return strdup("1");
+    }
+}
+char* replaceWords(char *str) {
+    const char *delimiter = " ";
+    char *token;
+    char *replaceToken = "%s";
+    char *newString = NULL;
+    char *result = NULL;
+    int count = 0;
+
+    newString = strdup(str);
+    token = strtok(newString, delimiter);
+
+    while (token != NULL) {
+        if (token[0] == '%' && strlen(token) > 1 && isalpha(token[1])) {
+            token = replaceToken;
+            count++;
+        }
+
+        if (result == NULL) {
+            result = strdup(token);
+        } else {
+            result = realloc(result, strlen(result) + strlen(token) + 1);
+            strcat(result, delimiter);
+            strcat(result, token);
+        }
+
+        token = strtok(NULL, delimiter);
+    }
+
+return result;
+
+}
 void stripTrailingWhitespace(char* str) {
     int i = strlen(str) - 1;
     while (i >= 0 && isspace((unsigned char)str[i])) {
@@ -277,7 +379,50 @@ char* translater(char* code,char* funcname){
             char* extractedText = strstr(line, "cout:") + strlen("cout:");
             strcpy(outputString, extractedText);  // Copy the extracted text to the output string
             if (hasQuotes(outputString)==1){
-      fprintf(file,"printf(%s);\n",outputString);
+if (strcmp(checkString(outputString),"1")==0){
+ 
+        fprintf(file,"printf(%s);\n",outputString);
+}
+else{
+  char* test1 = checkString(outputString);
+    char* test = replaceWords(outputString);
+
+    size_t test_len = strlen(test);
+    size_t test1_len = strlen(test1);
+
+    // Allocate memory for the destination buffer
+    char* result = malloc((test_len + test1_len + 2) * sizeof(char));  // +2 for the added double-quote and null-terminating character
+    char res2[1000];
+strcpy(res2,test);
+
+removeTrailingQuotes(res2);
+
+ if (hasWhitespaceAtEnd(res2)==1)
+ { 
+ strcat(test, "\"");
+ }
+ else{
+
+ }
+ 
+  
+ 
+ 
+
+      strcat(test, ",");
+    strcpy(result, test);
+
+    removeQuotes(test1);
+    
+  
+    strcat(result, test1);
+
+    
+ fprintf(file, "printf(%s);\n", result);
+
+
+   
+}
             }
                else{
                 char optstring2[1000];

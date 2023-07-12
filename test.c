@@ -1,48 +1,65 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 
+char* checkString(const char* input) {
+    const char delimiter = '%';
+    char* words = NULL;
+    bool hasPercentage = false;
 
-char* getFormattedString(const char* str) {
-    int count = 0;
-    int length = strlen(str);
-    
-    // Count the number of commas
-    for (int i = 0; i < length; i++) {
-        if (str[i] == ',') {
-            count++;
+    // Check if the input contains '%'
+    if (strchr(input, delimiter) != NULL) {
+        hasPercentage = true;
+
+        // Create a copy of the input string
+        char* inputCopy = strdup(input);
+
+        // Find the words after each '%'
+        char* token = strtok(inputCopy, " ");
+        while (token != NULL) {
+            if (token[0] == delimiter && strlen(token) > 1) {
+                if (words == NULL) {
+                    words = strdup(token + 1); // Exclude the '%' character
+                } else {
+                    // Append the comma and the word to the existing words
+                    size_t len = strlen(words);
+                    words = realloc(words, len + strlen(token) + 2); // +2 for comma and null terminator
+                    strcat(words, ",");
+                    strcat(words, token + 1); // Exclude the '%' character
+                }
+            }
+
+            token = strtok(NULL, " ");
         }
+
+        // Free the memory allocated for the input copy
+        free(inputCopy);
     }
-    
-    // Calculate the length required for the formatted string
-    int formattedLength = 3 * count + 1;
-    
-    // Allocate memory for the formatted string
-    char* formattedStr = (char*)malloc(formattedLength * sizeof(char));
-    
-    int j = 0;
-    
-    // Add "%s " to the formatted string for each comma
-    for (int i = 0; i < count; i++) {
-        formattedStr[j++] = '%';
-        formattedStr[j++] = 's';
-        formattedStr[j++] = ' ';
+
+    // Return the appropriate value
+    if (hasPercentage && words != NULL) {
+        return words;
+    } else {
+        return strdup("1");
     }
-    
-    // Null-terminate the formatted string
-    formattedStr[j] = '\0';
-    
-    return formattedStr;
 }
 
-
 int main() {
-    const char* inputString = "hi,bye,lol,";
-    char* formattedString = getFormattedString(inputString);
-    
-    printf("%s\n", formattedString);
-    
-    free(formattedString);  // Don't forget to free the memory
-    
+    char input[100];
+    printf("Enter a string: ");
+    fgets(input, sizeof(input), stdin);
+
+    // Remove the trailing newline character
+    input[strcspn(input, "\n")] = '\0';
+
+    const char* result = checkString(input);
+
+    // Print the individual words
+    printf("Result: %s\n", result);
+
+    // Free the memory allocated for the result
+    free((void*)result);
+
     return 0;
 }
