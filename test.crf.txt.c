@@ -6,6 +6,10 @@ void main() {
   size_t testsz = strlen(testval); 
  char* test = (char*) malloc((testsz + 1) * sizeof(char)); 
      strcpy(test,testval); 
-printf("ff %s \n ",test);
+  const char* test2val =  "Majumder"; 
+  size_t test2sz = strlen(test2val); 
+ char* test2 = (char*) malloc((test2sz + 1) * sizeof(char)); 
+     strcpy(test2,test2val); 
+printf("Welcome, %s %s \n",test,test2);
 
 }

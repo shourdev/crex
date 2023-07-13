@@ -396,20 +396,26 @@ else{
 strcpy(res2,test);
 
 removeTrailingQuotes(res2);
+removeTrailingQuotes(test);
+
 
  if (hasWhitespaceAtEnd(res2)==1)
  { 
- strcat(test, "\"");
+   strcat(test, "\"");
+ 
+
  }
  else{
+    strcat(test, "\"");
 
  }
  
-  
- 
+    
  
 
+
       strcat(test, ",");
+  
     strcpy(result, test);
 
     removeQuotes(test1);
