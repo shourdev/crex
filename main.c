@@ -483,6 +483,10 @@ fprintf(file, "strcpy(%s, %snewString);\n", outputString, outputString);
 fprintf(file, "free(%snewString);\n", outputString);
 
          }
+             if (strstr(line, "exit:") != NULL) {
+      
+            fprintf(file,"exit(0)");
+             }
           
         line = strtok(NULL, "\n");
         // Move to the next line
