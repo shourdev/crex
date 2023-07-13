@@ -370,7 +370,7 @@ char* translater(char* code,char* funcname){
   strcat(name2,".txt");
  
   file = fopen(name2, "w");
- char outputString[100];
+ char outputString[1000];
     char* line = strtok(code, "\n");
     while (line != NULL) {
         // Check if the line contains "cout:"
@@ -441,7 +441,7 @@ fprintf(file, "printf(\"%s\",%s);\n",formattedString, outputString);
                }
         }
               if (strstr(line, "var") != NULL) {
-            // Extract the text after "cout:"
+          
             char* extractedText = strstr(line, "var") + strlen("var");
             strcpy(outputString, extractedText);  // Copy the extracted text to the output string
         char* firstWord = getFirstWord(outputString);
@@ -466,8 +466,23 @@ char* var2 = strcat(sec2,"sz");
      
          
         }
+         if (strstr(line, "cin:") != NULL) {
+      
+            char* extractedText = strstr(line, "cin:") + strlen("cin:");
+            strcpy(outputString, extractedText); 
         
-        
+fprintf(file, "char* %snewString = NULL;\n", outputString);
+fprintf(file, "size_t %sbufferSize = 0;\n", outputString);
+fprintf(file, "size_t %scharsRead = getline(&%snewString, &%sbufferSize, stdin);\n", outputString, outputString, outputString);
+fprintf(file, "if (%snewString[%scharsRead - 1] == '\\n') {\n", outputString, outputString);
+fprintf(file, "    %snewString[%scharsRead - 1] = '\\0';\n", outputString, outputString);
+fprintf(file, "}\n");
+fprintf(file, "size_t %snewSize = strlen(%snewString);\n", outputString, outputString);
+fprintf(file, "char* %sresizedTest = (char*) realloc(%s, (%snewSize + 1) * sizeof(char));\n", outputString, outputString, outputString);
+fprintf(file, "strcpy(%s, %snewString);\n", outputString, outputString);
+fprintf(file, "free(%snewString);\n", outputString);
+
+         }
           
         line = strtok(NULL, "\n");
         // Move to the next line
