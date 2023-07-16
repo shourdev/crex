@@ -6,6 +6,79 @@
 
 char name[1000];
 char acname[1000];
+
+void remove_leading_whitespace(char *str) {
+    if (str == NULL) {
+        return; // Handle NULL pointer case
+    }
+
+    int len = strlen(str);
+    if (len == 0) {
+        return; // Empty string, nothing to remove
+    }
+
+    int start_index = 0;
+    while (isspace(str[start_index])) {
+        start_index++;
+    }
+
+    if (start_index > 0) {
+        memmove(str, str + start_index, len - start_index + 1);
+    }
+}
+int isDecimalOrNumber(const char* str) {
+    // Helper function to check if a character is a digit
+    bool isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    int decimalPoints = 0;
+    int digits = 0;
+
+    // Check if the string is empty
+    if (str == NULL || *str == '\0') {
+        return -1; // Indicate an error (e.g., empty string)
+    }
+
+    // Check the first character (it could be a negative sign or a digit)
+    if (*str == '-') {
+        str++; // Skip the negative sign if present
+    }
+    else if (!isDigit(*str)) {
+        return -1; // Invalid input (not a digit or negative sign)
+    }
+
+    // Loop through the rest of the string to check for digits and decimal point
+    while (*str) {
+        if (isDigit(*str)) {
+            digits++;
+        }
+        else if (*str == '.') {
+            decimalPoints++;
+        }
+        else {
+            return -1; // Invalid character encountered
+        }
+        str++; // Move to the next character
+    }
+
+    // Check if there is at most one decimal point and at least one digit
+    if (decimalPoints > 1 || digits == 0) {
+        return -1; // Invalid decimal format
+    }
+
+    return decimalPoints == 1 ? 1 : 0; // Return 1 if it's a decimal, 0 if it's an integer
+}
+
+int is_number(char *str) {
+  int i;
+  for (i = 0; str[i] != '\0'; i++) {
+    if (!isdigit(str[i]) && str[i] != '.' && str[i] != '-' && str[i] != '+') {
+      return 1;
+    }
+  }
+  return 0;
+}
 void removeTrailingQuotes(char* str) {
     int length = strlen(str);
     
@@ -431,13 +504,23 @@ removeTrailingQuotes(test);
 }
             }
                else{
+       
+               remove_leading_whitespace(outputString);
+               if (is_number(outputString) == 0)
+               {
+             
+
+          fprintf(file,"printf(\"%s\");",outputString);
+               }
+
+                else{
                 char optstring2[1000];
                 strcpy(optstring2,outputString);
                 strcat(optstring2,",");
                    char* formattedString = getFormattedString(optstring2);
                    stripTrailingWhitespace(formattedString);
 fprintf(file, "printf(\"%s\",%s);\n",formattedString, outputString);
-
+                }
                }
         }
               if (strstr(line, "var") != NULL) {
@@ -455,12 +538,56 @@ fprintf(file, "printf(\"%s\",%s);\n",formattedString, outputString);
     strcpy(sec2,firstWord);
 char* var = strcat(sec,"val");
 char* var2 = strcat(sec2,"sz");
+char* fl = "false";
+ remove_leading_whitespace(outputString);
+if (is_number(outputString)==1)
+{
+        fprintf(file,"char* %stype = \"str\"; \n",firstWord); 
+         fprintf(file,"  const char* %s = %s; \n",var,outputString);
+}
+else{
+if (isDecimalOrNumber(outputString)==0){
 
+   fprintf(file,"char* %stype = \"int\"; \n",firstWord); 
+ fprintf(file,"  const char* %s = \"%s\"; \n",var,outputString);
+}
+else{
+   fprintf(file,"char* %stype = \"float\"; \n",firstWord); 
+    fprintf(file,"  const char* %s = \"%s\"; \n",var,outputString);
+}
+}
+     
+       fprintf(file,"  size_t %s = strlen(%s); \n",var2,var);
+             fprintf(file," char* %s = (char*) malloc((%s + 1) * sizeof(char)); \n",firstWord,var2);
+                fprintf(file,"     strcpy(%s,%s); \n",firstWord,var);   
+          fprintf(file,"char* %sisconst = \"%s\"; \n",firstWord,fl); 
+
+          free(firstWord);
+   
+     
+         
+        }
+          if (strstr(line, "const") != NULL) {
+          
+            char* extractedText = strstr(line, "const") + strlen("const");
+            strcpy(outputString, extractedText);  // Copy the extracted text to the output string
+        char* firstWord = getFirstWord(outputString);
+
+
+        
+       char* result = removeBeforeEquals(outputString);
+   char sec[1000];
+   char sec2[1000];
+   strcpy(sec,firstWord);
+    strcpy(sec2,firstWord);
+char* var = strcat(sec,"val");
+char* var2 = strcat(sec2,"sz");
+char* fl = "true";
       fprintf(file,"  const char* %s = %s; \n",var,outputString);
        fprintf(file,"  size_t %s = strlen(%s); \n",var2,var);
              fprintf(file," char* %s = (char*) malloc((%s + 1) * sizeof(char)); \n",firstWord,var2);
                 fprintf(file,"     strcpy(%s,%s); \n",firstWord,var);   
-
+          fprintf(file,"char* %sisconst = \"%s\"; \n",firstWord,fl); 
           free(firstWord);
    
      
@@ -470,7 +597,7 @@ char* var2 = strcat(sec2,"sz");
       
             char* extractedText = strstr(line, "cin:") + strlen("cin:");
             strcpy(outputString, extractedText); 
-        
+    fprintf(file, " \n if (strcmp(%sisconst,\"false\")==0) { \n", outputString);    
 fprintf(file, "char* %snewString = NULL;\n", outputString);
 fprintf(file, "size_t %sbufferSize = 0;\n", outputString);
 fprintf(file, "size_t %scharsRead = getline(&%snewString, &%sbufferSize, stdin);\n", outputString, outputString, outputString);
@@ -481,7 +608,11 @@ fprintf(file, "size_t %snewSize = strlen(%snewString);\n", outputString, outputS
 fprintf(file, "char* %sresizedTest = (char*) realloc(%s, (%snewSize + 1) * sizeof(char));\n", outputString, outputString, outputString);
 fprintf(file, "strcpy(%s, %snewString);\n", outputString, outputString);
 fprintf(file, "free(%snewString);\n", outputString);
+fprintf(file, "}\n");
 
+fprintf(file, "else{\n");
+fprintf(file, "printf(\"Cannot modify a constant \");\n");
+fprintf(file, "}\n");
          }
              if (strstr(line, "exit:") != NULL) {
       
@@ -507,6 +638,7 @@ strcpy(acname,name);
     fprintf(file, "#include <stdio.h>\n");
       fprintf(file, "#include <stdlib.h>\n");
            fprintf(file, "#include <string.h>\n");
+                      fprintf(file, "#include <ctype.h>\n");
 
     const char* searchStr = "func";
     const char* delimiter = "()";
