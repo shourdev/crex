@@ -624,6 +624,25 @@ fprintf(file, "    %snewString[%scharsRead - 1] = '\\0';\n", outputString, outpu
 fprintf(file, "}\n");
 fprintf(file, "size_t %snewSize = strlen(%snewString);\n", outputString, outputString);
 fprintf(file, "char* %sresizedTest = (char*) realloc(%s, (%snewSize + 1) * sizeof(char));\n", outputString, outputString, outputString);
+fprintf(file, "    char* %sstr = (char*)malloc((%snewSize + 1) * sizeof(char));\n", outputString, outputString);
+fprintf(file, "      int %sinteger;\n", outputString);
+fprintf(file, "       float %sdecimal;\n", outputString);
+fprintf(file, "       float %sisFloat = 0;\n", outputString);
+fprintf(file, "        if (sscanf(%snewString, \"%%f\", &%sdecimal) == 1) {\n", outputString,outputString);
+fprintf(file, "   if (strchr(%snewString, '.') != NULL) {\n", outputString);
+fprintf(file, " %sisFloat = 1;\n", outputString);
+fprintf(file, "   }\n" );
+fprintf(file, "   }\n" );
+fprintf(file, "      if   (%sisFloat) {   \n",outputString);
+fprintf(file, "       %stype = \"float\";\n", outputString);
+fprintf(file, "       }\n");
+
+fprintf(file, "           else if (sscanf(%snewString, \"%%d\", &%sinteger) == 1) {\n",outputString,outputString);
+fprintf(file, "       %stype = \"int\";\n", outputString);
+fprintf(file, "       }\n");
+fprintf(file, "      else {  \n");
+fprintf(file, "       %stype = \"str\";\n", outputString);
+fprintf(file, "       }\n");
 fprintf(file, "strcpy(%s, %snewString);\n", outputString, outputString);
 fprintf(file, "free(%snewString);\n", outputString);
 fprintf(file, "}\n");

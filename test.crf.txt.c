@@ -41,6 +41,23 @@ if ( agenewString[ agecharsRead - 1] == '\n') {
 }
 size_t  agenewSize = strlen( agenewString);
 char*  ageresizedTest = (char*) realloc( age, ( agenewSize + 1) * sizeof(char));
+ char* str = (char*)malloc((dnewSize + 1) * sizeof(char));
+    int integer;
+    float decimal;
+
+    if (sscanf(dnewString, "%s", str) == 1) {
+        // Input is a string
+        printf("String: %s\n", str);
+    } else if (sscanf(dnewString, "%d", &integer) == 1) {
+        // Input is an integer
+        printf("Integer: %d\n", integer);
+    } else if (sscanf(dnewString, "%f", &decimal) == 1) {
+        // Input is a decimal
+        printf("Decimal: %f\n", decimal);
+    } else {
+        // Input could not be recognized as any of the above
+        printf("Unrecognized input format\n");
+    }
 strcpy( age,  agenewString);
 free( agenewString);
 }
