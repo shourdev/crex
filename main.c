@@ -583,11 +583,29 @@ else{
 char* var = strcat(sec,"val");
 char* var2 = strcat(sec2,"sz");
 char* fl = "true";
-      fprintf(file,"  const char* %s = %s; \n",var,outputString);
+remove_leading_whitespace(outputString);
+if (is_number(outputString)==1)
+{
+        fprintf(file,"char* %stype = \"str\"; \n",firstWord); 
+         fprintf(file,"  const char* %s = %s; \n",var,outputString);
+}
+else{
+if (isDecimalOrNumber(outputString)==0){
+
+   fprintf(file,"char* %stype = \"int\"; \n",firstWord); 
+ fprintf(file,"  const char* %s = \"%s\"; \n",var,outputString);
+}
+else{
+   fprintf(file,"char* %stype = \"float\"; \n",firstWord); 
+    fprintf(file,"  const char* %s = \"%s\"; \n",var,outputString);
+}
+}
+     
        fprintf(file,"  size_t %s = strlen(%s); \n",var2,var);
              fprintf(file," char* %s = (char*) malloc((%s + 1) * sizeof(char)); \n",firstWord,var2);
                 fprintf(file,"     strcpy(%s,%s); \n",firstWord,var);   
           fprintf(file,"char* %sisconst = \"%s\"; \n",firstWord,fl); 
+
           free(firstWord);
    
      
