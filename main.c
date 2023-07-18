@@ -614,46 +614,67 @@ else{
          if (strstr(line, "cin:") != NULL) {
       
             char* extractedText = strstr(line, "cin:") + strlen("cin:");
-            strcpy(outputString, extractedText); 
+            strcpy(outputString, extractedText);
+            int i;
+         remove_leading_whitespace(outputString);
+         
     fprintf(file, " \n if (strcmp(%sisconst,\"false\")==0) { \n", outputString);    
-fprintf(file, "char* %snewString = NULL;\n", outputString);
-fprintf(file, "size_t %sbufferSize = 0;\n", outputString);
-fprintf(file, "size_t %scharsRead = getline(&%snewString, &%sbufferSize, stdin);\n", outputString, outputString, outputString);
-fprintf(file, "if (%snewString[%scharsRead - 1] == '\\n') {\n", outputString, outputString);
-fprintf(file, "    %snewString[%scharsRead - 1] = '\\0';\n", outputString, outputString);
+fprintf(file, "char* %s%dnewString = NULL;\n", outputString,i);
+fprintf(file, "size_t %s%dbufferSize = 0;\n", outputString,i);
+fprintf(file, "size_t %s%dcharsRead = getline(&%s%dnewString, &%s%dbufferSize, stdin);\n", outputString,i, outputString,i, outputString,i);
+fprintf(file, "if (%s%dnewString[%s%dcharsRead - 1] == '\\n') {\n", outputString,i, outputString,i);
+fprintf(file, "    %s%dnewString[%s%dcharsRead - 1] = '\\0';\n", outputString,i, outputString,i);
 fprintf(file, "}\n");
-fprintf(file, "size_t %snewSize = strlen(%snewString);\n", outputString, outputString);
-fprintf(file, "char* %sresizedTest = (char*) realloc(%s, (%snewSize + 1) * sizeof(char));\n", outputString, outputString, outputString);
-fprintf(file, "    char* %sstr = (char*)malloc((%snewSize + 1) * sizeof(char));\n", outputString, outputString);
-fprintf(file, "      int %sinteger;\n", outputString);
-fprintf(file, "       float %sdecimal;\n", outputString);
-fprintf(file, "       float %sisFloat = 0;\n", outputString);
-fprintf(file, "        if (sscanf(%snewString, \"%%f\", &%sdecimal) == 1) {\n", outputString,outputString);
-fprintf(file, "   if (strchr(%snewString, '.') != NULL) {\n", outputString);
-fprintf(file, " %sisFloat = 1;\n", outputString);
-fprintf(file, "   }\n" );
-fprintf(file, "   }\n" );
-fprintf(file, "      if   (%sisFloat) {   \n",outputString);
-fprintf(file, "       %stype = \"float\";\n", outputString);
-fprintf(file, "       }\n");
-
-fprintf(file, "           else if (sscanf(%snewString, \"%%d\", &%sinteger) == 1) {\n",outputString,outputString);
-fprintf(file, "       %stype = \"int\";\n", outputString);
-fprintf(file, "       }\n");
-fprintf(file, "      else {  \n");
-fprintf(file, "       %stype = \"str\";\n", outputString);
-fprintf(file, "       }\n");
-fprintf(file, "strcpy(%s, %snewString);\n", outputString, outputString);
-fprintf(file, "free(%snewString);\n", outputString);
+fprintf(file, "size_t %s%dnewSize = strlen(%s%dnewString);\n", outputString,i, outputString,i);
+fprintf(file, "char* %s%dresizedTest = (char*) realloc(%s, (%s%dnewSize + 1) * sizeof(char));\n",outputString,i, outputString, outputString,i);
+fprintf(file, "    char* %s%dstr = (char*)malloc((%s%dnewSize + 1) * sizeof(char));\n", outputString,i, outputString,i);
+fprintf(file, "%stype = \"str\";\n", outputString);
+fprintf(file, "strcpy(%s, %s%dnewString);\n", outputString, outputString,i);
+fprintf(file, "free(%s%dnewString);\n", outputString,i);
 fprintf(file, "}\n");
 
 fprintf(file, "else{\n");
 fprintf(file, "printf(\"Cannot modify a constant \");\n");
 fprintf(file, "}\n");
+i++;
          }
              if (strstr(line, "exit:") != NULL) {
       
             fprintf(file,"exit(0)");
+             }
+               if (strstr(line, "int:") != NULL) {
+                int i2;
+                remove_leading_whitespace(outputString);
+             char* extractedText = strstr(line, "int:") + strlen("int:");
+            strcpy(outputString, extractedText); 
+            fprintf(file, "if (strcmp(%stype,\"int\")==0) { \n", outputString);
+fprintf(file, "%stype = \"int\";\n", outputString);
+fprintf(file,"} \n");
+         fprintf(file, "if (strcmp(%stype,\"float\")==0) { \n", outputString);
+         fprintf(file, "%stype = \"int\";\n", outputString);
+         fprintf(file,"} \n");
+            fprintf(file, "if (strcmp(%stype,\"str\")==0) { \n", outputString);
+fprintf(file,"bool %s%dis_integer = true; \n",outputString,i2);
+     fprintf(file,"if (*%s == '-' || *%s == '+') {  \n",outputString,outputString);
+     fprintf(file,"  %s++; \n",outputString);
+fprintf(file,"} \n");
+fprintf(file, "for (; *%s != '\\0'; ) { \n", outputString);
+
+fprintf(file,"  if (!isdigit(*%s)) { \n",outputString);
+   fprintf(file,"  %s%dis_integer = false; \n",outputString,i2);
+    fprintf(file," break; \n");
+     fprintf(file,"} \n");
+          fprintf(file,"%s++; \n",outputString);
+      fprintf(file,"} \n");
+       fprintf(file," if (%s%dis_integer) { \n",outputString,i2);
+            fprintf(file, "%stype = \"int\";\n", outputString);
+            fprintf(file,"} \n");
+            fprintf(file,"else{ \n");
+            fprintf(file,"printf(\"%s is not an integer \\n \"); \n",outputString);
+            
+                fprintf(file,"} \n");
+                fprintf(file,"} \n");
+                i2++;
              }
           
         line = strtok(NULL, "\n");
@@ -676,7 +697,7 @@ strcpy(acname,name);
       fprintf(file, "#include <stdlib.h>\n");
            fprintf(file, "#include <string.h>\n");
                       fprintf(file, "#include <ctype.h>\n");
-
+fprintf(file,"#include <stdbool.h> \n");
     const char* searchStr = "func";
     const char* delimiter = "()";
     const size_t codeLength = strlen(code);
