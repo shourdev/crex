@@ -654,29 +654,27 @@ fprintf(file,"} \n");
          fprintf(file, "%stype = \"int\";\n", outputString);
          fprintf(file,"} \n");
             fprintf(file, "if (strcmp(%stype,\"str\")==0) { \n", outputString);
-fprintf(file,"bool %s%dis_integer = true; \n",outputString,i2);
-     fprintf(file,"if (*%s == '-' || *%s == '+') {  \n",outputString,outputString);
-     fprintf(file,"  %s++; \n",outputString);
-fprintf(file,"} \n");
-fprintf(file, "for (; *%s != '\\0'; ) { \n", outputString);
 
-fprintf(file,"  if (!isdigit(*%s)) { \n",outputString);
-   fprintf(file,"  %s%dis_integer = false; \n",outputString,i2);
-    fprintf(file," break; \n");
-     fprintf(file,"} \n");
-          fprintf(file,"%s++; \n",outputString);
-      fprintf(file,"} \n");
-       fprintf(file," if (%s%dis_integer) { \n",outputString,i2);
-            fprintf(file, "%stype = \"int\";\n", outputString);
-            fprintf(file,"} \n");
-            fprintf(file,"else{ \n");
-            fprintf(file,"printf(\"%s is not an integer \\n \"); \n",outputString);
-            
-                fprintf(file,"} \n");
-                fprintf(file,"} \n");
+               
+             
+        fprintf(file,"} \n");
                 i2++;
              }
+           if (strstr(line, "str:") != NULL) {
+              
+      
+             char* extractedText = strstr(line, "str:") + strlen("str:");
+              strcpy(outputString, extractedText); 
+                        remove_leading_whitespace(outputString);
+             fprintf(file,"%stype = \"str\"; \n",outputString);
+           }
+             if (strstr(line, "flt:") != NULL) {
+              int i3;
+      
+             char* extractedText = strstr(line, "flt:") + strlen("flt:");
+              strcpy(outputString, extractedText); 
           
+           }
         line = strtok(NULL, "\n");
         // Move to the next line
     }
