@@ -631,6 +631,7 @@ fprintf(file, "    char* %s%dstr = (char*)malloc((%s%dnewSize + 1) * sizeof(char
 fprintf(file, "%stype = \"str\";\n", outputString);
 fprintf(file, "strcpy(%s, %s%dnewString);\n", outputString, outputString,i);
 fprintf(file, "free(%s%dnewString);\n", outputString,i);
+fprintf(file, "%ssz = %s%dnewSize;\n",outputString, outputString,i);
 fprintf(file, "}\n");
 
 fprintf(file, "else{\n");
@@ -658,7 +659,9 @@ fprintf(file,"} \n");
                                fprintf(file,"  int %s%dintStrLen = snprintf(NULL, 0, \"%%d\", %s%dintegerValue); \n",outputString,i2,outputString,i2);
                         fprintf(file,"    size_t %s%dnewSize = %ssz + %s%dintStrLen + 1; \n",outputString,i2,outputString,outputString,i2);
                                     fprintf(file,"    char* %s%dresizedTest2 = (char*)realloc(%s, %s%dnewSize * sizeof(char)); \n",outputString,i2,outputString,outputString,i2);   
-                                     fprintf(file,"    sprintf(%s%dresizedTest2, \"%%d\", %s%dintegerValue); \n",outputString,i2,outputString,i2);
+                                     fprintf(file,"    snprintf(%s%dresizedTest2, %s%dnewSize, \"%%d\", %s%dintegerValue); \n",outputString,i2,outputString,i2,outputString,i2);
+                                                        
+                         fprintf(file," %ssz = %s%dnewSize; \n",outputString,outputString,i2);   
                          fprintf(file," %s = %s%dresizedTest2; \n",outputString,outputString,i2);       
      
          fprintf(file, "%stype = \"int\";\n", outputString);

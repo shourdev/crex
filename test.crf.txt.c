@@ -33,12 +33,55 @@ len = strlen(input);
   }
 void main() {
 char* test2type = "float"; 
-  const char* test2val = "3.3"; 
+  const char* test2val = "4.4"; 
   size_t test2sz = strlen(test2val); 
  char* test2 = (char*) malloc((test2sz + 1) * sizeof(char)); 
      strcpy(test2,test2val); 
 char* test2isconst = "false"; 
-test2type = "str"; 
+ 
+ if (strcmp(test2isconst,"false")==0) { 
+char* test20newString = NULL;
+size_t test20bufferSize = 0;
+size_t test20charsRead = getline(&test20newString, &test20bufferSize, stdin);
+if (test20newString[test20charsRead - 1] == '\n') {
+    test20newString[test20charsRead - 1] = '\0';
+}
+size_t test20newSize = strlen(test20newString);
+char* test20resizedTest = (char*) realloc(test2, (test20newSize + 1) * sizeof(char));
+    char* test20str = (char*)malloc((test20newSize + 1) * sizeof(char));
+test2type = "str";
+strcpy(test2, test20newString);
+free(test20newString);
+test2sz = test20newSize;
+}
+else{
+printf("Cannot modify a constant ");
+}
+if (strcmp( test2type,"int")==0) { 
+ test2type = "int";
+} 
+if (strcmp( test2type,"float")==0) { 
+   float  test20floatValue;
+     test20floatValue = atof( test2); 
+  int  test20integerValue; 
+ test20integerValue = (int) test20floatValue; 
+  int  test20intStrLen = snprintf(NULL, 0, "%d",  test20integerValue); 
+    size_t  test20newSize =  test2sz +  test20intStrLen + 1; 
+    char*  test20resizedTest2 = (char*)realloc( test2,  test20newSize * sizeof(char)); 
+    snprintf( test20resizedTest2,  test20newSize, "%d",  test20integerValue); 
+  test2sz =  test20newSize; 
+  test2 =  test20resizedTest2; 
+ test2type = "int";
+} 
+if (strcmp( test2type,"str")==0) { 
+if (isStringOrInt( test2)==0) {
+ test2type = "int";
+ 
+} 
+else{ 
+printf("Not a number. \n"); 
+} 
+} 
 printf("%s",test2type); 
 printf("%s",test2);
 
