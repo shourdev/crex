@@ -33,55 +33,11 @@ len = strlen(input);
   }
 void main() {
 char* testtype = "str"; 
-  const char* testval = ""; 
+  const char* testval = "gg"; 
   size_t testsz = strlen(testval); 
  char* test = (char*) malloc((testsz + 1) * sizeof(char)); 
      strcpy(test,testval); 
 char* testisconst = "false"; 
-char* test2type = "str"; 
-  const char* test2val = ""; 
-  size_t test2sz = strlen(test2val); 
- char* test2 = (char*) malloc((test2sz + 1) * sizeof(char)); 
-     strcpy(test2,test2val); 
-char* test2isconst = "false"; 
- 
- if (strcmp(testisconst,"false")==0) { 
-char* test0newString = NULL;
-size_t test0bufferSize = 0;
-size_t test0charsRead = getline(&test0newString, &test0bufferSize, stdin);
-if (test0newString[test0charsRead - 1] == '\n') {
-    test0newString[test0charsRead - 1] = '\0';
-}
-size_t test0newSize = strlen(test0newString);
-char* test0resizedTest = (char*) realloc(test, (test0newSize + 1) * sizeof(char));
-    char* test0str = (char*)malloc((test0newSize + 1) * sizeof(char));
-testtype = "str";
-strcpy(test, test0newString);
-free(test0newString);
-testsz = test0newSize;
-}
-else{
-printf("Cannot modify a constant ");
-}
- 
- if (strcmp(test2isconst,"false")==0) { 
-char* test21newString = NULL;
-size_t test21bufferSize = 0;
-size_t test21charsRead = getline(&test21newString, &test21bufferSize, stdin);
-if (test21newString[test21charsRead - 1] == '\n') {
-    test21newString[test21charsRead - 1] = '\0';
-}
-size_t test21newSize = strlen(test21newString);
-char* test21resizedTest = (char*) realloc(test2, (test21newSize + 1) * sizeof(char));
-    char* test21str = (char*)malloc((test21newSize + 1) * sizeof(char));
-test2type = "str";
-strcpy(test2, test21newString);
-free(test21newString);
-test2sz = test21newSize;
-}
-else{
-printf("Cannot modify a constant ");
-}
-printf("Welcome %s",test);
- 
+printf( "%test");
+
 }
