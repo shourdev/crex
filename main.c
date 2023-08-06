@@ -56,68 +56,73 @@ void lexer(char* string) {
     char* output = NULL;
     int outputIndex = 0;
     int length = strlen(string);
+    int isNewLine = 0; // Flag to check if we have encountered a newline
 
     for (int i = 0; i < length; i++) {
+        if (string[i] == '\n') {
+            isNewLine = 1; // Set the flag if newline character is found
+        }
+
         if (string[i] == 'c') {
             if (i + 1 < length) {
                 // cout
                 if (string[i + 1] == 'o' && string[i + 2] == 'u' && string[i + 3] == 't' && string[i + 4] == ':') {
-                        int charsBeforeC = i; 
-                           
-                           int t =   -1;
-                           int isstr = 0;
-     while(charsBeforeC>0){
-      if (string[charsBeforeC+t]=='"'){
+                    int charsBeforeC = i;
+                    int t = -1;
+                    int isstr = 0;
 
-isstr = 1;
-break;
-
-      }
-      else{
-        t--;
-        isstr = 0;
-        
-      }
-      }
-      if (isstr == 0){
-                 int j = i + 5;
-                    while (j < length && isspace(string[j])) {
-                        j++;
-                    }
-                    if (j < length && string[j] == '"') {
-                        j++; // Move past the opening double quote
-                        while (j < length) {
-                            if (string[j] == '"' && string[j - 1] != '\\') {
-                                break; // Found the closing double quote
+                    while (charsBeforeC > 0) {
+                        if (string[charsBeforeC + t] == '"') {
+                            if (isNewLine) {
+                                isstr = 0; // Reset to 0 if double quote is found on a new line
+                            } else {
+                                isstr = 1;
                             }
+                            break;
+                        } else {
+                            t--;
+                            isstr = 0;
+                        }
+                    }
 
-                            // Instead of using putchar, append the character to the output string
-                            output = (char*)realloc(output, (outputIndex + 2) * sizeof(char));
-                            output[outputIndex++] = string[j];
-                            output[outputIndex] = '\0'; // Null-terminate the output string
-
+                    if (isstr == 0) {
+                        int j = i + 5;
+                        while (j < length && isspace(string[j])) {
                             j++;
                         }
-                       cout(1,output); 
-                        free(output);
-                        output = NULL;
-                        outputIndex = 0;
-                    }
-      }
+                        if (j < length && string[j] == '"') {
+                            j++; // Move past the opening double quote
+                            while (j < length) {
+                                if (string[j] == '"' && string[j - 1] != '\\') {
+                                    break; // Found the closing double quote
+                                }
 
-          
-                      
+                                // Instead of using putchar, append the character to the output string
+                                output = (char*)realloc(output, (outputIndex + 2) * sizeof(char));
+                                output[outputIndex++] = string[j];
+                                output[outputIndex] = '\0'; // Null-terminate the output string
+
+                                j++;
+                            }
+                            cout(1, output);
+
+                            free(output);
+                            output = NULL;
+                            outputIndex = 0;
+                        }
+                    }
                 }
-                
             } else {
-             
+                // Handle the case where 'c' is at the end of the string.
             }
         }
-             if (string[i] == 'f') {
-         
+
+        if (string[i] == 'f') {
+            // Handle 'f' if needed.
         }
+    }
 }
-}
+
 
 
 

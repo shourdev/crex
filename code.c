@@ -1,1 +1,2 @@
-printf("cout:d");
+printf("cout:g");
+printf("cout: lol");
