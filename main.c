@@ -62,8 +62,25 @@ void lexer(char* string) {
             if (i + 1 < length) {
                 // cout
                 if (string[i + 1] == 'o' && string[i + 2] == 'u' && string[i + 3] == 't' && string[i + 4] == ':') {
-                
-                    int j = i + 5;
+                        int charsBeforeC = i; 
+                           
+                           int t =   -1;
+                           int isstr = 0;
+     while(charsBeforeC>0){
+      if (string[charsBeforeC+t]=='"'){
+
+isstr = 1;
+break;
+
+      }
+      else{
+        t--;
+        isstr = 0;
+        
+      }
+      }
+      if (isstr == 0){
+                 int j = i + 5;
                     while (j < length && isspace(string[j])) {
                         j++;
                     }
@@ -86,6 +103,10 @@ void lexer(char* string) {
                         output = NULL;
                         outputIndex = 0;
                     }
+      }
+
+          
+                      
                 }
                 
             } else {

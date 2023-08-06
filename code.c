@@ -1,3 +1,1 @@
-printf("   df cout: ");
-printf("f");
-printf("func");
+printf("cout:d");
