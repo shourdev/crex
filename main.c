@@ -54,6 +54,7 @@ void cout(int varorno,char* output) {
 
 void lexer(char* string) {
      char* output = NULL;
+      char *result = NULL;
     int outputIndex = 0;
     int length = strlen(string);
     int isNewLine = 0; // Flag to check if we have encountered a newline
@@ -62,7 +63,83 @@ void lexer(char* string) {
         if (string[i] == '\n') {
             isNewLine = 1; // Set the flag if newline character is found
         }
+      if (string[i] == 'f') {
+      if (i + 1 < length) {
+                
+                if (string[i + 1] == 'u' && string[i + 2] == 'n' && string[i + 3] == 'c') {
+                     int charsBeforeC = i;
+                    int t = -1;
+                    int isstr = 0;
 
+                    // Check for double quote in front of 'cout:' on the same line
+                    for (int k = i - 1; k >= 0; k--) {
+                        if (string[k] == '"' || string[k] == '\n') {
+                            if (string[k] == '\n') {
+                                isNewLine = 1; // Set the flag if newline character is found while checking in reverse
+                            } else {
+                                isNewLine = 0;
+                            }
+                            break;
+                        }
+                    }
+
+                    while (charsBeforeC > 0) {
+                        if (string[charsBeforeC + t] == '"') {
+                            if (isNewLine) {
+                                isstr = 0; // Reset to 0 if double quote is found on a new line
+                            } else {
+                                isstr = 1;
+                            }
+                            break;
+                        } else {
+                            t--;
+                            isstr = 0;
+                        }
+                    }
+                    
+                    if (isstr==0){
+                         int n = 4;
+                     
+                     
+    int resultLength = 0;
+                    
+
+
+     while (string[i + n] != '\0') {
+  if (isalpha(string[i + n]) || string[i+n] != '\0') { 
+   
+     if (string[i+n] == '('){
+break;
+ }
+      
+         resultLength++;
+            result = realloc(result, resultLength * sizeof(char));
+           
+            result[resultLength - 1] = string[i + n];
+ 
+
+
+ 
+           
+        }
+
+     
+   
+        n++;
+     
+    }
+      result = realloc(result, (resultLength + 1) * sizeof(char));
+  
+    result[resultLength] = '\0';
+
+  
+    }
+                    }
+                   
+
+
+        }
+    }
         if (string[i] == 'c') {
             if (i + 1 < length) {
                 // cout
@@ -129,65 +206,7 @@ void lexer(char* string) {
             }
         }
 
-        if (string[i] == 'f') {
-      if (i + 1 < length) {
-                
-                if (string[i + 1] == 'u' && string[i + 2] == 'n' && string[i + 3] == 'c') {
-                     int charsBeforeC = i;
-                    int t = -1;
-                    int isstr = 0;
-
-                    // Check for double quote in front of 'cout:' on the same line
-                    for (int k = i - 1; k >= 0; k--) {
-                        if (string[k] == '"' || string[k] == '\n') {
-                            if (string[k] == '\n') {
-                                isNewLine = 1; // Set the flag if newline character is found while checking in reverse
-                            } else {
-                                isNewLine = 0;
-                            }
-                            break;
-                        }
-                    }
-
-                    while (charsBeforeC > 0) {
-                        if (string[charsBeforeC + t] == '"') {
-                            if (isNewLine) {
-                                isstr = 0; // Reset to 0 if double quote is found on a new line
-                            } else {
-                                isstr = 1;
-                            }
-                            break;
-                        } else {
-                            t--;
-                            isstr = 0;
-                        }
-                    }
-                    
-                    if (isstr==0){
-                         int n = 4;
-                     
-                    
-                    
-
-
-     while (string[i + n] != '\0') {
-        if (isalpha(string[i + n])) { 
-         
-     while (string[i + n] != '\0') {
-        printf("%c",string[i+n]);
- break;
-     }
-           
-        }
-        n++;
-    }
-    }
-                    }
-                   
-
-
-        }
-    }
+  
 }
 
     }
