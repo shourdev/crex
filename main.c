@@ -64,40 +64,27 @@ void lexer(char* string) {
             isNewLine = 1; // Set the flag if newline character is found
         }
       if (string[i] == 'f') {
-      if (i + 1 < length) {
-                
-                if (string[i + 1] == 'u' && string[i + 2] == 'n' && string[i + 3] == 'c') {
-                     int charsBeforeC = i;
+            int charsBeforeC = i;
                     int t = -1;
                     int isstr = 0;
-
-                    // Check for double quote in front of 'cout:' on the same line
-                    for (int k = i - 1; k >= 0; k--) {
-                        if (string[k] == '"' || string[k] == '\n') {
-                            if (string[k] == '\n') {
-                                isNewLine = 1; // Set the flag if newline character is found while checking in reverse
-                            } else {
-                                isNewLine = 0;
-                            }
+      if (i + 1 < length) {
+                  if (string[i + 1] == 'u' && string[i + 2] == 'n' && string[i + 3] == 'c') {
+                    int k = i - 1;
+                    while (k >= 0 && string[k] != '\n') {
+                        if (string[k] == '"') {
+                            isstr = 1; // Set isstr to 1 if a double quote is found on the same line
                             break;
                         }
+                        k--;
                     }
-
-                    while (charsBeforeC > 0) {
-                        if (string[charsBeforeC + t] == '"') {
-                            if (isNewLine) {
-                                isstr = 0; // Reset to 0 if double quote is found on a new line
-                            } else {
-                                isstr = 1;
-                            }
-                            break;
-                        } else {
-                            t--;
-                            isstr = 0;
-                        }
-                    }
+                
+                  if (isstr == 0) {
                     
-                    if (isstr==0){
+                  
+
+                   
+                    
+                    
                          int n = 4;
                      
                      
@@ -118,7 +105,6 @@ break;
             result[resultLength - 1] = string[i + n];
  
 
-
  
            
         }
@@ -132,49 +118,31 @@ break;
   
     result[resultLength] = '\0';
 
+
   
-    }
                     }
                    
 
-
+                  }
         }
+      
     }
-        if (string[i] == 'c') {
+         if (string[i] == 'c') {
+             int isstr = 0; 
             if (i + 1 < length) {
                 // cout
                 if (string[i + 1] == 'o' && string[i + 2] == 'u' && string[i + 3] == 't' && string[i + 4] == ':') {
-                    int charsBeforeC = i;
-                    int t = -1;
-                    int isstr = 0;
-
-                    // Check for double quote in front of 'cout:' on the same line
-                    for (int k = i - 1; k >= 0; k--) {
-                        if (string[k] == '"' || string[k] == '\n') {
-                            if (string[k] == '\n') {
-                                isNewLine = 1; // Set the flag if newline character is found while checking in reverse
-                            } else {
-                                isNewLine = 0;
-                            }
+                    int k = i - 1;
+                    while (k >= 0 && string[k] != '\n') {
+                        if (string[k] == '"') {
+                            isstr = 1; // Set isstr to 1 if a double quote is found on the same line
                             break;
                         }
-                    }
-
-                    while (charsBeforeC > 0) {
-                        if (string[charsBeforeC + t] == '"') {
-                            if (isNewLine) {
-                                isstr = 0; // Reset to 0 if double quote is found on a new line
-                            } else {
-                                isstr = 1;
-                            }
-                            break;
-                        } else {
-                            t--;
-                            isstr = 0;
-                        }
+                        k--;
                     }
 
                     if (isstr == 0) {
+                       
                         int j = i + 5;
                         while (j < length && isspace(string[j])) {
                             j++;
@@ -201,11 +169,8 @@ break;
                         }
                     }
                 }
-            } else {
-                // Handle the case where 'c' is at the end of the string.
             }
         }
-
   
 }
 
