@@ -52,7 +52,7 @@ void cout(int varorno,char* output) {
   
 }
 
-void lexer(char* string) {
+void lexer(char* string, int calltype) {
      char* output = NULL;
       char *result = NULL;
        char *result2 = NULL;
@@ -121,6 +121,7 @@ break;
       result = realloc(result, (resultLength + 1) * sizeof(char));
   
     result[resultLength] = '\0';
+
 l = 4;
 while (1) {
   l++;
@@ -137,16 +138,21 @@ while (1) {
       result2 = realloc(result2, (result2Length + 1) * sizeof(char));
   
     result2[result2Length] = '\0';
-lexer(result2);
-break;
+lexer(result2,1);
+    
                     }
                    
 
                   }
+               
         }
-      
+    
     }
+     
          if (string[i] == 'c') {
+         if (calltype == 0){
+         }
+         else{
              int isstr = 0; 
             if (i + 1 < length) {
                 // cout
@@ -190,6 +196,7 @@ break;
                 }
             }
         }
+        }
   
 }
 
@@ -202,6 +209,6 @@ FILE *FL;
 FL = fopen("main.crf","r");
   write = fopen("code.c", "w");
     char* file_content = read_file("main.crf");
-  lexer(file_content);
+  lexer(file_content,0);
    fclose(write);
 }
