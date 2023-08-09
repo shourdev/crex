@@ -55,6 +55,7 @@ void cout(int varorno,char* output) {
 void lexer(char* string) {
      char* output = NULL;
       char *result = NULL;
+       char *result2 = NULL;
     int outputIndex = 0;
     int length = strlen(string);
     int isNewLine = 0; // Flag to check if we have encountered a newline
@@ -86,9 +87,10 @@ void lexer(char* string) {
                     
                     
                          int n = 4;
-                     
+                     int l = n;
                      
     int resultLength = 0;
+     int result2Length = 0;
                     
 
 
@@ -105,7 +107,9 @@ break;
             result[resultLength - 1] = string[i + n];
  
 
+
  
+
            
         }
 
@@ -117,9 +121,24 @@ break;
       result = realloc(result, (resultLength + 1) * sizeof(char));
   
     result[resultLength] = '\0';
-
-
+l = 4;
+while (1) {
+  l++;
+         result2Length++;
+             result2 = realloc(result2, result2Length * sizeof(char));
+           
+            result2[result2Length - 1] = string[i + l - 1];
+ 
+   if (string[i+l] == 'o' && string[i+l+1] == 'v' && string[i+l+2] == 'e' && string[i+l+3] == 'r') {
+            break;
+        }
+      
+}
+      result2 = realloc(result2, (result2Length + 1) * sizeof(char));
   
+    result2[result2Length] = '\0';
+lexer(result2);
+break;
                     }
                    
 
@@ -142,7 +161,7 @@ break;
                     }
 
                     if (isstr == 0) {
-                       
+                     
                         int j = i + 5;
                         while (j < length && isspace(string[j])) {
                             j++;
