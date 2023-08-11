@@ -1,5 +1,4 @@
-printf("Hi");
-printf("Hi");
-printf("cout:");
 printf("hi");
+printf("bue");
+printf("bye");
 printf("l");

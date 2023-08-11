@@ -138,7 +138,9 @@ while (1) {
       result2 = realloc(result2, (result2Length + 1) * sizeof(char));
   
     result2[result2Length] = '\0';
+
 lexer(result2,1);
+
     
                     }
                    
@@ -197,13 +199,77 @@ lexer(result2,1);
             }
         }
         }
+          if (string[i] == 'i') {
+ if (calltype == 0){
+         }
+         else{
+            if (string[i + 1] == 'f') {
+                 int k = i - 1;
+                 int isstr = 0;
+                    while (k >= 0 && string[k] != '\n') {
+                        if (string[k] == '"') {
+                            isstr = 1; // Set isstr to 1 if a double quote is found on the same line
+                            break;
+                        }
+                        k--;
+                    }
+                    if (isstr==0){
+                            int resultLength = 0;
+                            char* result = NULL;
+                                 int result2Length = 0;
+                            char* result2 = NULL;
+                          int n = 2;
+                          int foundbrack = 0;
+                          while(1){
+                            if (string[i+n] == '('){
+                           foundbrack = 1;
+                             break;
+                            }
+                            
+                            n++;
+                          }
+                      if (foundbrack==1){
+                        while(string[i+n+1] != ')'){
+                            resultLength++;
+            result = realloc(result, resultLength * sizeof(char));
+           
+            result[resultLength - 1] = string[i + n + 1];
+ 
+                            n++;
+                        }
+                           result = realloc(result, (resultLength + 1) * sizeof(char));
+  
+    result[resultLength] = '\0';
+                      }
+                   while(string[i+n] != '\n'){
+                    n++;
+                   }
+                      while(1){
+                      
+                                           result2Length++;
+            result2 = realloc(result2, result2Length * sizeof(char));
+           
+            result2[result2Length - 1] = string[i + n];
+                        n++;
+                          if (string[i+n] == 'e' && string[i+n+1] == 'n' && string[i+n+2] == 'd') {
+            break;
+        }
+                      }
+                                  result2 = realloc(result2, (result2Length + 1) * sizeof(char));
+  
+    result2[result2Length] = '\0';
+    i = i + n;
+lexer(result2,1);
+                    }  
+         }
+          }
   
 }
 
     }
 
 
-
+}
 int main() {
 FILE *FL;
 FL = fopen("main.crf","r");
@@ -212,3 +278,4 @@ FL = fopen("main.crf","r");
   lexer(file_content,0);
    fclose(write);
 }
+
