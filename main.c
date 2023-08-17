@@ -145,6 +145,9 @@ while (1) {
  if (string[i+l]=='i' && string[i+l+1]== 'f'){
    nest++;
  }
+ if (string[i+l]=='e' && string[i+l+1]== 'l' && string[i+l+2] == 's' && string[i+l+3] == 'e'){
+   nest++;
+ }
    if (string[i+l] == 'o' && string[i+l+1] == 'v' && string[i+l+2] == 'e' && string[i+l+3] == 'r') {
           if(nest>0){
             nest--;
