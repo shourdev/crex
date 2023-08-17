@@ -123,22 +123,42 @@ break;
     result[resultLength] = '\0';
 
 l = 4;
+int f;
+int nest = 0;
+while (1)
+
+{
+    if(string[i+l] == '-'){
+    i =     i+1;
+        break;
+    }
+    i++;
+}
+
 while (1) {
   l++;
+
          result2Length++;
              result2 = realloc(result2, result2Length * sizeof(char));
            
             result2[result2Length - 1] = string[i + l - 1];
- 
+ if (string[i+l]=='i' && string[i+l+1]== 'f'){
+   nest++;
+ }
    if (string[i+l] == 'o' && string[i+l+1] == 'v' && string[i+l+2] == 'e' && string[i+l+3] == 'r') {
+          if(nest>0){
+            nest--;
+          }
+          else{
             break;
+          }
         }
       
 }
       result2 = realloc(result2, (result2Length + 1) * sizeof(char));
   
     result2[result2Length] = '\0';
-
+printf("%s",result2);
 lexer(result2,1);
 
     
@@ -251,7 +271,7 @@ lexer(result2,1);
            
             result2[result2Length - 1] = string[i + n];
                         n++;
-                          if (string[i+n] == 'e' && string[i+n+1] == 'n' && string[i+n+2] == 'd') {
+                          if (string[i+n] == 'o' && string[i+n+1] == 'v' && string[i+n+2] == 'e'&& string[i+n+3] == 'r') {
             break;
         }
                       }
@@ -259,6 +279,8 @@ lexer(result2,1);
   
     result2[result2Length] = '\0';
     i = i + n;
+
+
 lexer(result2,1);
                     }  
          }
@@ -278,4 +300,3 @@ FL = fopen("main.crf","r");
   lexer(file_content,0);
    fclose(write);
 }
-
