@@ -137,6 +137,7 @@ while (1)
 }
 int ifistr = 0;
 int elsestr = 0;
+int overstr = 0;
 while (1) {
   l++;
 
@@ -189,12 +190,25 @@ ifistr = 0;
    nest++;}
  }
    if (string[i+l] == 'o' && string[i+l+1] == 'v' && string[i+l+2] == 'e' && string[i+l+3] == 'r') {
-          if(nest>0){
+           int k3 = i + l - 1;
+    overstr = 0;
+                    while (k3 >= 0 && string[k3] != '\n') {
+                        if (string[k3] == '"') {
+                       
+                         overstr = 1;
+                            break;
+                        }
+                        k3--;
+                    }
+                    if (overstr==0){
+ if(nest>0){
             nest--;
           }
           else{
             break;
           }
+                    }
+         
         }
       
 }
