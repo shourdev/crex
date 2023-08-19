@@ -1,2 +1,3 @@
+printf("if");
 printf("h");
-printf("g");
+printf("if");

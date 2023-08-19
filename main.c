@@ -129,12 +129,14 @@ while (1)
 
 {
     if(string[i+l] == '-'){
+
     i =     i+1;
         break;
     }
     i++;
 }
-
+int ifistr = 0;
+int elsestr = 0;
 while (1) {
   l++;
 
@@ -143,10 +145,48 @@ while (1) {
            
             result2[result2Length - 1] = string[i + l - 1];
  if (string[i+l]=='i' && string[i+l+1]== 'f'){
-   nest++;
+      int k3 = i + l - 1;
+ifistr = 0;
+   while (k3 >= 0 && string[k3] != '\n') {
+
+                        if (string[k3] == '"') {
+                    
+                          ifistr = 1;
+                            break;
+                        }
+                        else{
+                            ifistr = 0;
+                        }
+                        k3--;
+                    }
+                    if (ifistr==0){
+                    
+                       
+                    
+ nest++;
+                    }
+                                    
+                 
+                   
+                 
+               
+                   
+                
+  
  }
  if (string[i+l]=='e' && string[i+l+1]== 'l' && string[i+l+2] == 's' && string[i+l+3] == 'e'){
-   nest++;
+        int k3 = i + l - 1;
+    
+                    while (k3 >= 0 && string[k3] != '\n') {
+                        if (string[k3] == '"') {
+                       
+                         elsestr = 1;
+                            break;
+                        }
+                        k3--;
+                    }
+                    if(elsestr==0){
+   nest++;}
  }
    if (string[i+l] == 'o' && string[i+l+1] == 'v' && string[i+l+2] == 'e' && string[i+l+3] == 'r') {
           if(nest>0){
