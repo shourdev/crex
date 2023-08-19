@@ -176,7 +176,7 @@ ifistr = 0;
  }
  if (string[i+l]=='e' && string[i+l+1]== 'l' && string[i+l+2] == 's' && string[i+l+3] == 'e'){
         int k3 = i + l - 1;
-    
+    elsestr = 0;
                     while (k3 >= 0 && string[k3] != '\n') {
                         if (string[k3] == '"') {
                        
