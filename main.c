@@ -215,7 +215,7 @@ ifistr = 0;
       result2 = realloc(result2, (result2Length + 1) * sizeof(char));
   
     result2[result2Length] = '\0';
-printf("%s",result2);
+//printf("%s",result2);
 lexer(result2,1);
 
     
@@ -281,6 +281,9 @@ lexer(result2,1);
          }
          else{
             if (string[i + 1] == 'f') {
+                int nest = 0;
+              int  ifistr = 0;
+              int   overstr = 0;
                  int k = i - 1;
                  int isstr = 0;
                     while (k >= 0 && string[k] != '\n') {
@@ -328,8 +331,56 @@ lexer(result2,1);
            
             result2[result2Length - 1] = string[i + n];
                         n++;
-                          if (string[i+n] == 'o' && string[i+n+1] == 'v' && string[i+n+2] == 'e'&& string[i+n+3] == 'r') {
+                        if (string[i+n]=='i' && string[i+n+1]== 'f'){
+      int k3 = i + n - 1;
+ifistr = 0;
+   while (k3 >= 0 && string[k3] != '\n') {
+
+                        if (string[k3] == '"') {
+                    
+                          ifistr = 1;
+                            break;
+                        }
+                        else{
+                            ifistr = 0;
+                        }
+                        k3--;
+                    }
+                    if (ifistr==0){
+                    
+                       
+                    
+ nest++;
+                    }
+                                    
+                 
+                   
+                 
+               
+                   
+                
+  
+ }
+ if (string[i+n] == 'o' && string[i+n+1] == 'v' && string[i+n+2] == 'e' && string[i+n+3] == 'r') {
+           int k3 = i + n - 1;
+    overstr = 0;
+                    while (k3 >= 0 && string[k3] != '\n') {
+                        if (string[k3] == '"') {
+                       
+                         overstr = 1;
+                            break;
+                        }
+                        k3--;
+                    }
+                    if (overstr==0){
+ if(nest>0){
+            nest--;
+          }
+          else{
             break;
+          }
+                    }
+         
         }
                       }
                                   result2 = realloc(result2, (result2Length + 1) * sizeof(char));
@@ -337,7 +388,7 @@ lexer(result2,1);
     result2[result2Length] = '\0';
     i = i + n;
 
-
+printf("%s",result2);
 lexer(result2,1);
                     }  
          }
