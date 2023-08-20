@@ -1,3 +1,4 @@
-printf("g");
-printf("g");
-printf("f");
+#include <stdio.h> 
+char*  main(){ 
+printf("hi \n");
+}

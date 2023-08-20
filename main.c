@@ -53,6 +53,7 @@ void cout(int varorno,char* output) {
 }
 
 void lexer(char* string, int calltype) {
+    
      char* output = NULL;
       char *result = NULL;
        char *result2 = NULL;
@@ -139,6 +140,7 @@ int ifistr = 0;
 int elsestr = 0;
 int overstr = 0;
 while (1) {
+
   l++;
 
          result2Length++;
@@ -216,8 +218,9 @@ ifistr = 0;
   
     result2[result2Length] = '\0';
 //printf("%s",result2);
+  fprintf(write, "char* %s(){ \n",result);
 lexer(result2,1);
-
+  fprintf(write, "}\n");
     
                     }
                    
@@ -396,6 +399,7 @@ lexer(result2,1);
   
 }
 
+
     }
 
 
@@ -404,7 +408,10 @@ int main() {
 FILE *FL;
 FL = fopen("main.crf","r");
   write = fopen("code.c", "w");
+    fprintf(write, "#include <stdio.h> \n");
     char* file_content = read_file("main.crf");
   lexer(file_content,0);
    fclose(write);
+   system("gcc code.c -o output");
+   system("./output");
 }
