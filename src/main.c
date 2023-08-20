@@ -402,6 +402,8 @@ lexer(result2,1);
  if (calltype == 0){
          }
          else{
+            // variables
+            char* type = "   ";
                if (i + 1 < length) {
             if (string[i+1] == 'a' && string[i+2] == 'r'){
                 int isstr = 0;
@@ -417,6 +419,8 @@ if (isstr==0){
     int d = 3;
          int resultLength = 0;
                             char* result = NULL;
+                                   int result2Length = 0;
+                            char* result2 = NULL;
  while(string[i+d] != '='){
                 resultLength++;
             result = realloc(result, resultLength * sizeof(char));
@@ -424,11 +428,25 @@ if (isstr==0){
             result[resultLength - 1] = string[i + d];
     d++;
  }
+d = d+1;
+
+ 
+ while(string[i+d]!='\n'){
+   
+        result2Length++;
+            result2 = realloc(result2, result2Length * sizeof(char));
+           
+            result2[result2Length - 1] = string[i + d];
+    d++;
+ }
       result = realloc(result, (resultLength + 1) * sizeof(char));
   
     result[resultLength] = '\0';
 
-    printf("%s",result);
+  result2 = realloc(result2, (result2Length + 1) * sizeof(char));
+  
+    result2[result2Length] = '\0';
+  
 }
 
             }
