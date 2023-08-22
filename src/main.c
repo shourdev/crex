@@ -2,9 +2,39 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #define NAMEMAXSIZE 100000
 char name[NAMEMAXSIZE] = "teset";
+bool hasvarcode = false;
 FILE *write;
+int checkNumberType(const char *str) {
+    int len = strlen(str);
+
+    bool hasDecimal = false;
+    bool hasDigits = false;
+
+    for (int i = 0; i < len; i++) {
+        if (i == 0 && (str[i] == '-' || str[i] == '+')) {
+            continue; // Allow leading sign for numbers
+        }
+
+        if (isdigit(str[i])) {
+            hasDigits = true;
+        } else if (str[i] == '.' && !hasDecimal) {
+            hasDecimal = true;
+        }
+    }
+
+    if (!hasDigits) {
+        return 0; // No digits in the string
+    }
+
+    if (hasDecimal) {
+        return 2; // Decimal number (float)
+    }
+
+    return 1; // Integer
+}
 
 char* read_file(const char* filename) {
     FILE* file = fopen(filename, "r");
@@ -49,9 +79,32 @@ void cout(int varorno,char* output) {
    
      
     }
+    else{
+            fprintf(write, "if (%s->type == STRING){\n",output); 
+    fprintf(write, "printf(\"%%s\",%s->value.stringvalue);\n",output);
+        fprintf(write, "}\n"); 
+    }
   
 }
-
+void varcodegen(){
+if (hasvarcode==false){
+fprintf(write,"enum types{\n");
+fprintf(write," STRING,\n");
+fprintf(write,"INT,\n");
+fprintf(write,"FLOAT\n");
+fprintf(write,"};\n");
+fprintf(write,"struct Var{\n");
+fprintf(write," enum types type;\n");
+fprintf(write," union \n");
+fprintf(write,"  {\n");
+fprintf(write," int intvalue;\n");
+fprintf(write," float   floatvalue;\n");
+fprintf(write,"char* stringvalue;\n");
+fprintf(write,"  } value;\n");
+fprintf(write,"};\n");
+hasvarcode = true;
+}
+}
 void lexer(char* string, int calltype) {
     
      char* output = NULL;
@@ -268,8 +321,23 @@ lexer(result2,1);
 
                                 j++;
                             }
+                           
                             cout(1, output);
 
+                            free(output);
+                            output = NULL;
+                            outputIndex = 0;
+                        }
+                        else{
+                    
+                            while (string[j]!='\n')
+                            {
+                               output = (char*)realloc(output, (outputIndex + 2) * sizeof(char));
+                                output[outputIndex++] = string[j];
+                                output[outputIndex] = '\0'; // Null-terminate the output string
+                                j++;
+                            }
+                          cout(0,output);
                             free(output);
                             output = NULL;
                             outputIndex = 0;
@@ -446,7 +514,24 @@ d = d+1;
   result2 = realloc(result2, (result2Length + 1) * sizeof(char));
   
     result2[result2Length] = '\0';
-  
+
+  int t = checkNumberType(result2);
+
+if (t==0){
+fprintf(write,"   struct Var *%s = malloc(sizeof(struct Var));\n",result);
+fprintf(write,"    %s->type = STRING;\n",result);
+fprintf(write,"        %s->value.stringvalue = %s;\n",result,result2);
+}
+if (t==1){
+  fprintf(write,"   struct Var *%s = malloc(sizeof(struct Var));\n",result);
+  fprintf(write,"    %s->type = INT;\n",result);
+  fprintf(write,"        %s->value.intvalue = %s;\n",result,result2);
+}
+if (t==2){
+      fprintf(write,"   struct Var *%s = malloc(sizeof(struct Var));\n",result);
+        fprintf(write,"    %s->type = FLOAT;\n",result);
+          fprintf(write,"        %s->value.floatvalue = %s;\n",result,result2);
+}
 }
 
             }
@@ -462,8 +547,9 @@ int main() {
 FILE *FL;
 FL = fopen("main.crf","r");
   write = fopen("code.c", "w");
-    fprintf(write, "#include <stdio.h> \n");
+    fprintf(write, "#include <stdio.h> \n #include <stdlib.h> \n");
     char* file_content = read_file("main.crf");
+    varcodegen();
   lexer(file_content,0);
    fclose(write);
    system("gcc code.c -o output");
