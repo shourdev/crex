@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #define NAMEMAXSIZE 100000
+int oc;
 char name[NAMEMAXSIZE] = "teset";
 bool hasvarcode = false;
 FILE *write;
@@ -83,6 +84,12 @@ void cout(int varorno,char* output) {
             fprintf(write, "if (%s->type == STRING){\n",output); 
     fprintf(write, "printf(\"%%s\",%s->value.stringvalue);\n",output);
         fprintf(write, "}\n"); 
+          fprintf(write, "if (%s->type == INT){\n",output); 
+              fprintf(write, "printf(\"%%d\",%s->value.intvalue);\n",output);
+             fprintf(write, "}\n");
+                      fprintf(write, "if (%s->type == FLOAT){\n",output); 
+                       fprintf(write, "printf(\"%%f\",%s->value.floatvalue);\n",output);
+                         fprintf(write, "}\n");    
     }
   
 }
