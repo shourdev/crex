@@ -63,10 +63,12 @@ void lexer(char* string, Token** tokens, int* num_tokens) {
     *tokens = NULL;
 
     while (1) {
-        while (isspace(string[i])) {
-            if (string[i] == '\n') {
-                line++;
-            }
+    if (string[i]=='\n'){
+    
+    line++;
+    }
+        if (isspace(string[i])) {
+          
             i++;
         }
 
@@ -110,6 +112,27 @@ void lexer(char* string, Token** tokens, int* num_tokens) {
             (*tokens)[token_index].value = result;
             token_index++;
         } 
+ else if (string[i] == '"') {
+    i++;  // Move past the opening double quote
+
+    int stringStart = i;
+    while (string[i] != '"' && string[i] != '\0') {
+        i++;
+    }
+
+    if (string[i] == '"') {
+  
+}
+
+else{
+if(isspace(string[i])){
+i++;
+}
+else{
+printf("error at line %d",line+1);
+i++;
+}
+}
  
        
     }
