@@ -1,79 +1,62 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 
-enum DataType {
-    INT,
-    FLOAT,
+enum types {
     STRING,
-    
+    INT,
+    FLOAT
 };
 
-struct DynamicValue {
-    enum DataType type;
+struct Var {
+    enum types type;
     union {
-        int intValue;
-        float floatValue;
-        char* stringValue;
-
+        int intvalue;
+        float floatvalue;
+        char* stringvalue;
     } value;
 };
 
-void createStringDynamicValue(struct DynamicValue *value, const char* str) {
-    value->type = STRING;
-    value->value.stringValue = malloc(strlen(str) + 1);  // +1 for null terminator
-    strcpy(value->value.stringValue, str);
-}
+void printvars(const char *format, int numVars, ...) {
+    va_list args;
+    va_start(args, numVars);
 
-void freeDynamicValue(struct DynamicValue *value) {
-    if (value->type == STRING) {
-        free(value->value.stringValue);
+    const char *placeholder = format;
+    while (*placeholder) {
+        if (*placeholder == '%' && *(placeholder + 1) == 't') {
+            placeholder += 2; // Move past '%t'
+            int varIndex = *placeholder - '0'; // Extract variable index
+
+            struct Var *var = va_arg(args, struct Var*);
+            switch (var->type) {
+                case STRING:
+                    printf("%s", var->value.stringvalue);
+                    break;
+                case INT:
+                    printf("%d", var->value.intvalue);
+                    break;
+                case FLOAT:
+                    printf("%f", var->value.floatvalue);
+                    break;
+                default:
+                    printf("Unknown type");
+                    break;
+            }
+        } else {
+            putchar(*placeholder);
+        }
+
+        placeholder++;
     }
-}
-struct DynamicValue *test(struct DynamicValue *inp){
-inp->type = INT;
-return inp;
-}
-int main() {
-    struct DynamicValue strValue;
-    createStringDynamicValue(&strValue, "Hello, world!");
- struct DynamicValue *strval2;
- strval2 =    test(&strValue);
 
-switch (strval2->type)
-{
-case STRING:
-    printf("string");
-    break;
-case INT:
-    printf("int");
-    break;
-case FLOAT:
-    printf("float");
-    break;
-default:
-    break;
+    va_end(args);
 }
-switch (strValue.type)
-{
-case STRING:
-    printf("string");
-    break;
-case INT:
-    printf("int");
-    break;
-case FLOAT:
-    printf("float");
-    break;
-default:
-    break;
-}
-    freeDynamicValue(&strValue);
+
+int main() {
+    struct Var test = {.type = INT, .value.intvalue = 42};
+    struct Var test2 = {.type = FLOAT, .value.floatvalue = 3.14};
+
+    printvars("hi %t0",1,&test);
 
     return 0;
 }
-
-
-
-
-
