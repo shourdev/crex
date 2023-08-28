@@ -14,7 +14,8 @@ typedef enum{
     STRING,
     FLOAT,
     PLUS_OP,
-    TOKEN_EOF
+    TOKEN_EOF,
+    VAR_KEY
 } type;
 typedef struct{
     type type;
@@ -94,6 +95,7 @@ void lexer(char* string, Token** tokens, int* num_tokens) {
             token_index += 1;
             i += 1;
         } else if (isdigit(string[i])) {
+
             char *result = NULL;
             int resultLength = 0;
             int isdec = 0;
@@ -134,8 +136,39 @@ else{
 }
          
         } 
+        else if(string[i]=='"'){
+            i++;
+            int stringstart = i;
+            while (string[i]!='"'&&string[i]!='\0')
+            {
+              
+                i++;
+             
+              
+            }
+            if (string[i]=='"'){
+int strlength = i - stringstart;
+char* result = (char*)malloc(strlength+1);
+   strncpy(result, string + stringstart, strlength);
+        result[strlength] = '\0';
+        (*tokens)[token_index].type = STRING;
+        (*tokens)[token_index].value = result;
+        token_index++;
+        i++;
+            }
+            else{
+                printf("Error: No closing quote for string on line %d\n",line);
+            }
+        }
         
-
+  if (string[i]=='v'&& string[i+1] == 'a'&& string[i+2] == 'r'){
+            (*tokens)[token_index].type = VAR_KEY;
+            (*tokens)[token_index].value = NULL;
+            token_index++;
+           i =  i+3;
+         
+            
+        }
 else{
 
     if (string[i]=='\n'){
@@ -146,9 +179,11 @@ else{
           
             i++;
         }
+      
 else{
-    printf("error at line %d character %c \n",line,string[i]);
-    i++;
+    printf("Error: at line %d character %c \n",line,string[i]);
+    
+  break;
 }
 }
  
@@ -185,9 +220,13 @@ FL = fopen("main.crf","r");
                 break;
             case STRING:
                 printf("Token: STRING, Value: %s\n",tokens[i].value);  
-            
+                break;
             case FLOAT:
                 printf("Token: FLOAT, Value: %s\n",tokens[i].value);
+                break;
+            case VAR_KEY:
+                printf("Token: VAR_kEY \n");
+                break;
                   }
     }
 
