@@ -96,9 +96,24 @@ void lexer(char* string, Token** tokens, int* num_tokens) {
         } else if (isdigit(string[i])) {
             char *result = NULL;
             int resultLength = 0;
+            int isdec = 0;
 
-            while (isdigit(string[i]) && string[i] != '\n' && string[i] != '\0')
+            while ( string[i] != '\n' && string[i] != '\0')
             {
+                if(string[i]=='.' ){
+                   while (!isdigit(string[i]))
+                   {
+                        resultLength++;
+                result = realloc(result, resultLength * sizeof(char));
+                result[resultLength - 1] = string[i];
+                i++;
+isdec = 1;
+                   }
+                   
+                }
+                if(!isdigit(string[i])){
+                    break;
+                }
                 resultLength++;
                 result = realloc(result, resultLength * sizeof(char));
                 result[resultLength - 1] = string[i];
@@ -107,30 +122,33 @@ void lexer(char* string, Token** tokens, int* num_tokens) {
 
             result = realloc(result, (resultLength + 1) * sizeof(char));
             result[resultLength] = '\0';
-
-            (*tokens)[token_index].type = INT;
+if (isdec==0){
+   (*tokens)[token_index].type = INT;
             (*tokens)[token_index].value = result;
             token_index++;
+}
+else{
+       (*tokens)[token_index].type = FLOAT;
+            (*tokens)[token_index].value = result;
+            token_index++;
+}
+         
         } 
- else if (string[i] == '"') {
-    i++;  // Move past the opening double quote
+        
 
-    int stringStart = i;
-    while (string[i] != '"' && string[i] != '\0') {
-        i++;
+else{
+
+    if (string[i]=='\n'){
+    
+    line++;
     }
-
-    if (string[i] == '"') {
-  
-}
-
+        if (isspace(string[i])) {
+          
+            i++;
+        }
 else{
-if(isspace(string[i])){
-i++;
-}
-else{
-printf("error at line %d",line+1);
-i++;
+    printf("error at line %d character %c \n",line,string[i]);
+    i++;
 }
 }
  
@@ -166,7 +184,11 @@ FL = fopen("main.crf","r");
                 printf("Token: EOF\n");
                 break;
             case STRING:
-                printf("Token: STRING, Value: %s\n",tokens[i].value);        }
+                printf("Token: STRING, Value: %s\n",tokens[i].value);  
+            
+            case FLOAT:
+                printf("Token: FLOAT, Value: %s\n",tokens[i].value);
+                  }
     }
 
 }
