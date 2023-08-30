@@ -160,6 +160,7 @@
          if (isspace(string[i])) { 
   
              i++; 
+continue;
          } 
 
     if (string[i] == '\0') { 
