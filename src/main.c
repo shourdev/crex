@@ -13,7 +13,9 @@
      FLOAT, 
      PLUS_OP, 
      TOKEN_EOF, 
-     VAR_KEY 
+     INT_KEY,
+     EQUAL,
+     IDENTFIER
  } type; 
  typedef struct{ 
      type type; 
@@ -66,7 +68,7 @@
   
          
   
-         *tokens = realloc(*tokens, (token_index + 1) * sizeof(Token)); 
+      *tokens = realloc(*tokens, (token_index+3) * sizeof(Token)); 
   
          if (string[i] == 'f' && string[i + 1] == 'u' && string[i + 2] == 'n' && string[i + 3] == 'c') { 
              (*tokens)[token_index].type = FUNC_KEYWORD; 
@@ -144,14 +146,46 @@
              } 
          } 
   
-   if (string[i]=='v'&& string[i+1] == 'a'&& string[i+2] == 'r'){ 
-             (*tokens)[token_index].type = VAR_KEY; 
+   if (string[i]=='i'&& string[i+1] == 'n'&& string[i+2] == 't'){ 
+      
+             (*tokens)[token_index].type = INT_KEY; 
              (*tokens)[token_index].value = NULL; 
-             token_index++; 
+             token_index++;
+  
             i =  i+3; 
-  
-  
+                    char *result = NULL; 
+             int resultLength = 0;
+  while (!isalpha(string[i]))
+  {
+    
+    i++;
+      }
+      while (1)
+      {
+if (string[i]=='='){   
+             (*tokens)[token_index].type = EQUAL; 
+             (*tokens)[token_index].value = NULL; 
+             token_index++;
+
+        i++;
+    break;
+}     
+              resultLength++; 
+                 result = realloc(result, resultLength * sizeof(char)); 
+                 result[resultLength - 1] = string[i]; 
+       i++;
+      }
+      
+    result = realloc(result, (resultLength + 1) * sizeof(char)); 
+             result[resultLength] = '\0'; 
+  (*tokens)[token_index].type = IDENTFIER;
+  (*tokens)[token_index].value= result;
+  token_index++;
+  i++;
          } 
+ 
+ 
+ 
  else {
     if (string[i]=='\n'){ 
   
@@ -214,10 +248,14 @@ continue;
              case FLOAT: 
                  printf("Token: FLOAT, Value: %s\n",tokens[i].value); 
                  break; 
-             case VAR_KEY: 
-                 printf("Token: VAR_kEY \n"); 
+             case INT_KEY: 
+                 printf("Token: INT_kEY \n"); 
                  break; 
-              
+            case EQUAL:
+                 printf("Token: EQUAL \n");
+                 break;
+            case IDENTFIER:
+                 printf("Token: IDENTIFIER, Value: %s \n",tokens[i].value);
          }            
          
      }
