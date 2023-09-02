@@ -15,7 +15,9 @@
      TOKEN_EOF, 
      INT_KEY,
      EQUAL,
-     IDENTFIER
+     IDENTFIER,
+     STRING_KEY,
+     MUL_OP
  } type; 
  typedef struct{ 
      type type; 
@@ -29,20 +31,20 @@
          return NULL; 
      } 
   
-     // Find the size of the file 
+  
      fseek(file, 0, SEEK_END); 
      long file_size = ftell(file); 
      rewind(file); 
   
-     // Dynamically allocate memory for the string 
-     char* buffer = (char*)malloc(file_size + 1); // +1 for null terminator 
+    
+     char* buffer = (char*)malloc(file_size + 1); 
      if (buffer == NULL) { 
          printf("Error allocating memory.\n"); 
          fclose(file); 
          return NULL; 
      } 
   
-     // Read the file into the buffer 
+    
      size_t result = fread(buffer, 1, file_size, file); 
      if (result != file_size) { 
          printf("Error reading the file.\n"); 
@@ -51,7 +53,7 @@
          return NULL; 
      } 
   
-     buffer[file_size] = '\0'; // Add null terminator at the end 
+     buffer[file_size] = '\0'; 
   
      fclose(file); 
      return buffer; 
@@ -69,23 +71,22 @@
          
   
       *tokens = realloc(*tokens, (token_index+3) * sizeof(Token)); 
-  
-         if (string[i] == 'f' && string[i + 1] == 'u' && string[i + 2] == 'n' && string[i + 3] == 'c') { 
-             (*tokens)[token_index].type = FUNC_KEYWORD; 
+  // * Operator
+         if (string[i]=='*') { 
+             (*tokens)[token_index].type = MUL_OP; 
              (*tokens)[token_index].value = NULL; 
              token_index += 1; 
-             i += 4; 
-         } else if (string[i] == '+') { 
-             (*tokens)[token_index].type = PLUS_OP; 
-             (*tokens)[token_index].value = NULL; 
-             token_index += 1; 
-             i += 1; 
-         } else if (isdigit(string[i])){
+             i++; 
+
+         } 
+     
+         //Int
+         else if (isdigit(string[i])){
              char *result = NULL; 
              int resultLength = 0; 
              int isdec = 0; 
   
-             while ( string[i] != '\n' && string[i] != '\0') 
+             while ( string[i] != '\n') 
              { 
                  if(string[i]=='.' ){ 
                     while (!isdigit(string[i])) 
@@ -99,28 +100,41 @@
   
                  } 
                  if(!isdigit(string[i])){ 
+               
                      break; 
-                 } 
+                 }
+             
                  resultLength++; 
                  result = realloc(result, resultLength * sizeof(char)); 
                  result[resultLength - 1] = string[i]; 
-                 i++; 
+            i++;
              } 
   
              result = realloc(result, (resultLength + 1) * sizeof(char)); 
-             result[resultLength] = '\0'; 
+             result[resultLength] = '\0';
+          
  if (isdec==0){ 
     (*tokens)[token_index].type = INT; 
              (*tokens)[token_index].value = result; 
              token_index++; 
+            
  } 
  else{ 
         (*tokens)[token_index].type = FLOAT; 
              (*tokens)[token_index].value = result; 
              token_index++; 
+           
  } 
   
          }  
+         // + Operator
+          else if (string[i] == '+') { 
+             (*tokens)[token_index].type = PLUS_OP; 
+             (*tokens)[token_index].value = NULL; 
+             token_index += 1; 
+             i += 1; 
+         }
+         // Strings
          else if(string[i]=='"'){ 
              i++; 
              int stringstart = i; 
@@ -145,9 +159,10 @@
                  printf("Error: No closing quote for string on line %d\n",line); 
              } 
          } 
-  
+
+  //Int Keyword
    if (string[i]=='i'&& string[i+1] == 'n'&& string[i+2] == 't'){ 
-      
+      int iseq = 0;
              (*tokens)[token_index].type = INT_KEY; 
              (*tokens)[token_index].value = NULL; 
              token_index++;
@@ -155,47 +170,94 @@
             i =  i+3; 
                     char *result = NULL; 
              int resultLength = 0;
-  while (!isalpha(string[i]))
+  while (isspace(string[i]))
   {
     
     i++;
       }
-      while (1)
-      {
-if (string[i]=='='){   
-             (*tokens)[token_index].type = EQUAL; 
-             (*tokens)[token_index].value = NULL; 
-             token_index++;
-
-        i++;
-    break;
-}     
-              resultLength++; 
+  while (1)
+{
+    if(string[i]=='='){
+     iseq = 1;
+        break;
+    }
+             resultLength++; 
                  result = realloc(result, resultLength * sizeof(char)); 
                  result[resultLength - 1] = string[i]; 
        i++;
-      }
-      
-    result = realloc(result, (resultLength + 1) * sizeof(char)); 
+}
+  result = realloc(result, (resultLength + 1) * sizeof(char)); 
              result[resultLength] = '\0'; 
   (*tokens)[token_index].type = IDENTFIER;
   (*tokens)[token_index].value= result;
   token_index++;
   i++;
+  // Equal
+  if (iseq==1){
+
+             (*tokens)[token_index].type = EQUAL; 
+             (*tokens)[token_index].value = NULL; 
+             token_index++;
+
+       
+  }
+
          } 
- 
- 
- 
+
+ //String Keyword
+ if (string[i]=='s'&&string[i+1]=='t'&&string[i+2]=='r' && string[i+3]=='i'&&string[i+4]=='n'&&string[i+5]=='g'){
+    int iseq = 0;
+(*tokens)[token_index].type = STRING_KEY;
+(*tokens)[token_index].value = NULL;
+token_index++;
+         char *result = NULL; 
+             int resultLength = 0;
+i += 6;
+while (isspace(string[i]))
+{
+  i++;
+}
+while (1)
+{
+
+    if(string[i]=='='){
+     iseq = 1;
+        break;
+    }
+             resultLength++; 
+                 result = realloc(result, resultLength * sizeof(char)); 
+                 result[resultLength - 1] = string[i]; 
+       i++;
+}
+  result = realloc(result, (resultLength + 1) * sizeof(char)); 
+             result[resultLength] = '\0'; 
+  (*tokens)[token_index].type = IDENTFIER;
+  (*tokens)[token_index].value= result;
+  token_index++;
+  i++;
+  // Equal
+  if (iseq==1){
+
+             (*tokens)[token_index].type = EQUAL; 
+             (*tokens)[token_index].value = NULL; 
+             token_index++;
+
+      
+  }
+ }
+ // Error Handling and spaces and lines
  else {
     if (string[i]=='\n'){ 
   
      line++; 
+
      } 
          if (isspace(string[i])) { 
   
              i++; 
 continue;
          } 
+         
 
     if (string[i] == '\0') { 
         
@@ -207,6 +269,7 @@ continue;
     }
     else {
         printf("Error at line %d for %c", line, string[i]);
+        break;
     }
  }
        
@@ -256,6 +319,13 @@ continue;
                  break;
             case IDENTFIER:
                  printf("Token: IDENTIFIER, Value: %s \n",tokens[i].value);
+                 break;
+            case STRING_KEY:
+                 printf("Token: STRING_KEY \n");
+                 break;
+            case MUL_OP:
+                 printf("Token: Multiply operator \n");
+                 break;
          }            
          
      }
