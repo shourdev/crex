@@ -80,7 +80,7 @@
 
          } 
      
-         //Int
+         //Int and float
          else if (isdigit(string[i])){
              char *result = NULL; 
              int resultLength = 0; 
@@ -112,7 +112,7 @@
   
              result = realloc(result, (resultLength + 1) * sizeof(char)); 
              result[resultLength] = '\0';
-          
+
  if (isdec==0){ 
     (*tokens)[token_index].type = INT; 
              (*tokens)[token_index].value = result; 
@@ -268,8 +268,8 @@ continue;
         return; 
     }
     else {
-        printf("Error at line %d for %c", line, string[i]);
-        break;
+        printf("Error at line %d for %c\n", line, string[i]);
+    
     }
  }
        
