@@ -180,7 +180,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         if (string[i] == 'i' && string[i + 1] == 'n' && string[i + 2] == 't')
         {
             isiden = 1;
-          
+
             (*tokens)[token_index].type = INT_KEY;
             (*tokens)[token_index].value = NULL;
             token_index++;
@@ -197,7 +197,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             {
                 if (string[i] == '=')
                 {
-                   
+
                     break;
                 }
                 resultLength++;
@@ -210,22 +210,20 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             (*tokens)[token_index].type = IDENTFIER;
             (*tokens)[token_index].value = result;
             token_index++;
-            
-            
-         
         }
         // Equal
-if (string[i]=='='){
-    isiden = 1;
-    (*tokens)[token_index].type = EQUAL;
-                (*tokens)[token_index].value = NULL;
-                token_index++;
-                i++;
-}
+        if (string[i] == '=')
+        {
+            isiden = 1;
+            (*tokens)[token_index].type = EQUAL;
+            (*tokens)[token_index].value = NULL;
+            token_index++;
+            i++;
+        }
         // String Keyword
         if (string[i] == 's' && string[i + 1] == 't' && string[i + 2] == 'r' && string[i + 3] == 'i' && string[i + 4] == 'n' && string[i + 5] == 'g')
         {
-          
+
             isiden = 1;
             (*tokens)[token_index].type = STRING_KEY;
             (*tokens)[token_index].value = NULL;
@@ -242,7 +240,7 @@ if (string[i]=='='){
 
                 if (string[i] == '=')
                 {
-                  
+
                     break;
                 }
                 resultLength++;
@@ -255,7 +253,6 @@ if (string[i]=='='){
             (*tokens)[token_index].type = IDENTFIER;
             (*tokens)[token_index].value = result;
             token_index++;
-          
         }
         // Error Handling and spaces and lines and comments
         else
@@ -294,7 +291,7 @@ if (string[i]=='='){
                 return;
             }
             else
-            { 
+            {
                 if (isiden == 0)
                 {
                     printf("Error at line %d for %c\n", line, string[i]);
@@ -338,7 +335,7 @@ int main()
             printf("Token: STRING, Value: %s\n", tokens[i].value);
             break;
         case FLOAT:
-            printf("Token: FLOAT, Value: %s\n", tokens[i].value);
+            printf("Token: FLOAT_LITERAL, Value: %s\n", tokens[i].value);
             break;
         case INT_KEY:
             printf("Token: INT_kEY \n");
