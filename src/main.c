@@ -180,7 +180,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         if (string[i] == 'i' && string[i + 1] == 'n' && string[i + 2] == 't')
         {
             isiden = 1;
-            int iseq = 0;
+          
             (*tokens)[token_index].type = INT_KEY;
             (*tokens)[token_index].value = NULL;
             token_index++;
@@ -197,7 +197,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             {
                 if (string[i] == '=')
                 {
-                    iseq = 1;
+                   
                     break;
                 }
                 resultLength++;
@@ -210,21 +210,21 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             (*tokens)[token_index].type = IDENTFIER;
             (*tokens)[token_index].value = result;
             token_index++;
-            i++;
+            
             // Equal
-            if (iseq == 1)
-            {
-
-                (*tokens)[token_index].type = EQUAL;
+         
+        }
+if (string[i]=='='){
+    isiden = 1;
+    (*tokens)[token_index].type = EQUAL;
                 (*tokens)[token_index].value = NULL;
                 token_index++;
-            }
-        }
-
+                i++;
+}
         // String Keyword
         if (string[i] == 's' && string[i + 1] == 't' && string[i + 2] == 'r' && string[i + 3] == 'i' && string[i + 4] == 'n' && string[i + 5] == 'g')
         {
-            int iseq = 0;
+          
             isiden = 1;
             (*tokens)[token_index].type = STRING_KEY;
             (*tokens)[token_index].value = NULL;
@@ -241,7 +241,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
 
                 if (string[i] == '=')
                 {
-                    iseq = 1;
+                  
                     break;
                 }
                 resultLength++;
@@ -254,15 +254,8 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             (*tokens)[token_index].type = IDENTFIER;
             (*tokens)[token_index].value = result;
             token_index++;
-            i++;
-            // Equal
-            if (iseq == 1)
-            {
-
-                (*tokens)[token_index].type = EQUAL;
-                (*tokens)[token_index].value = NULL;
-                token_index++;
-            }
+          
+         
         }
         // Error Handling and spaces and lines and comments
         else
@@ -301,7 +294,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 return;
             }
             else
-            {
+            { 
                 if (isiden == 0)
                 {
                     printf("Error at line %d for %c\n", line, string[i]);
