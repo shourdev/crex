@@ -255,7 +255,6 @@ if (string[i]=='='){
             (*tokens)[token_index].value = result;
             token_index++;
           
-         
         }
         // Error Handling and spaces and lines and comments
         else
