@@ -211,9 +211,10 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             (*tokens)[token_index].value = result;
             token_index++;
             
-            // Equal
+            
          
         }
+        // Equal
 if (string[i]=='='){
     isiden = 1;
     (*tokens)[token_index].type = EQUAL;
