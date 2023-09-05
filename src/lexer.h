@@ -19,7 +19,9 @@ typedef enum
     STRING_KEY,
     MUL_OP,
     OPEN_PAREN,
-    CLOSE_PAREN
+    CLOSE_PAREN,
+    OVER_KEY,
+    COMMA
 } type;
 typedef struct
 {
@@ -169,6 +171,12 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 (*tokens)[token_index].value = NULL;
                 token_index++;
             }
+            if(strcmp(result,"over")==0){
+                isiden = 1;
+         (*tokens)[token_index].type = OVER_KEY;
+                (*tokens)[token_index].value = NULL;
+                token_index++;
+            }
             else
             {
                 isiden = 1;
@@ -187,6 +195,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             token_index++;
             i++;
         }
+        // Opening paren
         if (string[i]=='('){
             isiden = 1;
                (*tokens)[token_index].type = OPEN_PAREN;
@@ -194,12 +203,21 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             token_index++;
             i++;
         }
+        // Closing paren
         if (string[i]==')'){
             isiden = 1;
              (*tokens)[token_index].type = CLOSE_PAREN;
             (*tokens)[token_index].value = NULL;
             token_index++;
             i++;  
+        }
+        // Comma
+        if (string[i]==','){
+              isiden = 1;
+             (*tokens)[token_index].type = COMMA;
+            (*tokens)[token_index].value = NULL;
+            token_index++;
+            i++;
         }
         // Error Handling and spaces and lines and comments
         else

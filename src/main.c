@@ -100,6 +100,12 @@ int main()
         case CLOSE_PAREN:
             printf("Token: CLOSE_PAREN \n");
             break;
+        case OVER_KEY:
+            printf("Token: OVER_KEY \n");
+            break;
+        case COMMA:
+            printf("Token: COMMA \n");
+            break;
         }
     }
 }
