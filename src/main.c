@@ -5,6 +5,7 @@ Copyright (c) 2023 Shourjjo Majumder
 https://github.com/shourdev/crex
 */
 #include "lexer.h"
+#include "include.h"
 FILE *write;
 char *read_file(const char *filename)
 {

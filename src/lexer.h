@@ -3,11 +3,7 @@ This is the code for the lexer.
 Copyright (c) 2023 Shourjjo Majumder
 https://github.com/shourdev/crex
 */
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include "include.h"
 
 typedef enum
 {
@@ -28,7 +24,6 @@ typedef struct
     type type;
     char *value;
 } Token;
-
 
 void lexer(char *string, Token **tokens, int *num_tokens)
 {
@@ -143,31 +138,13 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 printf("Error: No closing quote for string on line %d\n", line);
             }
         }
-
-        // Int Keyword
-        if (string[i] == 'i' && string[i + 1] == 'n' && string[i + 2] == 't')
+        // Identifiers
+        if (isalpha(string[i]))
         {
-            isiden = 1;
-
-            (*tokens)[token_index].type = INT_KEY;
-            (*tokens)[token_index].value = NULL;
-            token_index++;
-
-            i = i + 3;
             char *result = NULL;
             int resultLength = 0;
-            while (isspace(string[i]))
+            while (isalnum(string[i]) || isalpha(string[i]) || string[i] == '_')
             {
-
-                i++;
-            }
-            while (1)
-            {
-                if (string[i] == '=')
-                {
-
-                    break;
-                }
                 resultLength++;
                 result = realloc(result, resultLength * sizeof(char));
                 result[resultLength - 1] = string[i];
@@ -175,10 +152,30 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             }
             result = realloc(result, (resultLength + 1) * sizeof(char));
             result[resultLength] = '\0';
-            (*tokens)[token_index].type = IDENTFIER;
-            (*tokens)[token_index].value = result;
-            token_index++;
+            if (strcmp(result, "int") == 0)
+            {
+                isiden = 1;
+
+                (*tokens)[token_index].type = INT_KEY;
+                (*tokens)[token_index].value = NULL;
+                token_index++;
+            }
+            if (strcmp(result, "string") == 0)
+            {
+                isiden = 1;
+                (*tokens)[token_index].type = STRING_KEY;
+                (*tokens)[token_index].value = NULL;
+                token_index++;
+            }
+            else
+            {
+                isiden = 1;
+                (*tokens)[token_index].type = IDENTFIER;
+                (*tokens)[token_index].value = result;
+                token_index++;
+            }
         }
+
         // Equal
         if (string[i] == '=')
         {
@@ -187,40 +184,6 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             (*tokens)[token_index].value = NULL;
             token_index++;
             i++;
-        }
-        // String Keyword
-        if (string[i] == 's' && string[i + 1] == 't' && string[i + 2] == 'r' && string[i + 3] == 'i' && string[i + 4] == 'n' && string[i + 5] == 'g')
-        {
-
-            isiden = 1;
-            (*tokens)[token_index].type = STRING_KEY;
-            (*tokens)[token_index].value = NULL;
-            token_index++;
-            char *result = NULL;
-            int resultLength = 0;
-            i += 6;
-            while (isspace(string[i]))
-            {
-                i++;
-            }
-            while (1)
-            {
-
-                if (string[i] == '=')
-                {
-
-                    break;
-                }
-                resultLength++;
-                result = realloc(result, resultLength * sizeof(char));
-                result[resultLength - 1] = string[i];
-                i++;
-            }
-            result = realloc(result, (resultLength + 1) * sizeof(char));
-            result[resultLength] = '\0';
-            (*tokens)[token_index].type = IDENTFIER;
-            (*tokens)[token_index].value = result;
-            token_index++;
         }
         // Error Handling and spaces and lines and comments
         else
@@ -269,4 +232,3 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         }
     }
 }
-
