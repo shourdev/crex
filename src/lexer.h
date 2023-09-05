@@ -17,7 +17,9 @@ typedef enum
     EQUAL,
     IDENTFIER,
     STRING_KEY,
-    MUL_OP
+    MUL_OP,
+    OPEN_PAREN,
+    CLOSE_PAREN
 } type;
 typedef struct
 {
@@ -184,6 +186,20 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             (*tokens)[token_index].value = NULL;
             token_index++;
             i++;
+        }
+        if (string[i]=='('){
+            isiden = 1;
+               (*tokens)[token_index].type = OPEN_PAREN;
+            (*tokens)[token_index].value = NULL;
+            token_index++;
+            i++;
+        }
+        if (string[i]==')'){
+            isiden = 1;
+             (*tokens)[token_index].type = CLOSE_PAREN;
+            (*tokens)[token_index].value = NULL;
+            token_index++;
+            i++;  
         }
         // Error Handling and spaces and lines and comments
         else

@@ -94,6 +94,12 @@ int main()
         case MUL_OP:
             printf("Token: MULTIPLY \n");
             break;
+        case OPEN_PAREN:
+            printf("Token: OPEN_PAREN \n");
+            break;
+        case CLOSE_PAREN:
+            printf("Token: CLOSE_PAREN \n");
+            break;
         }
     }
 }
