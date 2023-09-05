@@ -145,6 +145,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         // Identifiers
         if (isalpha(string[i]))
         {
+           
             char *result = NULL;
             int resultLength = 0;
             while (isalnum(string[i]) || isalpha(string[i]) || string[i] == '_')
@@ -163,6 +164,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 (*tokens)[token_index].type = INT_KEY;
                 (*tokens)[token_index].value = NULL;
                 token_index++;
+            
             }
             if (strcmp(result, "string") == 0)
             {
@@ -184,6 +186,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 (*tokens)[token_index].value = result;
                 token_index++;
             }
+           
         }
 
         // Equal
