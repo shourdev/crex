@@ -145,7 +145,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         // Identifiers
         if (isalpha(string[i]))
         {
-           
+           int visited = 0;
             char *result = NULL;
             int resultLength = 0;
             while (isalnum(string[i]) || isalpha(string[i]) || string[i] == '_')
@@ -164,16 +164,18 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 (*tokens)[token_index].type = INT_KEY;
                 (*tokens)[token_index].value = NULL;
                 token_index++;
+                visited = 1;
             
             }
             if (strcmp(result, "string") == 0)
-            {
+            {    visited = 1;
                 isiden = 1;
                 (*tokens)[token_index].type = STRING_KEY;
                 (*tokens)[token_index].value = NULL;
                 token_index++;
             }
             if(strcmp(result,"over")==0){
+                    visited = 1;
                 isiden = 1;
          (*tokens)[token_index].type = OVER_KEY;
                 (*tokens)[token_index].value = NULL;
@@ -181,12 +183,15 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             }
             else
             {
-                isiden = 1;
+                if (visited==0){
+  isiden = 1;
                 (*tokens)[token_index].type = IDENTFIER;
                 (*tokens)[token_index].value = result;
                 token_index++;
+                }
+              
             }
-           
+ 
         }
 
         // Equal
