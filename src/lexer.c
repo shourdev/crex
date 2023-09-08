@@ -137,7 +137,8 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             }
             else
             {
-                printf("Error: No closing quote for string on line %d\n", line);
+                printf("Lexical Error: Unterminated string at line %d\n", line);
+                  haserrored = 1;
             }
         }
         // Identifiers
@@ -257,6 +258,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                     if (string[i] == '\0')
                     {
                         printf("Lexical Error: Line %d unterminated comment\n", line);
+                          haserrored = 1;
                         return;
                     }
                     i++;
