@@ -5,7 +5,7 @@ https://github.com/shourdev/crex
 */
 #include "include.h"
 
-typedef enum
+enum tokentype
 {
     FUNC_KEYWORD,
     INT,
@@ -22,15 +22,14 @@ typedef enum
     CLOSE_PAREN,
     OVER_KEY,
     COMMA
-} type;
+};
 typedef struct
 {
-    type type;
+    enum tokentype type;
     char *value;
 } Token;
-
 void lexer(char *string, Token **tokens, int *num_tokens)
-{
+{    int haserrored = 0;
     int i = 0;
     int token_index = 0;
     int line = 1;
@@ -39,19 +38,19 @@ void lexer(char *string, Token **tokens, int *num_tokens)
    and if none is matched it will be 0 giving an error.
    Also this is going to be changed to 0 every time the loop runs
     */
-*tokens = NULL;
+    *tokens = NULL;
     while (1)
     {
- *tokens = realloc(*tokens,(token_index+3)*sizeof(Token));
-        isiden = 0;
 
-    
+        isiden = 0;
+        *tokens = realloc(*tokens, (token_index + 3) * sizeof(Token));
+
         // * Operator
         if (string[i] == '*')
         {
             (*tokens)[token_index].type = MUL_OP;
             (*tokens)[token_index].value = NULL;
-            token_index += 1;
+            token_index++;
             i++;
             isiden = 1;
         }
@@ -110,7 +109,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         {
             (*tokens)[token_index].type = PLUS_OP;
             (*tokens)[token_index].value = NULL;
-            token_index += 1;
+            token_index++;
             i += 1;
             isiden = 1;
         }
@@ -144,7 +143,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         // Identifiers
         if (isalpha(string[i]))
         {
-           int visited = 0;
+            int visited = 0;
             char *result = NULL;
             int resultLength = 0;
             while (isalnum(string[i]) || isalpha(string[i]) || string[i] == '_')
@@ -164,33 +163,33 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 (*tokens)[token_index].value = NULL;
                 token_index++;
                 visited = 1;
-            
             }
             if (strcmp(result, "string") == 0)
-            {    visited = 1;
+            {
+                visited = 1;
                 isiden = 1;
                 (*tokens)[token_index].type = STRING_KEY;
                 (*tokens)[token_index].value = NULL;
                 token_index++;
             }
-            if(strcmp(result,"over")==0){
-                    visited = 1;
+            if (strcmp(result, "over") == 0)
+            {
+                visited = 1;
                 isiden = 1;
-         (*tokens)[token_index].type = OVER_KEY;
+                (*tokens)[token_index].type = OVER_KEY;
                 (*tokens)[token_index].value = NULL;
                 token_index++;
             }
             else
             {
-                if (visited==0){
-  isiden = 1;
-                (*tokens)[token_index].type = IDENTFIER;
-                (*tokens)[token_index].value = result;
-                token_index++;
+                if (visited == 0)
+                {
+                    isiden = 1;
+                    (*tokens)[token_index].type = IDENTFIER;
+                    (*tokens)[token_index].value = result;
+                    token_index++;
                 }
-              
             }
- 
         }
 
         // Equal
@@ -203,37 +202,41 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             i++;
         }
         // Opening paren
-        if (string[i]=='('){
+        if (string[i] == '(')
+        {
             isiden = 1;
-               (*tokens)[token_index].type = OPEN_PAREN;
+            (*tokens)[token_index].type = OPEN_PAREN;
             (*tokens)[token_index].value = NULL;
             token_index++;
             i++;
         }
         // Closing paren
-        if (string[i]==')'){
+        if (string[i] == ')')
+        {
             isiden = 1;
-             (*tokens)[token_index].type = CLOSE_PAREN;
+            (*tokens)[token_index].type = CLOSE_PAREN;
             (*tokens)[token_index].value = NULL;
             token_index++;
-            i++;  
+            i++;
         }
         // Comma
-        if (string[i]==','){
-              isiden = 1;
-             (*tokens)[token_index].type = COMMA;
+        if (string[i] == ',')
+        {
+            isiden = 1;
+            (*tokens)[token_index].type = COMMA;
             (*tokens)[token_index].value = NULL;
             token_index++;
             i++;
         }
         // Error Handling and spaces and lines and comments
         else
-        {
+        {   // Lines
             if (string[i] == '\n')
             {
 
                 line++;
             }
+            // Space
             if (isspace(string[i]))
             {
 
@@ -247,33 +250,40 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 isiden = 1;
                 while (1)
                 {
-if (string[i]=='$'){
-    break;
-}
-if (string[i]=='\0'){
-    printf("Lexical Error: Line %d unterminated comment\n",line);
-   return;
-    
-}
+                    if (string[i] == '$')
+                    {
+                        break;
+                    }
+                    if (string[i] == '\0')
+                    {
+                        printf("Lexical Error: Line %d unterminated comment\n", line);
+                        return;
+                    }
                     i++;
                 }
                 i++;
             }
-
+           // EOF
             if (string[i] == '\0')
-{
-          (*tokens)[token_index].type = TOKEN_EOF;
-          (*tokens)[token_index].value = NULL;
-  
-
-          (*num_tokens) = token_index+1;
-          return;
+            { if(haserrored==1){
+                *tokens = NULL;
+                exit (1);
+            }else{
+ *tokens = realloc(*tokens, (token_index + 3) * sizeof(Token));
+                (*tokens)[token_index].type = TOKEN_EOF;
+                (*tokens)[token_index].value = NULL;
+                *num_tokens = token_index + 1;
+                return;
             }
+               
+            }
+            // Error
             else
             {
                 if (isiden == 0)
                 {
                     printf("Lexical Error: line %d for %c\n", line, string[i]);
+                    haserrored = 1;
                     i++;
                 }
             }
