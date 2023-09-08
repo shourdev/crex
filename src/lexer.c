@@ -29,7 +29,8 @@ typedef struct
     char *value;
 } Token;
 void lexer(char *string, Token **tokens, int *num_tokens)
-{    int haserrored = 0;
+{
+    int haserrored = 0;
     int i = 0;
     int token_index = 0;
     int line = 1;
@@ -138,7 +139,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             else
             {
                 printf("Lexical Error: Unterminated string at line %d\n", line);
-                  haserrored = 1;
+                haserrored = 1;
             }
         }
         // Identifiers
@@ -231,7 +232,7 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         }
         // Error Handling and spaces and lines and comments
         else
-        {   // Lines
+        { // Lines
             if (string[i] == '\n')
             {
 
@@ -258,26 +259,29 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                     if (string[i] == '\0')
                     {
                         printf("Lexical Error: Line %d unterminated comment\n", line);
-                          haserrored = 1;
+                        haserrored = 1;
                         return;
                     }
                     i++;
                 }
                 i++;
             }
-           // EOF
+            // EOF
             if (string[i] == '\0')
-            { if(haserrored==1){
-                *tokens = NULL;
-                exit (1);
-            }else{
- *tokens = realloc(*tokens, (token_index + 3) * sizeof(Token));
-                (*tokens)[token_index].type = TOKEN_EOF;
-                (*tokens)[token_index].value = NULL;
-                *num_tokens = token_index + 1;
-                return;
-            }
-               
+            {
+                if (haserrored == 1)
+                {
+                    *tokens = NULL;
+                    exit(1);
+                }
+                else
+                {
+                    *tokens = realloc(*tokens, (token_index + 3) * sizeof(Token));
+                    (*tokens)[token_index].type = TOKEN_EOF;
+                    (*tokens)[token_index].value = NULL;
+                    *num_tokens = token_index + 1;
+                    return;
+                }
             }
             // Error
             else
