@@ -252,7 +252,8 @@ if (string[i]=='$'){
 }
 if (string[i]=='\0'){
     printf("Lexical Error: Line %d unterminated comment\n",line);
-    break;
+   return;
+    
 }
                     i++;
                 }
@@ -260,8 +261,7 @@ if (string[i]=='\0'){
             }
 
             if (string[i] == '\0')
-            {
-         *tokens =  realloc(*tokens,(sizeof(Token))*(token_index+3));
+{
           (*tokens)[token_index].type = TOKEN_EOF;
           (*tokens)[token_index].value = NULL;
   
