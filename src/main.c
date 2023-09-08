@@ -4,7 +4,7 @@ It contains all CLI related code.
 Copyright (c) 2023 Shourjjo Majumder
 https://github.com/shourdev/crex
 */
-#include "lexer.h"
+#include "lexer.c"
 #include "include.h"
 FILE *write;
 char *read_file(const char *filename)
@@ -55,8 +55,9 @@ int main()
     Token *tokens = NULL;
     int num_tokens = 0;
 
-    lexer(file_content, &tokens, &num_tokens);
-    for (int i = 0; i < num_tokens; i++)
+    lexer(file_content, &tokens,&num_tokens);
+
+    for (int i = 0; i <num_tokens; i++)
     {
         switch (tokens[i].type)
         {
