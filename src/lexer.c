@@ -39,14 +39,13 @@ void lexer(char *string, Token **tokens, int *num_tokens)
    and if none is matched it will be 0 giving an error.
    Also this is going to be changed to 0 every time the loop runs
     */
-    *tokens = NULL;
-
+*tokens = NULL;
     while (1)
     {
-
+ *tokens = realloc(*tokens,(token_index+3)*sizeof(Token));
         isiden = 0;
 
-        *tokens = realloc(*tokens, (token_index + 3) * sizeof(Token));
+    
         // * Operator
         if (string[i] == '*')
         {
@@ -246,9 +245,15 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             {
                 i++;
                 isiden = 1;
-                while (string[i] != '$')
+                while (1)
                 {
-
+if (string[i]=='$'){
+    break;
+}
+if (string[i]=='\0'){
+    printf("Lexical Error: Line %d unterminated comment\n",line);
+    break;
+}
                     i++;
                 }
                 i++;
@@ -256,18 +261,19 @@ void lexer(char *string, Token **tokens, int *num_tokens)
 
             if (string[i] == '\0')
             {
+         *tokens =  realloc(*tokens,(sizeof(Token))*(token_index+3));
+          (*tokens)[token_index].type = TOKEN_EOF;
+          (*tokens)[token_index].value = NULL;
+  
 
-                *tokens = realloc(*tokens, (token_index + 1) * sizeof(Token));
-                (*tokens)[token_index].type = TOKEN_EOF;
-                (*tokens)[token_index].value = NULL;
-                *num_tokens = token_index + 1;
-                return;
+          (*num_tokens) = token_index+1;
+          return;
             }
             else
             {
                 if (isiden == 0)
                 {
-                    printf("Error at line %d for %c\n", line, string[i]);
+                    printf("Lexical Error: line %d for %c\n", line, string[i]);
                     i++;
                 }
             }
