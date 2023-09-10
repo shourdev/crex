@@ -1,11 +1,15 @@
 /*
-This is the main file of the crex compiler.
-It contains all CLI related code.
 Copyright (c) 2023 Shourjjo Majumder
 https://github.com/shourdev/crex
+
+This is the main file of the crex compiler.
+It contains all CLI related code.
 */
 #include "lexer.c"
 #include "include.h"
+
+
+
 FILE *write;
 char *read_file(const char *filename)
 {
@@ -51,9 +55,10 @@ int main()
     FL = fopen("main.crf", "r");
 
     char *file_content = read_file("main.crf");
-    Token *tokens;
+   
     int num_tokens = 0;
-    lexer(file_content, &tokens, &num_tokens);
+  Token* tokens =   lexer(file_content, &num_tokens);
+
     for (int i = 0; i < num_tokens; i++)
     {
         switch (tokens[i].type)

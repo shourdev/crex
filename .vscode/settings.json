@@ -4,6 +4,7 @@
         "def.h": "c",
         "string.h": "c",
         "ctype.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "include.h": "c"
     }
 }

@@ -1,13 +1,11 @@
 /*
-This is the code for the lexer.
-Copyright (c) 2023 Shourjjo Majumder
-https://github.com/shourdev/crex
+This is the code for the crex lexer.
 */
 #include "include.h"
 
 enum tokentype
 {
-    FUNC_KEYWORD,
+
     INT,
     STRING,
     FLOAT,
@@ -27,9 +25,11 @@ typedef struct
 {
     enum tokentype type;
     char *value;
+    int line;
 } Token;
-void lexer(char *string, Token **tokens, int *num_tokens)
+Token *lexer(char *string, int *num_tokens)
 {
+    Token *tokens;
     int haserrored = 0;
     int i = 0;
     int token_index = 0;
@@ -39,18 +39,19 @@ void lexer(char *string, Token **tokens, int *num_tokens)
    and if none is matched it will be 0 giving an error.
    Also this is going to be changed to 0 every time the loop runs
     */
-    *tokens = NULL;
+    tokens = NULL;
     while (1)
     {
 
         isiden = 0;
-        *tokens = realloc(*tokens, (token_index + 3) * sizeof(Token));
+        tokens = realloc(tokens, (token_index + 3) * sizeof(Token));
 
         // * Operator
         if (string[i] == '*')
         {
-            (*tokens)[token_index].type = MUL_OP;
-            (*tokens)[token_index].value = NULL;
+            tokens[token_index].type = MUL_OP;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
             token_index++;
             i++;
             isiden = 1;
@@ -94,22 +95,25 @@ void lexer(char *string, Token **tokens, int *num_tokens)
 
             if (isdec == 0)
             {
-                (*tokens)[token_index].type = INT;
-                (*tokens)[token_index].value = result;
+                tokens[token_index].type = INT;
+                tokens[token_index].value = result;
+                tokens[token_index].line = line;
                 token_index++;
             }
             else
             {
-                (*tokens)[token_index].type = FLOAT;
-                (*tokens)[token_index].value = result;
+                tokens[token_index].type = FLOAT;
+                tokens[token_index].value = result;
+                tokens[token_index].line = line;
                 token_index++;
             }
         }
         // + Operator
         else if (string[i] == '+')
         {
-            (*tokens)[token_index].type = PLUS_OP;
-            (*tokens)[token_index].value = NULL;
+            tokens[token_index].type = PLUS_OP;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
             token_index++;
             i += 1;
             isiden = 1;
@@ -131,8 +135,9 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 char *result = (char *)malloc(strlength + 1);
                 strncpy(result, string + stringstart, strlength);
                 result[strlength] = '\0';
-                (*tokens)[token_index].type = STRING;
-                (*tokens)[token_index].value = result;
+                tokens[token_index].type = STRING;
+                tokens[token_index].value = result;
+                tokens[token_index].line = line;
                 token_index++;
                 i++;
             }
@@ -161,8 +166,9 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             {
                 isiden = 1;
 
-                (*tokens)[token_index].type = INT_KEY;
-                (*tokens)[token_index].value = NULL;
+                tokens[token_index].type = INT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
                 token_index++;
                 visited = 1;
             }
@@ -170,16 +176,18 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             {
                 visited = 1;
                 isiden = 1;
-                (*tokens)[token_index].type = STRING_KEY;
-                (*tokens)[token_index].value = NULL;
+                tokens[token_index].type = STRING_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
                 token_index++;
             }
             if (strcmp(result, "over") == 0)
             {
                 visited = 1;
                 isiden = 1;
-                (*tokens)[token_index].type = OVER_KEY;
-                (*tokens)[token_index].value = NULL;
+                tokens[token_index].type = OVER_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
                 token_index++;
             }
             else
@@ -187,8 +195,9 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                 if (visited == 0)
                 {
                     isiden = 1;
-                    (*tokens)[token_index].type = IDENTFIER;
-                    (*tokens)[token_index].value = result;
+                    tokens[token_index].type = IDENTFIER;
+                    tokens[token_index].value = result;
+                    tokens[token_index].line = line;
                     token_index++;
                 }
             }
@@ -198,8 +207,9 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         if (string[i] == '=')
         {
             isiden = 1;
-            (*tokens)[token_index].type = EQUAL;
-            (*tokens)[token_index].value = NULL;
+            tokens[token_index].type = EQUAL;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
             token_index++;
             i++;
         }
@@ -207,8 +217,9 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         if (string[i] == '(')
         {
             isiden = 1;
-            (*tokens)[token_index].type = OPEN_PAREN;
-            (*tokens)[token_index].value = NULL;
+            tokens[token_index].type = OPEN_PAREN;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
             token_index++;
             i++;
         }
@@ -216,8 +227,9 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         if (string[i] == ')')
         {
             isiden = 1;
-            (*tokens)[token_index].type = CLOSE_PAREN;
-            (*tokens)[token_index].value = NULL;
+            tokens[token_index].type = CLOSE_PAREN;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
             token_index++;
             i++;
         }
@@ -225,8 +237,9 @@ void lexer(char *string, Token **tokens, int *num_tokens)
         if (string[i] == ',')
         {
             isiden = 1;
-            (*tokens)[token_index].type = COMMA;
-            (*tokens)[token_index].value = NULL;
+            tokens[token_index].type = COMMA;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
             token_index++;
             i++;
         }
@@ -260,7 +273,6 @@ void lexer(char *string, Token **tokens, int *num_tokens)
                     {
                         printf("Lexical Error: Line %d unterminated comment\n", line);
                         haserrored = 1;
-                        return;
                     }
                     i++;
                 }
@@ -271,16 +283,17 @@ void lexer(char *string, Token **tokens, int *num_tokens)
             {
                 if (haserrored == 1)
                 {
-                    *tokens = NULL;
+                    tokens = NULL;
                     exit(1);
                 }
                 else
                 {
-                    *tokens = realloc(*tokens, (token_index + 3) * sizeof(Token));
-                    (*tokens)[token_index].type = TOKEN_EOF;
-                    (*tokens)[token_index].value = NULL;
+
+                    tokens[token_index].type = TOKEN_EOF;
+                    tokens[token_index].value = NULL;
+                    tokens[token_index].line = line;
                     *num_tokens = token_index + 1;
-                    return;
+                    return tokens;
                 }
             }
             // Error
