@@ -29,7 +29,7 @@ typedef struct
 
 Token *lexer(char *string, int *num_tokens)
 {
-    Token *tokens;
+    Token *tokens = NULL;
     int haserrored = 0;
     int i = 0;
     int token_index = 0;
@@ -39,7 +39,7 @@ Token *lexer(char *string, int *num_tokens)
    and if none is matched it will be 0 giving an error.
    Also this is going to be changed to 0 every time the loop runs
     */
-    tokens = NULL;
+ 
     while (1)
     {
 
