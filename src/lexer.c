@@ -2,7 +2,6 @@
 This is the code for the crex lexer.
 */
 #include "include.h"
-
 enum tokentype
 {
 
@@ -27,6 +26,7 @@ typedef struct
     char *value;
     int line;
 } Token;
+
 Token *lexer(char *string, int *num_tokens)
 {
     Token *tokens;
@@ -273,6 +273,7 @@ Token *lexer(char *string, int *num_tokens)
                     {
                         printf("Lexical Error: Line %d unterminated comment\n", line);
                         haserrored = 1;
+                      
                     }
                     i++;
                 }
@@ -281,20 +282,14 @@ Token *lexer(char *string, int *num_tokens)
             // EOF
             if (string[i] == '\0')
             {
-                if (haserrored == 1)
-                {
-                    tokens = NULL;
-                    exit(1);
-                }
-                else
-                {
+              
+                
 
                     tokens[token_index].type = TOKEN_EOF;
                     tokens[token_index].value = NULL;
                     tokens[token_index].line = line;
-                    *num_tokens = token_index + 1;
-                    return tokens;
-                }
+                    break;
+                
             }
             // Error
             else
@@ -307,5 +302,12 @@ Token *lexer(char *string, int *num_tokens)
                 }
             }
         }
+    }
+    if(haserrored==1){
+        exit(1);
+    }
+    else{
+*num_tokens = token_index + 1;
+                    return tokens;
     }
 }
