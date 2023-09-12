@@ -5,6 +5,8 @@
         "string.h": "c",
         "ctype.h": "c",
         "type_traits": "c",
-        "include.h": "c"
+        "include.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c"
     }
 }

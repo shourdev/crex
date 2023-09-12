@@ -1,35 +1,16 @@
 /*
 This is the code for the crex lexer.
 */
-#include "include.h"
-enum tokentype
-{
-
-    INT,
-    STRING,
-    FLOAT,
-    PLUS_OP,
-    TOKEN_EOF,
-    INT_KEY,
-    EQUAL,
-    IDENTFIER,
-    STRING_KEY,
-    MUL_OP,
-    OPEN_PAREN,
-    CLOSE_PAREN,
-    OVER_KEY,
-    COMMA
-};
-typedef struct
-{
-    enum tokentype type;
-    char *value;
-    int line;
-} Token;
+#include <stdio.h>
+#include "./lexer.h"
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 Token *lexer(char *string, int *num_tokens)
 {
-    Token *tokens = NULL;
+  Token *tokens = NULL;
     int haserrored = 0;
     int i = 0;
     int token_index = 0;
@@ -39,7 +20,7 @@ Token *lexer(char *string, int *num_tokens)
    and if none is matched it will be 0 giving an error.
    Also this is going to be changed to 0 every time the loop runs
     */
- 
+
     while (1)
     {
 
@@ -96,6 +77,7 @@ Token *lexer(char *string, int *num_tokens)
             if (isdec == 0)
             {
                 tokens[token_index].type = INT;
+
                 tokens[token_index].value = result;
                 tokens[token_index].line = line;
                 token_index++;
@@ -273,7 +255,6 @@ Token *lexer(char *string, int *num_tokens)
                     {
                         printf("Lexical Error: Line %d unterminated comment\n", line);
                         haserrored = 1;
-                      
                     }
                     i++;
                 }
@@ -282,14 +263,12 @@ Token *lexer(char *string, int *num_tokens)
             // EOF
             if (string[i] == '\0')
             {
-              
-                
 
-                    tokens[token_index].type = TOKEN_EOF;
-                    tokens[token_index].value = NULL;
-                    tokens[token_index].line = line;
-                    break;
-                
+                tokens[token_index].type = TOKEN_EOF;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+
+                break;
             }
             // Error
             else
@@ -303,11 +282,13 @@ Token *lexer(char *string, int *num_tokens)
             }
         }
     }
-    if(haserrored==1){
+    if (haserrored == 1)
+    {
         exit(1);
     }
-    else{
-*num_tokens = token_index + 1;
-                    return tokens;
+    else
+    {
+        *num_tokens = token_index + 1;
+        return tokens;
     }
 }
