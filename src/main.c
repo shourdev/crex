@@ -5,13 +5,13 @@ https://github.com/shourdev/crex
 This is the main file of the crex compiler.
 It contains all CLI related code.
 */
-#include "lexer.h"
+#include "./lexer/lexer.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "parser.h"
+#include "./parser/parser.h"
 
 
 FILE *write;
