@@ -8,9 +8,9 @@ This is the code for the crex lexer.
 #include <stdlib.h>
 #include <stdbool.h>
 
-Token *lexer(char *string, int *num_tokens)
+Token* lexer(char *string, int *num_tokens)
 {
-  Token *tokens = NULL;
+ Token* tokens = NULL;
     int haserrored = 0;
     int i = 0;
     int token_index = 0;
@@ -25,8 +25,8 @@ Token *lexer(char *string, int *num_tokens)
     {
 
         isiden = 0;
-        tokens = realloc(tokens, (token_index + 3) * sizeof(Token));
-
+       
+tokens = realloc(tokens,sizeof(Token)*(token_index+3));
         // * Operator
         if (string[i] == '*')
         {
