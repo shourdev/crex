@@ -89,6 +89,7 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
                 tokens[token_index].line = line;
                 token_index++;
             }
+            free(result);
         }
         // + Operator
         else if (string[i] == '+')
@@ -122,12 +123,14 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
                 tokens[token_index].line = line;
                 token_index++;
                 i++;
+                  free(result);
             }
             else
             {
                 printf("Lexical Error: Unterminated string at line %d\n", line);
                 haserrored = 1;
             }
+            
         }
         // Identifiers
         if (isalpha(string[i]))
@@ -183,6 +186,7 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
                     token_index++;
                 }
             }
+              free(result);
         }
 
         // Equal
