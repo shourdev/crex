@@ -36,7 +36,7 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
             token_index++;
             i++;
             isiden = 1;
-        }
+	}	        
 
         // Int and float
         else if (isdigit(string[i]))
