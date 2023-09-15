@@ -16,7 +16,8 @@
     OPEN_PAREN,
     CLOSE_PAREN,
     OVER_KEY,
-    COMMA
+    COMMA,
+    FLOAT_KEY
 };
 typedef struct
 {

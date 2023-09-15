@@ -8,9 +8,9 @@ This is the code for the crex lexer.
 #include <stdlib.h>
 #include <stdbool.h>
 
-Token* lexer(char *string, int *num_tokens)
+Token *lexer(char *string, int *num_tokens)
 {
- Token* tokens = NULL;
+    Token *tokens = NULL;
     int haserrored = 0;
     int i = 0;
     int token_index = 0;
@@ -25,8 +25,8 @@ Token* lexer(char *string, int *num_tokens)
     {
 
         isiden = 0;
-       
-tokens = realloc(tokens,sizeof(Token)*(token_index+3));
+
+        tokens = realloc(tokens, sizeof(Token) * (token_index + 3));
         // * Operator
         if (string[i] == '*')
         {
@@ -36,7 +36,7 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
             token_index++;
             i++;
             isiden = 1;
-	}	        
+        }
 
         // Int and float
         else if (isdigit(string[i]))
@@ -123,14 +123,13 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
                 tokens[token_index].line = line;
                 token_index++;
                 i++;
-                  free(result);
+                free(result);
             }
             else
             {
                 printf("Lexical Error: Unterminated string at line %d\n", line);
                 haserrored = 1;
             }
-            
         }
         // Identifiers
         if (isalpha(string[i]))
@@ -166,6 +165,14 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
                 tokens[token_index].line = line;
                 token_index++;
             }
+            if(strcmp(result,"float")==0){
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = FLOAT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
             if (strcmp(result, "over") == 0)
             {
                 visited = 1;
@@ -186,7 +193,7 @@ tokens = realloc(tokens,sizeof(Token)*(token_index+3));
                     token_index++;
                 }
             }
-              free(result);
+            free(result);
         }
 
         // Equal
