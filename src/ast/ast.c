@@ -34,16 +34,36 @@ void ast_print(AST *ptr) {
       printf(")");
       return;
     }
+    case AST_DIV: {
+      struct AST_DIV data = ast.data.AST_DIV;
+      printf("(");
+      ast_print(data.left);
+      printf(" / ");
+      ast_print(data.right);
+      printf(")");
+      return;
+    }
+    case AST_GREATER: {
+      struct AST_DIV data = ast.data.AST_DIV;
+   
+      ast_print(data.left);
+      printf(" > ");
+      ast_print(data.right);
+    
+      return;
+    }
   }
 }
 int main(){
 AST *term = 
-  AST_NEW(AST_ADD,
-  AST_NEW(AST_NUMBER,3),
-  AST_NEW(AST_NUMBER,4),
-  
- 
-  );
+ AST_NEW(AST_GREATER,
+AST_NEW(AST_ADD,
+AST_NEW(AST_NUMBER,4),
+AST_NEW(AST_NUMBER,5),
+
+),
+AST_NEW(AST_NUMBER,8),
+ );
 
      ast_print(term);
 }

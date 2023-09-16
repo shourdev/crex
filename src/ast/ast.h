@@ -11,6 +11,8 @@ struct AST
         AST_NUMBER,
         AST_ADD,
         AST_MUL,
+        AST_DIV,
+        AST_GREATER
     } tag;
     union
     {
@@ -28,6 +30,14 @@ struct AST
             AST *left;
             AST *right;
         } AST_MUL;
+        struct AST_DIV{
+            AST *left;
+            AST *right;
+        } AST_DIV;
+        struct AST_GREATER{
+            AST *left;
+            AST *right;
+        }AST_GREATER;
     } data;
 };
 void ast_print(AST *ptr);
