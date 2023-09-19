@@ -1,7 +1,6 @@
+#ifndef PARSER_H_INCLUDED
+#define PARSER_H_INCLUDED
 
-#ifndef PARSER_H
-#define PARSER_H
 #include "../lexer/lexer.h"
-void getnexttoken();
-void parse(Token *token);
+void parse(Token* tokens);
 #endif

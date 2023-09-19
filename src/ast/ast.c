@@ -11,9 +11,20 @@ AST *ast_new(AST ast)
 void ast_print(AST *ptr) {
   AST ast = *ptr;
   switch (ast.tag) {
-    case AST_NUMBER: {
-      struct AST_NUMBER data = ast.data.AST_NUMBER;
-      printf("%d", data.number);
+    case AST_ROOT: {
+      printf("On Root: \n");
+       struct AST_ROOT data = ast.data.AST_ROOT;
+      ast_print(data.code);
+      return;
+    }
+    case AST_INT: {
+      struct AST_INT data = ast.data.AST_INT;
+      printf("%d", data.intval);
+      return;
+    }
+    case AST_FLOAT:{
+      struct AST_FLOAT data = ast.data.AST_FLOAT;
+      printf("%f",data.floatval);
       return;
     }
     case AST_ADD: {
@@ -53,17 +64,4 @@ void ast_print(AST *ptr) {
       return;
     }
   }
-}
-int main(){
-AST *term = 
- AST_NEW(AST_GREATER,
-AST_NEW(AST_ADD,
-AST_NEW(AST_NUMBER,4),
-AST_NEW(AST_NUMBER,5),
-
-),
-AST_NEW(AST_NUMBER,8),
- );
-
-     ast_print(term);
 }

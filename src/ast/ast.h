@@ -2,24 +2,31 @@
 #define AST_H_INCLUDED
 
 #define AST_NEW(tag, ...) \
-  ast_new((AST){tag, {.tag=(struct tag){__VA_ARGS__}}})
+    ast_new((AST){tag, {.tag = (struct tag){__VA_ARGS__}}})
 typedef struct AST AST;
 struct AST
 {
     enum
     {
-        AST_NUMBER,
+        AST_INT,
+        AST_FLOAT,
         AST_ADD,
         AST_MUL,
         AST_DIV,
-        AST_GREATER
+        AST_GREATER,
+        AST_ROOT
     } tag;
     union
     {
-        struct AST_NUMBER
+        struct AST_INT
         {
-            int number;
-        } AST_NUMBER;
+            int intval;
+        } AST_INT;
+        struct AST_FLOAT
+        {
+            float floatval;
+        } AST_FLOAT;
+
         struct AST_ADD
         {
             AST *left;
@@ -30,14 +37,21 @@ struct AST
             AST *left;
             AST *right;
         } AST_MUL;
-        struct AST_DIV{
+        struct AST_DIV
+        {
             AST *left;
             AST *right;
         } AST_DIV;
-        struct AST_GREATER{
+        struct AST_GREATER
+        {
             AST *left;
             AST *right;
-        }AST_GREATER;
+        } AST_GREATER;
+        struct AST_ROOT
+        {
+            AST *code;
+        } AST_ROOT;
+
     } data;
 };
 void ast_print(AST *ptr);

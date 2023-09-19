@@ -63,7 +63,7 @@ int main()
     int num_tokens = 0;
  Token* tokens = lexer(file_content, &num_tokens);
 
-printf("%d",tokens[0].type);
+parse(tokens);
 
     free(tokens);
 }

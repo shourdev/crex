@@ -89,7 +89,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            free(result);
+           
         }
         // + Operator
         else if (string[i] == '+')
@@ -193,7 +193,7 @@ Token *lexer(char *string, int *num_tokens)
                     token_index++;
                 }
             }
-            free(result);
+         
         }
 
         // Equal
