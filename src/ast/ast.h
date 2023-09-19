@@ -50,6 +50,7 @@ struct AST
         struct AST_ROOT
         {
             AST *code;
+        size_t len;
         } AST_ROOT;
 
     } data;
