@@ -9,21 +9,22 @@ struct AST
     enum
     {
         AST_NUM,
-       
+
         AST_ADD,
         AST_MUL,
         AST_DIV,
         AST_GREATER,
         AST_ROOT,
-        BinOpNode
+        BinOpNode,
+        EMPTY
     } tag;
     union
     {
         struct AST_NUM
         {
-            char* val;
+            char *val;
         } AST_NUM;
-     
+
         struct AST_ADD
         {
             AST *left;
@@ -47,13 +48,18 @@ struct AST
         struct AST_ROOT
         {
             AST *code;
-        size_t len;
+            size_t len;
         } AST_ROOT;
-        struct BinOpNode{
-            AST* left;
-            char* op;
-            AST* right;
-        }BinOpNode;
+        struct EMPTY
+        {
+            char t;
+        } EMPTY;
+        struct BinOpNode
+        {
+            AST *left;
+            char *op;
+            AST *right;
+        } BinOpNode;
 
     } data;
 };

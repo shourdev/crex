@@ -72,10 +72,25 @@ AST *expr()
 
     return left;
 }
+void parsestatement()
+{
+    if (curtoken.type == INT || curtoken.type == FLOAT)
+    {
+        AST *tree = expr();
+       ast_root_add(root, tree);
+    }
+}
 void parse(Token *tokens)
 {
     tokens2 = tokens;
     getnexttoken();
-    AST *tree = expr();
-    ast_print(tree);
+    root = AST_NEW(AST_ROOT,
+  AST_NEW(EMPTY,'f'),
+  );
+    while (curtoken.type != TOKEN_EOF)
+    {
+        parsestatement();
+    }
+ 
+    ast_print(root);
 }

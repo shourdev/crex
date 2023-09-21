@@ -17,7 +17,11 @@ void ast_print(AST *ptr)
   {
     printf("On Root: \n");
     struct AST_ROOT data = ast.data.AST_ROOT;
-    ast_print(data.code);
+   for (size_t i = 0; i < data.len; i++)
+   {
+    ast_print(&data.code[i]);
+   }
+   
     return;
   }
   case AST_NUM:
