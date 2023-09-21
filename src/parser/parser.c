@@ -6,6 +6,9 @@ Token *tokens2;
 Token curtoken;
 int tokenindex = -1;
 AST *root;
+AST *expr();
+AST *term();
+AST *factor();
 void ast_root_add(AST *root, AST *node)
 {
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
@@ -25,6 +28,22 @@ AST *factor()
         getnexttoken();
         return numnode;
     }
+    if (curtoken.type == OPEN_PAREN)
+    {
+        getnexttoken();
+        AST *expr2 = expr();
+        if (curtoken.type == CLOSE_PAREN)
+        {
+            getnexttoken();
+            return expr2;
+        }
+        else{
+            printf("Expected ) after expression ");
+            ast_print(expr2);
+printf(" on line %d\n",curtoken.line);
+exit(1);
+        }
+    }
 }
 AST *term()
 {
@@ -43,7 +62,9 @@ AST *term()
         }
 
         getnexttoken();
+     
         AST *right = factor();
+
         left = AST_NEW(BinOpNode, left, op, right);
     }
 
@@ -67,6 +88,7 @@ AST *expr()
         }
         getnexttoken();
         AST *right = term();
+
         left = AST_NEW(BinOpNode, left, op, right);
     }
 
@@ -74,10 +96,10 @@ AST *expr()
 }
 void parsestatement()
 {
-    if (curtoken.type == INT || curtoken.type == FLOAT)
+    if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN)
     {
         AST *tree = expr();
-       ast_root_add(root, tree);
+        ast_root_add(root, tree);
     }
 }
 void parse(Token *tokens)
@@ -85,12 +107,12 @@ void parse(Token *tokens)
     tokens2 = tokens;
     getnexttoken();
     root = AST_NEW(AST_ROOT,
-  AST_NEW(EMPTY,'f'),
-  );
+                   AST_NEW(EMPTY, 'f'), );
+
     while (curtoken.type != TOKEN_EOF)
     {
         parsestatement();
     }
- 
+
     ast_print(root);
 }
