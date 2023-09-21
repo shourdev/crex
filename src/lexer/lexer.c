@@ -285,6 +285,7 @@ Token *lexer(char *string, int *num_tokens)
                     {
                         printf("Lexical Error: Line %d unterminated comment\n", line);
                         haserrored = 1;
+                        break;
                     }
                     i++;
                 }

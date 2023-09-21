@@ -28,6 +28,7 @@ AST *factor()
         getnexttoken();
         return numnode;
     }
+
     if (curtoken.type == OPEN_PAREN)
     {
         getnexttoken();
@@ -37,11 +38,12 @@ AST *factor()
             getnexttoken();
             return expr2;
         }
-        else{
+        else
+        {
             printf("Expected ) after expression ");
             ast_print(expr2);
-printf(" on line %d\n",curtoken.line);
-exit(1);
+            printf(" on line %d\n", curtoken.line);
+            exit(1);
         }
     }
 }
@@ -62,7 +64,7 @@ AST *term()
         }
 
         getnexttoken();
-     
+
         AST *right = factor();
 
         left = AST_NEW(BinOpNode, left, op, right);
