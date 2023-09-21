@@ -8,25 +8,22 @@ struct AST
 {
     enum
     {
-        AST_INT,
-        AST_FLOAT,
+        AST_NUM,
+       
         AST_ADD,
         AST_MUL,
         AST_DIV,
         AST_GREATER,
-        AST_ROOT
+        AST_ROOT,
+        BinOpNode
     } tag;
     union
     {
-        struct AST_INT
+        struct AST_NUM
         {
-            int intval;
-        } AST_INT;
-        struct AST_FLOAT
-        {
-            float floatval;
-        } AST_FLOAT;
-
+            char* val;
+        } AST_NUM;
+     
         struct AST_ADD
         {
             AST *left;
@@ -52,6 +49,11 @@ struct AST
             AST *code;
         size_t len;
         } AST_ROOT;
+        struct BinOpNode{
+            AST* left;
+            char* op;
+            AST* right;
+        }BinOpNode;
 
     } data;
 };

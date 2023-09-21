@@ -37,6 +37,26 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             isiden = 1;
         }
+        // / Operator
+        if (string[i] == '/')
+        {
+            tokens[token_index].type = DIV;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            isiden++;
+        }
+        // - Operator
+        if (string[i] == '-')
+        {
+            tokens[token_index].type = MINUS;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            isiden++;
+        }
 
         // Int and float
         else if (isdigit(string[i]))
@@ -89,7 +109,6 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-           
         }
         // + Operator
         else if (string[i] == '+')
@@ -165,7 +184,8 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            if(strcmp(result,"float")==0){
+            if (strcmp(result, "float") == 0)
+            {
                 visited = 1;
                 isiden = 1;
                 tokens[token_index].type = FLOAT_KEY;
@@ -193,7 +213,6 @@ Token *lexer(char *string, int *num_tokens)
                     token_index++;
                 }
             }
-         
         }
 
         // Equal

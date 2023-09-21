@@ -5,8 +5,9 @@
 Token *tokens2;
 Token curtoken;
 int tokenindex = -1;
-AST* root;
-void ast_root_add(AST* root, AST* node) {
+AST *root;
+void ast_root_add(AST *root, AST *node)
+{
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
     root->data.AST_ROOT.code[root->data.AST_ROOT.len++] = *node;
 }
@@ -15,45 +16,66 @@ void getnexttoken()
     tokenindex++;
     curtoken = tokens2[tokenindex];
 }
-void parseexpr()
+AST *factor()
 {
-    char *test = curtoken.value;
-
-    int x;
-    sscanf(test, "%d", &x);
-    getnexttoken();
-    if (curtoken.type == PLUS_OP)
+    if (curtoken.type == INT || curtoken.type == FLOAT)
     {
+
+        AST *numnode = AST_NEW(AST_NUM, curtoken.value);
         getnexttoken();
-        char *test2 = curtoken.value;
-        int y;
-        sscanf(test2, "%d", &y);
-        AST *tree = 
-                            AST_NEW(AST_ADD,
-                                    AST_NEW(AST_INT, x),
-                                    AST_NEW(AST_INT, y), );
-        ast_root_add(root,tree);
+        return numnode;
     }
 }
-void parsestatement()
+AST *term()
 {
-    if (curtoken.type == INT)
+    AST *left = factor();
+
+    while (curtoken.type == MUL_OP || curtoken.type == DIV)
     {
-        parseexpr();
+        char *op;
+        if (curtoken.type == MUL_OP)
+        {
+            op = "*";
+        }
+        if (curtoken.type == DIV)
+        {
+            op = "/";
+        }
+
+        getnexttoken();
+        AST *right = factor();
+        left = AST_NEW(BinOpNode, left, op, right);
     }
-    else
+
+    return left;
+}
+AST *expr()
+{
+    AST *left = term();
+
+    AST *opnode;
+    while (curtoken.type == PLUS_OP || curtoken.type == MINUS)
     {
-        printf("Error \n");
-        exit(1);
+        char *op;
+        if (curtoken.type == PLUS_OP)
+        {
+            op = "+";
+        }
+        if (curtoken.type == MINUS)
+        {
+            op = "-";
+        }
+        getnexttoken();
+        AST *right = term();
+        left = AST_NEW(BinOpNode, left, op, right);
     }
+
+    return left;
 }
 void parse(Token *tokens)
 {
     tokens2 = tokens;
     getnexttoken();
-    while (curtoken.type != TOKEN_EOF)
-    {
-
-        parsestatement();
-    }
+    AST *tree = expr();
+    ast_print(tree);
 }
