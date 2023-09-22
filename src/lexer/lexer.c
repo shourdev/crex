@@ -144,7 +144,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
                 i++;
-                free(result);
+               
             }
             else
             {

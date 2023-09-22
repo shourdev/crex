@@ -19,7 +19,8 @@ enum tokentype
   COMMA,
   FLOAT_KEY,
   MINUS,
-  DIV
+  DIV,
+  NEWLINE
 };
 typedef struct
 {

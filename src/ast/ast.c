@@ -41,6 +41,7 @@ void ast_print(AST *ptr)
     printf("%s", data.op);
     ast_print(data.right);
     printf(")");
+
     return;
   }
   case UnaryNode:
@@ -48,6 +49,12 @@ void ast_print(AST *ptr)
     struct UnaryNode data = ast.data.UnaryNode;
     printf("%s", data.op);
     ast_print(data.node);
+    return;
+  }
+  case StringNode:
+  {
+    struct StringNode data = ast.data.StringNode;
+    printf("%s",data.value);
     return;
   }
   }

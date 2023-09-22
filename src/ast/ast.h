@@ -17,7 +17,8 @@ struct AST
         AST_ROOT,
         BinOpNode,
         EMPTY,
-        UnaryNode
+        UnaryNode,
+        StringNode
     } tag;
     union
     {
@@ -66,6 +67,10 @@ struct AST
             char *op;
             AST *node;
         } UnaryNode;
+        struct StringNode
+        {
+            char* value;
+        }StringNode;
     } data;
 };
 void ast_print(AST *ptr);

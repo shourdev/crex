@@ -28,13 +28,21 @@ AST *factor()
         getnexttoken();
         return numnode;
     }
+    if (curtoken.type == STRING)
+    {
+
+        AST *stringnode = AST_NEW(StringNode, curtoken.value);
+        getnexttoken();
+
+        return stringnode;
+    }
     if (curtoken.type == MINUS)
     {
         getnexttoken();
         AST *factor2 = factor();
         char *op = "-";
         AST *factor3 = AST_NEW(UnaryNode, op, factor2);
-    
+
         return factor3;
     }
     if (curtoken.type == OPEN_PAREN)
@@ -53,6 +61,11 @@ AST *factor()
             printf(" on line %d\n", curtoken.line);
             exit(1);
         }
+    }
+    else
+    {
+        printf("Error: Invalid synax, expected literal or identifier after operator on line %d\n ", tokens2[tokenindex - 1].line);
+        exit(1);
     }
 }
 AST *term()
@@ -104,9 +117,10 @@ AST *expr()
 
     return left;
 }
+
 void parsestatement()
 {
-    if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN||curtoken.type==MINUS)
+    if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN || curtoken.type == MINUS || curtoken.type == STRING)
     {
         AST *tree = expr();
         ast_root_add(root, tree);
