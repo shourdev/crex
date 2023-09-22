@@ -20,7 +20,8 @@ enum tokentype
   FLOAT_KEY,
   MINUS,
   DIV,
-  NEWLINE
+  NEWLINE,
+  GREATER
 };
 typedef struct
 {

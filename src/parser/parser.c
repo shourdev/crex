@@ -109,6 +109,7 @@ AST *expr()
         {
             op = "-";
         }
+
         getnexttoken();
         AST *right = term();
 
