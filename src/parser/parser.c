@@ -28,7 +28,15 @@ AST *factor()
         getnexttoken();
         return numnode;
     }
-
+    if (curtoken.type == MINUS)
+    {
+        getnexttoken();
+        AST *factor2 = factor();
+        char *op = "-";
+        AST *factor3 = AST_NEW(UnaryNode, op, factor2);
+    
+        return factor3;
+    }
     if (curtoken.type == OPEN_PAREN)
     {
         getnexttoken();
@@ -98,7 +106,7 @@ AST *expr()
 }
 void parsestatement()
 {
-    if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN)
+    if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN||curtoken.type==MINUS)
     {
         AST *tree = expr();
         ast_root_add(root, tree);

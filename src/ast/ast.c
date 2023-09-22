@@ -35,15 +35,19 @@ void ast_print(AST *ptr)
   {
     struct BinOpNode data = ast.data.BinOpNode;
     printf("(");
+   
     ast_print(data.left);
-    printf("%s", data.op);
-    ast_print(data.right);
-    printf(")");
+      
+ printf("%s", data.op);
+   ast_print(data.right);
+   printf(")");
+return; 
   }
   case UnaryNode:{
      struct UnaryNode data = ast.data.UnaryNode;
     printf("%s",data.op);
     ast_print(data.node);
+    return;
   }
   }
 }
