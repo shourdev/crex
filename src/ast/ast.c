@@ -17,11 +17,11 @@ void ast_print(AST *ptr)
   {
     printf("On Root: \n");
     struct AST_ROOT data = ast.data.AST_ROOT;
-   for (size_t i = 0; i < data.len; i++)
-   {
-    ast_print(&data.code[i]);
-   }
-   
+    for (size_t i = 0; i < data.len; i++)
+    {
+      ast_print(&data.code[i]);
+    }
+
     return;
   }
   case AST_NUM:
@@ -35,17 +35,18 @@ void ast_print(AST *ptr)
   {
     struct BinOpNode data = ast.data.BinOpNode;
     printf("(");
-   
+
     ast_print(data.left);
-      
- printf("%s", data.op);
-   ast_print(data.right);
-   printf(")");
-return; 
+
+    printf("%s", data.op);
+    ast_print(data.right);
+    printf(")");
+    return;
   }
-  case UnaryNode:{
-     struct UnaryNode data = ast.data.UnaryNode;
-    printf("%s",data.op);
+  case UnaryNode:
+  {
+    struct UnaryNode data = ast.data.UnaryNode;
+    printf("%s", data.op);
     ast_print(data.node);
     return;
   }

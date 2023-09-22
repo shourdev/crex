@@ -27,39 +27,11 @@ Token *lexer(char *string, int *num_tokens)
         isiden = 0;
 
         tokens = realloc(tokens, sizeof(Token) * (token_index + 3));
-        // * Operator
-        if (string[i] == '*')
-        {
-            tokens[token_index].type = MUL_OP;
-            tokens[token_index].value = NULL;
-            tokens[token_index].line = line;
-            token_index++;
-            i++;
-            isiden = 1;
-        }
-        // / Operator
-        if (string[i] == '/')
-        {
-            tokens[token_index].type = DIV;
-            tokens[token_index].value = NULL;
-            tokens[token_index].line = line;
-            token_index++;
-            i++;
-            isiden++;
-        }
-        // - Operator
-        if (string[i] == '-')
-        {
-            tokens[token_index].type = MINUS;
-            tokens[token_index].value = NULL;
-            tokens[token_index].line = line;
-            token_index++;
-            i++;
-            isiden++;
-        }
+
+      
 
         // Int and float
-        else if (isdigit(string[i]))
+        if (isdigit(string[i]))
         {
             isiden = 1;
             char *result = NULL;
@@ -109,6 +81,36 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+        }
+          // - Operator
+        if (string[i] == '-')
+        {
+            tokens[token_index].type = MINUS;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            isiden = 1;
+        }
+        // / Operator
+        if (string[i] == '/')
+        {
+            tokens[token_index].type = DIV;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            isiden = 1;
+        }
+        // * Operator
+        if (string[i] == '*')
+        {
+            tokens[token_index].type = MUL_OP;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i += 1;
+            isiden = 1;
         }
         // + Operator
         else if (string[i] == '+')
