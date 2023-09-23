@@ -64,7 +64,7 @@ AST *factor()
     }
     else
     {
-        printf("Error: Invalid synax, expected literal or identifier after operator on line %d\n ", tokens2[tokenindex - 1].line);
+        printf("Error: Invalid synax, expected literal or identifier after operator %d on line %d\n ", tokens2[tokenindex - 1].type, tokens2[tokenindex - 1].line);
         exit(1);
     }
 }
@@ -97,7 +97,7 @@ AST *term()
 AST *rel()
 {
     AST *left = term();
-    while (curtoken.type == GREATER || curtoken.type == SMALLER)
+    while (curtoken.type == GREATER || curtoken.type == SMALLER || curtoken.type == EQUALSTO)
     {
         char *op;
         if (curtoken.type == GREATER)
@@ -107,6 +107,10 @@ AST *rel()
         if (curtoken.type == SMALLER)
         {
             op = "<";
+        }
+        if (curtoken.type == EQUALSTO)
+        {
+            op = "==";
         }
         getnexttoken();
         AST *right = term();
