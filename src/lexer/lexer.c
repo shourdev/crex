@@ -28,8 +28,6 @@ Token *lexer(char *string, int *num_tokens)
 
         tokens = realloc(tokens, sizeof(Token) * (token_index + 3));
 
-      
-
         // Int and float
         if (isdigit(string[i]))
         {
@@ -82,7 +80,7 @@ Token *lexer(char *string, int *num_tokens)
                 token_index++;
             }
         }
-          // - Operator
+        // - Operator
         if (string[i] == '-')
         {
             tokens[token_index].type = MINUS;
@@ -122,8 +120,19 @@ Token *lexer(char *string, int *num_tokens)
             i += 1;
             isiden = 1;
         }
-        else if (string[i]=='>'){
+        // Greater
+        else if (string[i] == '>')
+        {
             tokens[token_index].type = GREATER;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            isiden = 1;
+        }
+        else if (string[i] == '<')
+        {
+            tokens[token_index].type = SMALLER;
             tokens[token_index].value = NULL;
             tokens[token_index].line = line;
             token_index++;
@@ -152,7 +161,6 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
                 i++;
-               
             }
             else
             {

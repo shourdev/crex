@@ -93,9 +93,33 @@ AST *term()
 
     return left;
 }
-AST *expr()
+
+AST *rel()
 {
     AST *left = term();
+    while (curtoken.type == GREATER || curtoken.type == SMALLER)
+    {
+        char *op;
+        if (curtoken.type == GREATER)
+        {
+            op = ">";
+        }
+        if (curtoken.type == SMALLER)
+        {
+            op = "<";
+        }
+        getnexttoken();
+        AST *right = term();
+
+        left = AST_NEW(RelNode, left, op, right);
+    }
+
+    return left;
+}
+
+AST *expr()
+{
+    AST *left = rel();
 
     AST *opnode;
     while (curtoken.type == PLUS_OP || curtoken.type == MINUS)
@@ -111,7 +135,7 @@ AST *expr()
         }
 
         getnexttoken();
-        AST *right = term();
+        AST *right = rel();
 
         left = AST_NEW(BinOpNode, left, op, right);
     }

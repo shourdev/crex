@@ -57,5 +57,12 @@ void ast_print(AST *ptr)
     printf("%s",data.value);
     return;
   }
+  case RelNode:{
+  struct RelNode data = ast.data.RelNode;
+  ast_print(data.left);
+  printf("%s",data.op);
+  ast_print(data.right);
+  return;
+  }
   }
 }

@@ -21,7 +21,8 @@ enum tokentype
   MINUS,
   DIV,
   NEWLINE,
-  GREATER
+  GREATER,
+  SMALLER
 };
 typedef struct
 {
