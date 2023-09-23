@@ -23,7 +23,8 @@ enum tokentype
   NEWLINE,
   GREATER,
   SMALLER,
-  EQUALSTO
+  EQUALSTO,
+  AND
 };
 typedef struct
 {

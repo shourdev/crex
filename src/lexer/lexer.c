@@ -287,6 +287,15 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+        if(string[i]=='&'&&string[i+1]=='&'){
+            isiden = 1;
+            tokens[token_index].type = AND;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            i++;
+        }
         // Error Handling and spaces and lines and comments
         else
         { // Lines

@@ -120,10 +120,22 @@ AST *rel()
 
     return left;
 }
-
-AST *expr()
+AST * and ()
 {
     AST *left = rel();
+    while (curtoken.type == AND)
+    {
+        char *op = "&&";
+        getnexttoken();
+        AST *right = rel();
+        left = AST_NEW(BinOpNode, left, op, right);
+       
+    }
+    return left;
+}
+AST *expr()
+{
+    AST *left = and();
 
     AST *opnode;
     while (curtoken.type == PLUS_OP || curtoken.type == MINUS)
@@ -139,7 +151,7 @@ AST *expr()
         }
 
         getnexttoken();
-        AST *right = rel();
+        AST *right = and();
 
         left = AST_NEW(BinOpNode, left, op, right);
     }

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ast.h"
+#include <string.h>
 AST *ast_new(AST ast)
 {
   AST *ptr = malloc(sizeof(AST));
@@ -34,6 +35,13 @@ void ast_print(AST *ptr)
   case BinOpNode:
   {
     struct BinOpNode data = ast.data.BinOpNode;
+    if(strcmp(data.op,"&&")==0){
+          ast_print(data.left);
+
+    printf("%s", data.op);
+    ast_print(data.right);
+    return;
+    }
     printf("(");
 
     ast_print(data.left);
@@ -57,6 +65,11 @@ void ast_print(AST *ptr)
     printf("%s",data.value);
     return;
   }
- 
+ case AndNode:{
+  struct AndNode data = ast.data.AndNode;
+  ast_print(data.left);
+  printf("%s",data.op);
+  ast_print(data.right);
+ }
   }
 }

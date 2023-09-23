@@ -19,7 +19,7 @@ struct AST
         EMPTY,
         UnaryNode,
         StringNode,
-       
+       AndNode
     } tag;
     union
     {
@@ -72,6 +72,12 @@ struct AST
         {
             char* value;
         }StringNode;
+        struct AndNode{
+            AST* left;
+            char* op;
+            AST* right;
+    
+        }AndNode;
      
     } data;
 
