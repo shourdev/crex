@@ -115,7 +115,7 @@ AST *rel()
         getnexttoken();
         AST *right = term();
 
-        left = AST_NEW(RelNode, left, op, right);
+        left = AST_NEW(BinOpNode, left, op, right);
     }
 
     return left;

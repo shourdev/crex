@@ -19,7 +19,7 @@ struct AST
         EMPTY,
         UnaryNode,
         StringNode,
-        RelNode
+       
     } tag;
     union
     {
@@ -72,11 +72,7 @@ struct AST
         {
             char* value;
         }StringNode;
-        struct RelNode{
-            AST* left;
-            char* op;
-            AST* right;
-        } RelNode;
+     
     } data;
 
 };
