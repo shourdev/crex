@@ -6,7 +6,8 @@ Token *tokens2;
 Token curtoken;
 int tokenindex = -1;
 AST *root;
-AST *expr();
+
+AST* and();
 AST *term();
 AST *factor();
 void ast_root_add(AST *root, AST *node)
@@ -19,7 +20,7 @@ void getnexttoken()
     tokenindex++;
     curtoken = tokens2[tokenindex];
 }
-AST *factor()
+AST *num()
 {
     if (curtoken.type == INT || curtoken.type == FLOAT)
     {
@@ -48,7 +49,7 @@ AST *factor()
     if (curtoken.type == OPEN_PAREN)
     {
         getnexttoken();
-        AST *expr2 = expr();
+        AST *expr2 = and();
         if (curtoken.type == CLOSE_PAREN)
         {
             getnexttoken();
@@ -68,9 +69,9 @@ AST *factor()
         exit(1);
     }
 }
-AST *term()
+AST *factor()
 {
-    AST *left = factor();
+    AST *left = num();
 
     while (curtoken.type == MUL_OP || curtoken.type == DIV)
     {
@@ -86,6 +87,30 @@ AST *term()
 
         getnexttoken();
 
+        AST *right = num();
+
+        left = AST_NEW(BinOpNode, left, op, right);
+    }
+
+    return left;
+}
+AST* term(){
+     AST *left = factor();
+
+    AST *opnode;
+    while (curtoken.type == PLUS_OP || curtoken.type == MINUS)
+    {
+        char *op;
+        if (curtoken.type == PLUS_OP)
+        {
+            op = "+";
+        }
+        if (curtoken.type == MINUS)
+        {
+            op = "-";
+        }
+
+        getnexttoken();
         AST *right = factor();
 
         left = AST_NEW(BinOpNode, left, op, right);
@@ -93,7 +118,6 @@ AST *term()
 
     return left;
 }
-
 AST *rel()
 {
     AST *left = term();
@@ -133,37 +157,13 @@ AST * and ()
     }
     return left;
 }
-AST *expr()
-{
-    AST *left = and();
 
-    AST *opnode;
-    while (curtoken.type == PLUS_OP || curtoken.type == MINUS)
-    {
-        char *op;
-        if (curtoken.type == PLUS_OP)
-        {
-            op = "+";
-        }
-        if (curtoken.type == MINUS)
-        {
-            op = "-";
-        }
-
-        getnexttoken();
-        AST *right = and();
-
-        left = AST_NEW(BinOpNode, left, op, right);
-    }
-
-    return left;
-}
 
 void parsestatement()
 {
     if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN || curtoken.type == MINUS || curtoken.type == STRING)
     {
-        AST *tree = expr();
+        AST *tree = and();
         ast_root_add(root, tree);
     }
 }

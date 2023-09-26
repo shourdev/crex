@@ -35,13 +35,7 @@ void ast_print(AST *ptr)
   case BinOpNode:
   {
     struct BinOpNode data = ast.data.BinOpNode;
-    if(strcmp(data.op,"&&")==0){
-          ast_print(data.left);
-
-    printf("%s", data.op);
-    ast_print(data.right);
-    return;
-    }
+   
     printf("(");
 
     ast_print(data.left);
