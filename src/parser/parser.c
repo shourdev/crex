@@ -2,30 +2,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../ast/ast.h"
+#include <stdbool.h>
 // tokens2 is an array of tokens, and curtoken stores the current token in the tokens2 index
 Token *tokens2;
 Token curtoken;
 int tokenindex = -1;
 AST *root;
 // All the functions for parsing expression
-AST* or();
+AST * or ();
 AST * and ();
 AST *term();
 AST *factor();
 AST *rel();
 AST *primary();
-AST* unary();
+AST *unary();
 // Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
 {
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
     root->data.AST_ROOT.code[root->data.AST_ROOT.len++] = *node;
 }
+
 void getnexttoken()
 {
     tokenindex++;
     curtoken = tokens2[tokenindex];
 }
+
 // Parses int,float, () etc
 AST *primary()
 {
@@ -62,10 +65,10 @@ AST *primary()
             exit(1);
         }
     }
-
 }
 // Parses unary
-AST* unary(){
+AST *unary()
+{
     if (curtoken.type == MINUS || curtoken.type == BANG)
     {
         char *op;
@@ -191,14 +194,49 @@ AST * or ()
 }
 AST *expr()
 {
+
     or ();
+}
+AST *exprstate()
+{
+    AST *exp = expr();
+
+    if (curtoken.type == NEWLINE)
+    {
+        getnexttoken();
+    }
+    return exp;
+}
+AST *printstatement()
+{
+    AST *expr2 = exprstate();
+    if (curtoken.type == NEWLINE)
+    {
+        getnexttoken();
+    }
+
+    AST *node = AST_NEW(PrintNode, expr2);
+
+    return node;
+}
+
+AST *statement()
+{
+    if (curtoken.type == PRINT_KEY)
+    {
+        getnexttoken();
+        return printstatement();
+    }
+
+    return exprstate();
 }
 void parsestatement()
 {
-
-        AST *tree = expr();
+    while (curtoken.type != TOKEN_EOF)
+    {
+        AST *tree = statement();
         ast_root_add(root, tree);
- 
+    }
 }
 void parse(Token *tokens)
 {
@@ -207,9 +245,7 @@ void parse(Token *tokens)
     root = AST_NEW(AST_ROOT,
                    AST_NEW(EMPTY, 'f'), );
 
-
-        parsestatement();
- 
+    parsestatement();
 
     ast_print(root);
 }

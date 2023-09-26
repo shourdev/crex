@@ -162,6 +162,15 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+             if (strcmp(result, "print") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = PRINT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            } 
             else
             {
                 if (visited == 0)
@@ -325,6 +334,12 @@ Token *lexer(char *string, int *num_tokens)
             {
 
                 line++;
+                   tokens[token_index].type = NEWLINE;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            isiden = 1;
+            i++;
             }
             // Space
             if (isspace(string[i]))

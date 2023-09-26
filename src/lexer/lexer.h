@@ -26,7 +26,8 @@ enum tokentype
   EQUALSTO,
   AND,
   BANG,
-  OR
+  OR,
+  PRINT_KEY
 };
 typedef struct
 {

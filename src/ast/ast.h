@@ -19,7 +19,8 @@ struct AST
         EMPTY,
         UnaryNode,
         StringNode,
-       AndNode
+       AndNode,
+       PrintNode
     } tag;
     union
     {
@@ -78,6 +79,9 @@ struct AST
             AST* right;
     
         }AndNode;
+        struct PrintNode{
+AST* expr;
+        }PrintNode;
      
     } data;
 
