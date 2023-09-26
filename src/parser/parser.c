@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../ast/ast.h"
+// tokens2 is an array of tokens, and curtoken stores the current token in the tokens2 index
 Token *tokens2;
 Token curtoken;
 int tokenindex = -1;
 AST *root;
+// All the functions for parsing expression
 AST* or();
 AST * and ();
 AST *term();
@@ -13,6 +15,7 @@ AST *factor();
 AST *rel();
 AST *primary();
 AST* unary();
+// Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
 {
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
@@ -23,6 +26,7 @@ void getnexttoken()
     tokenindex++;
     curtoken = tokens2[tokenindex];
 }
+// Parses int,float, () etc
 AST *primary()
 {
     if (curtoken.type == INT || curtoken.type == FLOAT)
@@ -58,14 +62,10 @@ AST *primary()
             exit(1);
         }
     }
-    else
-    {
-        printf("Error: Invalid synax, expected literal or identifier after operator %d on line %d\n ", tokens2[tokenindex - 1].type, tokens2[tokenindex - 1].line);
-        exit(1);
-    }
+
 }
-AST *unary()
-{
+// Parses unary
+AST* unary(){
     if (curtoken.type == MINUS || curtoken.type == BANG)
     {
         char *op;
@@ -84,6 +84,7 @@ AST *unary()
     }
     return primary();
 }
+// Parses multiplication and div
 AST *factor()
 {
     AST *left = unary();
@@ -109,6 +110,7 @@ AST *factor()
 
     return left;
 }
+// Parses addition and subtraction
 AST *term()
 {
     AST *left = factor();
@@ -134,6 +136,7 @@ AST *term()
 
     return left;
 }
+// Relation operators like < == etc
 AST *rel()
 {
     AST *left = term();
@@ -160,6 +163,7 @@ AST *rel()
 
     return left;
 }
+// &&
 AST * and ()
 {
     AST *left = rel();
@@ -172,6 +176,7 @@ AST * and ()
     }
     return left;
 }
+// ||
 AST * or ()
 {
     AST *left = and();
@@ -190,11 +195,10 @@ AST *expr()
 }
 void parsestatement()
 {
-    if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN || curtoken.type == MINUS || curtoken.type == STRING)
-    {
+
         AST *tree = expr();
         ast_root_add(root, tree);
-    }
+ 
 }
 void parse(Token *tokens)
 {
@@ -203,10 +207,9 @@ void parse(Token *tokens)
     root = AST_NEW(AST_ROOT,
                    AST_NEW(EMPTY, 'f'), );
 
-    while (curtoken.type != TOKEN_EOF)
-    {
+
         parsestatement();
-    }
+ 
 
     ast_print(root);
 }
