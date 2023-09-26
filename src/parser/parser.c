@@ -7,9 +7,11 @@ Token curtoken;
 int tokenindex = -1;
 AST *root;
 
-AST* and();
+AST * and ();
 AST *term();
 AST *factor();
+AST *rel();
+AST *primary();
 void ast_root_add(AST *root, AST *node)
 {
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
@@ -20,7 +22,7 @@ void getnexttoken()
     tokenindex++;
     curtoken = tokens2[tokenindex];
 }
-AST *num()
+AST *primary()
 {
     if (curtoken.type == INT || curtoken.type == FLOAT)
     {
@@ -37,15 +39,7 @@ AST *num()
 
         return stringnode;
     }
-    if (curtoken.type == MINUS)
-    {
-        getnexttoken();
-        AST *factor2 = factor();
-        char *op = "-";
-        AST *factor3 = AST_NEW(UnaryNode, op, factor2);
 
-        return factor3;
-    }
     if (curtoken.type == OPEN_PAREN)
     {
         getnexttoken();
@@ -69,9 +63,29 @@ AST *num()
         exit(1);
     }
 }
+AST *unary()
+{
+    if (curtoken.type == MINUS || curtoken.type == BANG)
+    {
+        char *op;
+        if (curtoken.type == MINUS)
+        {
+            op = "-";
+        }
+        if (curtoken.type == BANG)
+        {
+            op = "!";
+        }
+        getnexttoken();
+        AST *right = unary();
+        AST *expr = AST_NEW(UnaryNode, op, right);
+        return expr;
+    }
+    return primary();
+}
 AST *factor()
 {
-    AST *left = num();
+    AST *left = unary();
 
     while (curtoken.type == MUL_OP || curtoken.type == DIV)
     {
@@ -87,15 +101,16 @@ AST *factor()
 
         getnexttoken();
 
-        AST *right = num();
+        AST *right = unary();
 
         left = AST_NEW(BinOpNode, left, op, right);
     }
 
     return left;
 }
-AST* term(){
-     AST *left = factor();
+AST *term()
+{
+    AST *left = factor();
 
     AST *opnode;
     while (curtoken.type == PLUS_OP || curtoken.type == MINUS)
@@ -153,17 +168,26 @@ AST * and ()
         getnexttoken();
         AST *right = rel();
         left = AST_NEW(BinOpNode, left, op, right);
-       
     }
     return left;
 }
-
-
+AST * or ()
+{
+    AST *left = and();
+    while (curtoken.type == OR)
+    {
+        char *op = "||";
+        getnexttoken();
+        AST *right = and();
+        left = AST_NEW(BinOpNode, left, op, right);
+    }
+    return left;
+}
 void parsestatement()
 {
     if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN || curtoken.type == MINUS || curtoken.type == STRING)
     {
-        AST *tree = and();
+        AST *tree = or();
         ast_root_add(root, tree);
     }
 }

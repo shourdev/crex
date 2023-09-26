@@ -24,7 +24,9 @@ enum tokentype
   GREATER,
   SMALLER,
   EQUALSTO,
-  AND
+  AND,
+  BANG,
+  OR
 };
 typedef struct
 {
