@@ -6,12 +6,13 @@ Token *tokens2;
 Token curtoken;
 int tokenindex = -1;
 AST *root;
-
+AST* or();
 AST * and ();
 AST *term();
 AST *factor();
 AST *rel();
 AST *primary();
+AST* unary();
 void ast_root_add(AST *root, AST *node)
 {
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
@@ -183,11 +184,15 @@ AST * or ()
     }
     return left;
 }
+AST *expr()
+{
+    or ();
+}
 void parsestatement()
 {
     if (curtoken.type == INT || curtoken.type == FLOAT || curtoken.type == OPEN_PAREN || curtoken.type == MINUS || curtoken.type == STRING)
     {
-        AST *tree = or();
+        AST *tree = expr();
         ast_root_add(root, tree);
     }
 }
