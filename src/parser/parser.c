@@ -22,65 +22,107 @@ void ast_root_add(AST *root, AST *node)
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
     root->data.AST_ROOT.code[root->data.AST_ROOT.len++] = *node;
 }
-
-void getnexttoken()
+Token peek()
 {
-    tokenindex++;
-    curtoken = tokens2[tokenindex];
+    return tokens2[tokenindex];
+}
+Token previous()
+{
+    return tokens2[tokenindex - 1];
+}
+bool isatend()
+{
+    return peek().type == TOKEN_EOF;
+}
+Token getnexttoken()
+{
+    if (!isatend())
+    {
+        tokenindex++;
+    }
+    return previous();
 }
 
+bool check(enum tokentype type)
+{
+    if (isatend())
+    {
+        return false;
+    }
+    return peek().type == type;
+}
+bool match(enum tokentype type)
+{
+    if (check(type))
+    {
+        getnexttoken();
+        return true;
+    }
+    return false;
+}
+void error(Token token, char *message)
+{
+    if (token.type == TOKEN_EOF)
+    {
+        printf("%d at end %s", token.line, message);
+        exit(1);
+    }
+    else
+    {
+        printf("%d at %d %s", token.line, token.type, message);
+        exit(1);
+    }
+}
+Token consume(enum tokentype type, char *message)
+{
+    if (check(type))
+    {
+        return getnexttoken();
+    }
+    error(peek(), message);
+}
 // Parses int,float, () etc
 AST *primary()
 {
-    if (curtoken.type == INT || curtoken.type == FLOAT)
+    if (match(INT) || match(FLOAT))
     {
 
-        AST *numnode = AST_NEW(AST_NUM, curtoken.value);
-        getnexttoken();
+        AST *numnode = AST_NEW(AST_NUM, previous().value);
         return numnode;
     }
-    if (curtoken.type == STRING)
+    if (match(STRING))
     {
 
-        AST *stringnode = AST_NEW(StringNode, curtoken.value);
-        getnexttoken();
+        AST *stringnode = AST_NEW(StringNode, previous().value);
 
         return stringnode;
     }
 
-    if (curtoken.type == OPEN_PAREN)
+    if (match(OPEN_PAREN))
     {
-        getnexttoken();
+
         AST *expr2 = and();
-        if (curtoken.type == CLOSE_PAREN)
-        {
-            getnexttoken();
-            return expr2;
-        }
-        else
-        {
-            printf("Expected ) after expression ");
-            ast_print(expr2);
-            printf(" on line %d\n", curtoken.line);
-            exit(1);
-        }
+
+        consume(CLOSE_PAREN, "Expect ')' after expression.");
+
+        return expr2;
     }
 }
 // Parses unary
 AST *unary()
 {
-    if (curtoken.type == MINUS || curtoken.type == BANG)
+    if (match(MINUS) || match(BANG))
     {
         char *op;
-        if (curtoken.type == MINUS)
+        if (previous().type == MINUS)
         {
             op = "-";
         }
-        if (curtoken.type == BANG)
+        if (previous().type == BANG)
         {
             op = "!";
         }
-        getnexttoken();
+
         AST *right = unary();
         AST *expr = AST_NEW(UnaryNode, op, right);
         return expr;
@@ -92,19 +134,17 @@ AST *factor()
 {
     AST *left = unary();
 
-    while (curtoken.type == MUL_OP || curtoken.type == DIV)
+    while (match(MUL_OP) || match(DIV))
     {
         char *op;
-        if (curtoken.type == MUL_OP)
+        if (previous().type == MUL_OP)
         {
             op = "*";
         }
-        if (curtoken.type == DIV)
+        if (previous().type == DIV)
         {
             op = "/";
         }
-
-        getnexttoken();
 
         AST *right = unary();
 
@@ -119,19 +159,18 @@ AST *term()
     AST *left = factor();
 
     AST *opnode;
-    while (curtoken.type == PLUS_OP || curtoken.type == MINUS)
+    while (match(PLUS_OP) || match(MINUS))
     {
         char *op;
-        if (curtoken.type == PLUS_OP)
+        if (previous().type == PLUS_OP)
         {
             op = "+";
         }
-        if (curtoken.type == MINUS)
+        if (previous().type == MINUS)
         {
             op = "-";
         }
 
-        getnexttoken();
         AST *right = factor();
 
         left = AST_NEW(BinOpNode, left, op, right);
@@ -143,22 +182,22 @@ AST *term()
 AST *rel()
 {
     AST *left = term();
-    while (curtoken.type == GREATER || curtoken.type == SMALLER || curtoken.type == EQUALSTO)
+    while (match(GREATER) || match(SMALLER) || match(EQUALSTO))
     {
         char *op;
-        if (curtoken.type == GREATER)
+        if (previous().type == GREATER)
         {
             op = ">";
         }
-        if (curtoken.type == SMALLER)
+        if (previous().type == SMALLER)
         {
             op = "<";
         }
-        if (curtoken.type == EQUALSTO)
+        if (previous().type == EQUALSTO)
         {
             op = "==";
         }
-        getnexttoken();
+
         AST *right = term();
 
         left = AST_NEW(BinOpNode, left, op, right);
@@ -170,10 +209,10 @@ AST *rel()
 AST * and ()
 {
     AST *left = rel();
-    while (curtoken.type == AND)
+    while (match(AND))
     {
         char *op = "&&";
-        getnexttoken();
+
         AST *right = rel();
         left = AST_NEW(BinOpNode, left, op, right);
     }
@@ -183,10 +222,10 @@ AST * and ()
 AST * or ()
 {
     AST *left = and();
-    while (curtoken.type == OR)
+    while (match(OR))
     {
         char *op = "||";
-        getnexttoken();
+
         AST *right = and();
         left = AST_NEW(BinOpNode, left, op, right);
     }
@@ -195,25 +234,20 @@ AST * or ()
 AST *expr()
 {
 
-    or ();
+    return or ();
 }
 AST *exprstate()
 {
     AST *exp = expr();
 
-    if (curtoken.type == NEWLINE)
-    {
-        getnexttoken();
-    }
+    consume(Semi, "Expected ; after expression.");
     return exp;
 }
 AST *printstatement()
 {
-    AST *expr2 = exprstate();
-    if (curtoken.type == NEWLINE)
-    {
-        getnexttoken();
-    }
+    AST *expr2 = expr();
+
+    consume(Semi, "Expected ; after value.");
 
     AST *node = AST_NEW(PrintNode, expr2);
 
@@ -222,9 +256,9 @@ AST *printstatement()
 
 AST *statement()
 {
-    if (curtoken.type == PRINT_KEY)
+    if (match(PRINT_KEY))
     {
-        getnexttoken();
+
         return printstatement();
     }
 
@@ -232,7 +266,7 @@ AST *statement()
 }
 void parsestatement()
 {
-    while (curtoken.type != TOKEN_EOF)
+    while (!isatend())
     {
         AST *tree = statement();
         ast_root_add(root, tree);
@@ -244,8 +278,8 @@ void parse(Token *tokens)
     getnexttoken();
     root = AST_NEW(AST_ROOT,
                    AST_NEW(EMPTY, 'f'), );
+    AST *tree;
 
     parsestatement();
-
     ast_print(root);
 }

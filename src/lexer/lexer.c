@@ -162,7 +162,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-             if (strcmp(result, "print") == 0)
+            if (strcmp(result, "print") == 0)
             {
                 visited = 1;
                 isiden = 1;
@@ -170,7 +170,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].value = NULL;
                 tokens[token_index].line = line;
                 token_index++;
-            } 
+            }
             else
             {
                 if (visited == 0)
@@ -317,7 +317,7 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
-        if (string[i] == '|' && string[i+1] == '|')
+        if (string[i] == '|' && string[i + 1] == '|')
         {
             isiden = 1;
             tokens[token_index].type = OR;
@@ -327,6 +327,16 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             i++;
         }
+        // ;
+        if (string[i] == ';')
+        {
+            isiden = 1;
+            tokens[token_index].type = Semi;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
         // Error Handling and spaces and lines and comments
         else
         { // Lines
@@ -334,12 +344,12 @@ Token *lexer(char *string, int *num_tokens)
             {
 
                 line++;
-                   tokens[token_index].type = NEWLINE;
-            tokens[token_index].value = NULL;
-            tokens[token_index].line = line;
-            token_index++;
-            isiden = 1;
-            i++;
+                tokens[token_index].type = NEWLINE;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+                isiden = 1;
+                i++;
             }
             // Space
             if (isspace(string[i]))
@@ -379,6 +389,7 @@ Token *lexer(char *string, int *num_tokens)
 
                 break;
             }
+
             // Error
             else
             {

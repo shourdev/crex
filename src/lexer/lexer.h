@@ -27,7 +27,8 @@ enum tokentype
   AND,
   BANG,
   OR,
-  PRINT_KEY
+  PRINT_KEY,
+  Semi
 };
 typedef struct
 {

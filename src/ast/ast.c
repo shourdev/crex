@@ -64,11 +64,16 @@ void ast_print(AST *ptr)
   ast_print(data.left);
   printf("%s",data.op);
   ast_print(data.right);
+  return;
  }
  case PrintNode:{
   struct PrintNode data = ast.data.PrintNode;
   printf("print:\n");
   ast_print(data.expr);
+  return;
  }
+default:{
+  printf("h");
+}
   }
 }
