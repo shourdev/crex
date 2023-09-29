@@ -328,10 +328,10 @@ Token *lexer(char *string, int *num_tokens)
             i++;
         }
         // ;
-        if (string[i] == ';')
+        if (string[i] == '@')
         {
             isiden = 1;
-            tokens[token_index].type = Semi;
+            tokens[token_index].type = AT;
             tokens[token_index].value = NULL;
             tokens[token_index].line = line;
             token_index++;
@@ -344,12 +344,8 @@ Token *lexer(char *string, int *num_tokens)
             {
 
                 line++;
-                tokens[token_index].type = NEWLINE;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-                isiden = 1;
-                i++;
+      
+             
             }
             // Space
             if (isspace(string[i]))

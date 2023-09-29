@@ -19,8 +19,9 @@ struct AST
         EMPTY,
         UnaryNode,
         StringNode,
-       AndNode,
-       PrintNode
+        AndNode,
+        PrintNode,
+        VarDecl
     } tag;
     union
     {
@@ -71,20 +72,24 @@ struct AST
         } UnaryNode;
         struct StringNode
         {
-            char* value;
-        }StringNode;
-        struct AndNode{
-            AST* left;
-            char* op;
-            AST* right;
-    
-        }AndNode;
-        struct PrintNode{
-AST* expr;
-        }PrintNode;
-     
-    } data;
+            char *value;
+        } StringNode;
+        struct AndNode
+        {
+            AST *left;
+            char *op;
+            AST *right;
 
+        } AndNode;
+        struct PrintNode
+        {
+            AST *expr;
+        } PrintNode;
+  struct VarDecl{
+    char* name;
+    AST* expr;
+  }VarDecl;
+    } data;
 };
 void ast_print(AST *ptr);
 AST *ast_new(AST ast);

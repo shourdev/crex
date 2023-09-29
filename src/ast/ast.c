@@ -35,7 +35,7 @@ void ast_print(AST *ptr)
   case BinOpNode:
   {
     struct BinOpNode data = ast.data.BinOpNode;
-   
+
     printf("(");
 
     ast_print(data.left);
@@ -56,24 +56,33 @@ void ast_print(AST *ptr)
   case StringNode:
   {
     struct StringNode data = ast.data.StringNode;
-    printf("%s",data.value);
+    printf("%s", data.value);
     return;
   }
- case AndNode:{
-  struct AndNode data = ast.data.AndNode;
-  ast_print(data.left);
-  printf("%s",data.op);
-  ast_print(data.right);
-  return;
- }
- case PrintNode:{
-  struct PrintNode data = ast.data.PrintNode;
-  printf("print:\n");
-  ast_print(data.expr);
-  return;
- }
-default:{
-  printf("h");
-}
+  case AndNode:
+  {
+    struct AndNode data = ast.data.AndNode;
+    ast_print(data.left);
+    printf("%s", data.op);
+    ast_print(data.right);
+    return;
+  }
+  case PrintNode:
+  {
+    struct PrintNode data = ast.data.PrintNode;
+    printf("print:\n");
+    ast_print(data.expr);
+    return;
+  }
+  case VarDecl:
+  {
+    
+    
+      struct VarDecl data = ast.data.VarDecl;
+      printf("%s = ",data.name);
+      ast_print(data.expr);
+      return;
+    
+  }
   }
 }

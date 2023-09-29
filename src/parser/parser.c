@@ -240,14 +240,14 @@ AST *exprstate()
 {
     AST *exp = expr();
 
-    consume(Semi, "Expected ; after expression.");
+    consume(AT, "Expected '@' after expression.");
     return exp;
 }
 AST *printstatement()
 {
     AST *expr2 = expr();
 
-    consume(Semi, "Expected ; after value.");
+    consume(AT, "Expected '@' after value.");
 
     AST *node = AST_NEW(PrintNode, expr2);
 
@@ -264,11 +264,31 @@ AST *statement()
 
     return exprstate();
 }
+AST *varDeclare()
+{
+    char *name = peek().value;
+    getnexttoken();
+    AST *init;
+    if (match(EQUAL))
+    {
+        init = expr();
+    }
+    consume(AT, "Expect '@' after variable declaration");
+    return AST_NEW(VarDecl, name, init);
+}
+AST *declaration()
+{
+    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY))
+    {
+        return varDeclare();
+    }
+    return statement();
+}
 void parsestatement()
 {
     while (!isatend())
     {
-        AST *tree = statement();
+        AST *tree = declaration();
         ast_root_add(root, tree);
     }
 }
@@ -282,4 +302,5 @@ void parse(Token *tokens)
 
     parsestatement();
     ast_print(root);
+   
 }
