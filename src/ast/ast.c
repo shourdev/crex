@@ -84,5 +84,17 @@ void ast_print(AST *ptr)
       return;
     
   }
+  case VarAssign:{
+    struct VarAssign data = ast.data.VarAssign;
+    printf("%s",data.name);
+    printf("=");
+    ast_print(data.value);
+    return;
+  }
+  case VarAcess:{
+    struct VarAcess data = ast.data.VarAcess;
+    printf("%s",data.name);
+    return;
+  }
   }
 }

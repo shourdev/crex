@@ -21,7 +21,9 @@ struct AST
         StringNode,
         AndNode,
         PrintNode,
-        VarDecl
+        VarDecl,
+        VarAssign,
+        VarAcess
     } tag;
     union
     {
@@ -85,10 +87,20 @@ struct AST
         {
             AST *expr;
         } PrintNode;
-  struct VarDecl{
-    char* name;
-    AST* expr;
-  }VarDecl;
+        struct VarDecl
+        {
+            char *name;
+            AST *expr;
+        } VarDecl;
+        struct VarAssign
+        {
+            char *name;
+            AST *value;
+        } VarAssign;
+        struct VarAcess
+        {
+            char *name;
+        } VarAcess;
     } data;
 };
 void ast_print(AST *ptr);

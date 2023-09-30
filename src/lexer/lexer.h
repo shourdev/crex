@@ -28,7 +28,7 @@ enum tokentype
   BANG,
   OR,
   PRINT_KEY,
-  AT
+  QUESTION
 };
 typedef struct
 {

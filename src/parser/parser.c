@@ -81,6 +81,15 @@ Token consume(enum tokentype type, char *message)
     }
     error(peek(), message);
 }
+bool instanceofvar(AST *expr)
+{
+    AST ast = *expr;
+    if (ast.tag == VarAcess)
+    {
+        return true;
+    }
+    return false;
+}
 // Parses int,float, () etc
 AST *primary()
 {
@@ -96,6 +105,11 @@ AST *primary()
         AST *stringnode = AST_NEW(StringNode, previous().value);
 
         return stringnode;
+    }
+    if (match(IDENTFIER))
+    {
+        AST *varnode = AST_NEW(VarAcess, previous().value);
+        return varnode;
     }
 
     if (match(OPEN_PAREN))
@@ -231,23 +245,41 @@ AST * or ()
     }
     return left;
 }
+AST *assignment()
+{
+    AST *expr = or ();
+    if (match(EQUAL))
+    {
+        char *op = "=";
+        AST *value = assignment();
+        if (instanceofvar(expr))
+        {
+            AST exp = *expr;
+            char *name = exp.data.VarAcess.name;
+            return AST_NEW(VarAssign, name, value);
+        }
+        printf("Invalid assignment target.\n");
+        exit(1);
+    }
+    return expr;
+}
 AST *expr()
 {
 
-    return or ();
+    return assignment();
 }
 AST *exprstate()
 {
     AST *exp = expr();
 
-    consume(AT, "Expected '@' after expression.");
+    consume(QUESTION, "Expected '?' after expression.");
     return exp;
 }
 AST *printstatement()
 {
     AST *expr2 = expr();
 
-    consume(AT, "Expected '@' after value.");
+    consume(QUESTION, "Expected '?' after value.");
 
     AST *node = AST_NEW(PrintNode, expr2);
 
@@ -273,7 +305,7 @@ AST *varDeclare()
     {
         init = expr();
     }
-    consume(AT, "Expect '@' after variable declaration");
+    consume(QUESTION, "Expect '?' after variable declaration");
     return AST_NEW(VarDecl, name, init);
 }
 AST *declaration()
@@ -302,5 +334,4 @@ void parse(Token *tokens)
 
     parsestatement();
     ast_print(root);
-   
 }
