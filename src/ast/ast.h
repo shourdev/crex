@@ -23,7 +23,8 @@ struct AST
         PrintNode,
         VarDecl,
         VarAssign,
-        VarAcess
+        VarAcess,
+        AST_BLOCK
     } tag;
     union
     {
@@ -57,6 +58,11 @@ struct AST
             AST *code;
             size_t len;
         } AST_ROOT;
+        struct AST_BLOCK
+        {
+            AST *code;
+            size_t len;
+        } AST_BLOCK;
         struct EMPTY
         {
             char t;

@@ -337,6 +337,26 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+        // {
+        if (string[i] == '{')
+        {
+            isiden = 1;
+            tokens[token_index].type = OPEN_CURLY;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
+        // }
+        if (string[i] == '}')
+        {
+            isiden = 1;
+            tokens[token_index].type = CLOSE_CURLY;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
         // Error Handling and spaces and lines and comments
         else
         { // Lines
@@ -344,8 +364,6 @@ Token *lexer(char *string, int *num_tokens)
             {
 
                 line++;
-      
-             
             }
             // Space
             if (isspace(string[i]))

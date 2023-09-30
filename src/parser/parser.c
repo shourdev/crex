@@ -16,11 +16,17 @@ AST *factor();
 AST *rel();
 AST *primary();
 AST *unary();
+AST *block();
 // Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
 {
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
     root->data.AST_ROOT.code[root->data.AST_ROOT.len++] = *node;
+}
+void ast_block_add(AST *root, AST *node)
+{
+    root->data.AST_BLOCK.code = realloc(root->data.AST_BLOCK.code, (root->data.AST_BLOCK.len + 1) * sizeof(AST));
+    root->data.AST_BLOCK.code[root->data.AST_BLOCK.len++] = *node;
 }
 Token peek()
 {
@@ -293,7 +299,10 @@ AST *statement()
 
         return printstatement();
     }
-
+    if (match(OPEN_CURLY))
+    {
+        return block();
+    }
     return exprstate();
 }
 AST *varDeclare()
@@ -315,6 +324,18 @@ AST *declaration()
         return varDeclare();
     }
     return statement();
+}
+AST *block()
+{
+    AST *root = AST_NEW(AST_BLOCK,
+                        AST_NEW(EMPTY, 'f'), );
+    while (!check(CLOSE_CURLY) && !isatend())
+    {
+        AST *code = declaration();
+        ast_block_add(root, code);
+    }
+    consume(CLOSE_CURLY,"Expected '#' after block.");
+    return root;
 }
 void parsestatement()
 {

@@ -25,6 +25,17 @@ void ast_print(AST *ptr)
 
     return;
   }
+  case AST_BLOCK:
+  {
+    printf("On Block: \n");
+    struct AST_BLOCK data = ast.data.AST_BLOCK;
+    for (size_t i = 0; i < data.len; i++)
+    {
+      ast_print(&data.code[i]);
+    }
+
+    return;
+  }
   case AST_NUM:
   {
     struct AST_NUM data = ast.data.AST_NUM;
@@ -76,24 +87,24 @@ void ast_print(AST *ptr)
   }
   case VarDecl:
   {
-    
-    
-      struct VarDecl data = ast.data.VarDecl;
-      printf("%s = ",data.name);
-      ast_print(data.expr);
-      return;
-    
+
+    struct VarDecl data = ast.data.VarDecl;
+    printf("%s = ", data.name);
+    ast_print(data.expr);
+    return;
   }
-  case VarAssign:{
+  case VarAssign:
+  {
     struct VarAssign data = ast.data.VarAssign;
-    printf("%s",data.name);
+    printf("%s", data.name);
     printf("=");
     ast_print(data.value);
     return;
   }
-  case VarAcess:{
+  case VarAcess:
+  {
     struct VarAcess data = ast.data.VarAcess;
-    printf("%s",data.name);
+    printf("%s", data.name);
     return;
   }
   }
