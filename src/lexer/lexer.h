@@ -29,8 +29,9 @@ enum tokentype
   OR,
   PRINT_KEY,
   QUESTION,
- OPEN_CURLY,
- CLOSE_CURLY
+IF,
+ HASH,
+ ELSE
 };
 typedef struct
 {

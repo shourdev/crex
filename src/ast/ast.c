@@ -107,5 +107,23 @@ void ast_print(AST *ptr)
     printf("%s", data.name);
     return;
   }
+  case IF_STATEMENT:{
+    struct IF_STATEMENT data = ast.data.IF_STATEMENT;
+    printf("if ");
+    ast_print(data.condition);
+    printf("\n");
+    printf("then\n");
+    ast_print(data.thenbranch);
+     printf("\n");
+  printf("over\n");
+  printf("else\n");
+  ast_print(data.elsebranch);
+  printf("\n");
+  printf("over\n");
+  return;
+  }
+  case EMPTY:{
+    return;
+  }
   }
 }

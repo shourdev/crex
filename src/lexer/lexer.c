@@ -171,6 +171,24 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+            if (strcmp(result, "if") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = IF;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+             if (strcmp(result, "else") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = ELSE;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
             else
             {
                 if (visited == 0)
@@ -337,21 +355,11 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
-        // {
-        if (string[i] == '{')
+        // #
+        if (string[i] == '#')
         {
             isiden = 1;
-            tokens[token_index].type = OPEN_CURLY;
-            tokens[token_index].value = NULL;
-            tokens[token_index].line = line;
-            token_index++;
-            i++;
-        }
-        // }
-        if (string[i] == '}')
-        {
-            isiden = 1;
-            tokens[token_index].type = CLOSE_CURLY;
+            tokens[token_index].type = HASH;
             tokens[token_index].value = NULL;
             tokens[token_index].line = line;
             token_index++;

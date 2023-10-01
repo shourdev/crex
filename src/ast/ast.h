@@ -24,7 +24,8 @@ struct AST
         VarDecl,
         VarAssign,
         VarAcess,
-        AST_BLOCK
+        AST_BLOCK,
+        IF_STATEMENT
     } tag;
     union
     {
@@ -107,6 +108,11 @@ struct AST
         {
             char *name;
         } VarAcess;
+        struct IF_STATEMENT{
+            AST* condition;
+            AST* thenbranch;
+            AST* elsebranch;
+        }IF_STATEMENT;
     } data;
 };
 void ast_print(AST *ptr);

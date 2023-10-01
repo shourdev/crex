@@ -291,7 +291,19 @@ AST *printstatement()
 
     return node;
 }
-
+AST *ifstatement()
+{
+    consume(OPEN_PAREN, "Expect '(' after 'if'");
+    AST *condition = expr();
+    consume(CLOSE_PAREN, "Expect ')' after if condition");
+    AST *then = block();
+    AST *elsebranch = AST_NEW(EMPTY, 2);
+    if (match(ELSE))
+    {
+        elsebranch = block();
+    }
+    return AST_NEW(IF_STATEMENT, condition, then, elsebranch);
+}
 AST *statement()
 {
     if (match(PRINT_KEY))
@@ -299,9 +311,9 @@ AST *statement()
 
         return printstatement();
     }
-    if (match(OPEN_CURLY))
+    if (match(IF))
     {
-        return block();
+        return ifstatement();
     }
     return exprstate();
 }
@@ -329,12 +341,12 @@ AST *block()
 {
     AST *root = AST_NEW(AST_BLOCK,
                         AST_NEW(EMPTY, 'f'), );
-    while (!check(CLOSE_CURLY) && !isatend())
+    while (!check(HASH) && !isatend())
     {
         AST *code = declaration();
         ast_block_add(root, code);
     }
-    consume(CLOSE_CURLY,"Expected '#' after block.");
+    consume(HASH, "Expected '#' after block.");
     return root;
 }
 void parsestatement()
