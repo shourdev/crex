@@ -189,6 +189,15 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+               if (strcmp(result, "while") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = WHILE_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
             else
             {
                 if (visited == 0)

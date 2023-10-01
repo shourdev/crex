@@ -81,7 +81,7 @@ void ast_print(AST *ptr)
   case PrintNode:
   {
     struct PrintNode data = ast.data.PrintNode;
-    printf("print:\n");
+    printf("print: ");
     ast_print(data.expr);
     return;
   }
@@ -122,6 +122,17 @@ void ast_print(AST *ptr)
   printf("over\n");
   return;
   }
+  case WHILE_LOOP:{
+      struct WHILE_LOOP data = ast.data.WHILE_LOOP;
+    printf("While ");
+    ast_print(data.condition);
+    printf("\n");
+    printf("then\n");
+    ast_print(data.thenbranch);
+     printf("\n");
+  printf("over\n");
+  return;
+  }WHILE_LOOP;
   case EMPTY:{
     return;
   }

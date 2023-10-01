@@ -16,18 +16,28 @@ AST *factor();
 AST *rel();
 AST *primary();
 AST *unary();
+// All the functions for parsing statements
 AST *block();
+AST *declaration();
+AST *varDeclare();
+AST *statement();
+AST *ifstatement();
+AST *printstatement();
+AST *exprstate();
+AST *whilestatement();
 // Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
 {
     root->data.AST_ROOT.code = realloc(root->data.AST_ROOT.code, (root->data.AST_ROOT.len + 1) * sizeof(AST));
     root->data.AST_ROOT.code[root->data.AST_ROOT.len++] = *node;
 }
+// For blocks
 void ast_block_add(AST *root, AST *node)
 {
     root->data.AST_BLOCK.code = realloc(root->data.AST_BLOCK.code, (root->data.AST_BLOCK.len + 1) * sizeof(AST));
     root->data.AST_BLOCK.code[root->data.AST_BLOCK.len++] = *node;
 }
+// Token related functions
 Token peek()
 {
     return tokens2[tokenindex];
@@ -96,6 +106,11 @@ bool instanceofvar(AST *expr)
     }
     return false;
 }
+
+/*
+This section parses all the expressions
+*/
+
 // Parses int,float, () etc
 AST *primary()
 {
@@ -274,6 +289,9 @@ AST *expr()
 
     return assignment();
 }
+/*
+This section parses all the statements
+*/
 AST *exprstate()
 {
     AST *exp = expr();
@@ -291,11 +309,19 @@ AST *printstatement()
 
     return node;
 }
+AST *whilestatement()
+{
+    consume(OPEN_PAREN, "Expect '(' after 'while'");
+    AST *condition = expr();
+    consume(CLOSE_PAREN, "Expect ')' after condition");
+    AST *body = block();
+    return AST_NEW(WHILE_LOOP, condition, body);
+}
 AST *ifstatement()
 {
     consume(OPEN_PAREN, "Expect '(' after 'if'");
     AST *condition = expr();
-    consume(CLOSE_PAREN, "Expect ')' after if condition");
+    consume(CLOSE_PAREN, "Expect ')' after condition");
     AST *then = block();
     AST *elsebranch = AST_NEW(EMPTY, 2);
     if (match(ELSE))
@@ -314,6 +340,10 @@ AST *statement()
     if (match(IF))
     {
         return ifstatement();
+    }
+    if (match(WHILE_KEY))
+    {
+        return whilestatement();
     }
     return exprstate();
 }

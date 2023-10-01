@@ -31,7 +31,8 @@ enum tokentype
   QUESTION,
 IF,
  HASH,
- ELSE
+ ELSE,
+ WHILE_KEY
 };
 typedef struct
 {

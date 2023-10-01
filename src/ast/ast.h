@@ -25,7 +25,8 @@ struct AST
         VarAssign,
         VarAcess,
         AST_BLOCK,
-        IF_STATEMENT
+        IF_STATEMENT,
+        WHILE_LOOP
     } tag;
     union
     {
@@ -113,6 +114,10 @@ struct AST
             AST* thenbranch;
             AST* elsebranch;
         }IF_STATEMENT;
+        struct WHILE_LOOP{
+            AST* condition;
+            AST* thenbranch;
+        }WHILE_LOOP;
     } data;
 };
 void ast_print(AST *ptr);
