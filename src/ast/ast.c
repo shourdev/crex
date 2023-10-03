@@ -36,14 +36,14 @@ void ast_print(AST *ptr)
 
     return;
   }
-    case AST_ARG:
+  case AST_ARG:
   {
-  
+
     struct AST_ARG data = ast.data.AST_ARG;
     for (size_t i = 0; i < data.len; i++)
     {
       ast_print(&data.args[i]);
-    
+
       printf(",");
     }
 
@@ -149,14 +149,24 @@ void ast_print(AST *ptr)
     return;
   }
 
-    case Call:{
-      struct Call data = ast.data.Call;
-      ast_print(data.Callee);
-      printf("(");
-      ast_print(data.arguments);
-      printf(")");
-      return;
-    }
+  case Call:
+  {
+    struct Call data = ast.data.Call;
+    ast_print(data.Callee);
+    printf("(");
+    ast_print(data.arguments);
+    printf(")");
+    return;
+  }
+  case Function:
+  {
+    struct Function data = ast.data.Function;
+    printf("func %s(", data.name);
+    ast_print(data.args);
+    printf(")");
+    ast_print(data.code);
+    printf("over\n");
+  }
   case EMPTY:
   {
     return;

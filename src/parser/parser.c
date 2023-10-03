@@ -155,13 +155,19 @@ AST *primary()
 }
 AST *finishcall(AST *callee)
 {
+    int arg = 0;
     AST *arguments = AST_NEW(AST_ARG,
                              AST_NEW(EMPTY, 'f'), );
     if (!check(CLOSE_PAREN))
     {
         do
         {
+            if (arg > 250)
+            {
+                error(peek(), "Too many arguments");
+            }
             ast_arg_add(arguments, expr());
+            arg++;
         } while (match(COMMA));
     }
     consume(CLOSE_PAREN, "Expect ')' after arguments.");
@@ -410,7 +416,21 @@ AST *varDeclare()
     {
         init = expr();
     }
-
+    // Functions
+    if (match(OPEN_PAREN))
+    {
+        AST *parameters = AST_NEW(EMPTY, 2);
+        if (!check(CLOSE_PAREN))
+        {
+            do
+            {
+                ast_arg_add(parameters, varDeclare());
+            } while (COMMA);
+        }
+        consume(CLOSE_PAREN, "Expect");
+        AST *body = block();
+        return AST_NEW(Function, name, parameters, body);
+    }
     consume(QUESTION, "Expect '?' after variable declaration");
     return AST_NEW(VarDecl, name, type, init);
 }

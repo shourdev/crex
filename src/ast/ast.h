@@ -28,7 +28,8 @@ struct AST
         IF_STATEMENT,
         WHILE_LOOP,
         Call,
-        AST_ARG
+        AST_ARG,
+        Function
     } tag;
     union
     {
@@ -130,6 +131,11 @@ struct AST
             AST* Callee;
             AST* arguments;
         }Call;
+        struct Function{
+            char* name;
+            AST* args;
+            AST* code;
+        }Function;
     } data;
 };
 void ast_print(AST *ptr);
