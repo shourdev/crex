@@ -8,7 +8,8 @@
         "include.h": "c",
         "stdlib.h": "c",
         "stdio.h": "c",
-        "ast.h": "c"
+        "ast.h": "c",
+        "system_error": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

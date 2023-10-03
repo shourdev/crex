@@ -16,6 +16,7 @@ AST *factor();
 AST *rel();
 AST *primary();
 AST *unary();
+AST *expr();
 // All the functions for parsing statements
 AST *block();
 AST *declaration();
@@ -25,6 +26,7 @@ AST *ifstatement();
 AST *printstatement();
 AST *exprstate();
 AST *whilestatement();
+bool isatend();
 // Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
 {
@@ -37,11 +39,19 @@ void ast_block_add(AST *root, AST *node)
     root->data.AST_BLOCK.code = realloc(root->data.AST_BLOCK.code, (root->data.AST_BLOCK.len + 1) * sizeof(AST));
     root->data.AST_BLOCK.code[root->data.AST_BLOCK.len++] = *node;
 }
+// For args
+void ast_arg_add(AST *root, AST *node)
+{
+    root->data.AST_ARG.args = realloc(root->data.AST_ARG.args, (root->data.AST_ARG.len + 1) * sizeof(AST));
+    root->data.AST_ARG.args[root->data.AST_ARG.len++] = *node;
+}
 // Token related functions
 Token peek()
 {
+
     return tokens2[tokenindex];
 }
+
 Token previous()
 {
     return tokens2[tokenindex - 1];
@@ -143,6 +153,36 @@ AST *primary()
         return expr2;
     }
 }
+AST *finishcall(AST *callee)
+{
+    AST *arguments = AST_NEW(AST_ARG,
+                             AST_NEW(EMPTY, 'f'), );
+    if (!check(CLOSE_PAREN))
+    {
+        do
+        {
+            ast_arg_add(arguments, expr());
+        } while (match(COMMA));
+    }
+    consume(CLOSE_PAREN, "Expect ')' after arguments.");
+    return AST_NEW(Call, callee, arguments);
+}
+AST *call()
+{
+    AST *expr2 = primary();
+    while (true)
+    {
+        if (match(OPEN_PAREN))
+        {
+            expr2 = finishcall(expr2);
+        }
+        else
+        {
+            break;
+        }
+    }
+    return expr2;
+}
 // Parses unary
 AST *unary()
 {
@@ -162,8 +202,9 @@ AST *unary()
         AST *expr = AST_NEW(UnaryNode, op, right);
         return expr;
     }
-    return primary();
+    return call();
 }
+
 // Parses multiplication and div
 AST *factor()
 {
@@ -349,15 +390,29 @@ AST *statement()
 }
 AST *varDeclare()
 {
+    char *type;
+    if (previous().type == INT_KEY)
+    {
+        type = "int";
+    }
+    if (previous().type == FLOAT_KEY)
+    {
+        type = "float";
+    }
+    if (previous().type == STRING_KEY)
+    {
+        type = "string";
+    }
     char *name = peek().value;
     getnexttoken();
-    AST *init;
+    AST *init = AST_NEW(EMPTY, 3);
     if (match(EQUAL))
     {
         init = expr();
     }
+
     consume(QUESTION, "Expect '?' after variable declaration");
-    return AST_NEW(VarDecl, name, init);
+    return AST_NEW(VarDecl, name, type, init);
 }
 AST *declaration()
 {

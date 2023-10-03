@@ -1,2 +1,2 @@
- gcc main.c ./lexer/lexer.c ./parser/parser.c ./ast/ast.c
- ./a.out
+ gcc main.c ./lexer/lexer.c ./parser/parser.c ./ast/ast.c -g --static
+./a.out

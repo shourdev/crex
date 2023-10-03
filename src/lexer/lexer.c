@@ -26,7 +26,7 @@ Token *lexer(char *string, int *num_tokens)
 
         isiden = 0;
 
-        tokens = realloc(tokens, sizeof(Token) * (token_index + 3));
+        tokens = realloc(tokens, sizeof(Token) * (token_index + 19));
 
         // Int and float
         if (isdigit(string[i]))

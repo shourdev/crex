@@ -36,6 +36,19 @@ void ast_print(AST *ptr)
 
     return;
   }
+    case AST_ARG:
+  {
+  
+    struct AST_ARG data = ast.data.AST_ARG;
+    for (size_t i = 0; i < data.len; i++)
+    {
+      ast_print(&data.args[i]);
+    
+      printf(",");
+    }
+
+    return;
+  }
   case AST_NUM:
   {
     struct AST_NUM data = ast.data.AST_NUM;
@@ -89,7 +102,7 @@ void ast_print(AST *ptr)
   {
 
     struct VarDecl data = ast.data.VarDecl;
-    printf("%s = ", data.name);
+    printf("%s %s = ", data.type, data.name);
     ast_print(data.expr);
     return;
   }
@@ -107,33 +120,45 @@ void ast_print(AST *ptr)
     printf("%s", data.name);
     return;
   }
-  case IF_STATEMENT:{
+  case IF_STATEMENT:
+  {
     struct IF_STATEMENT data = ast.data.IF_STATEMENT;
     printf("if ");
     ast_print(data.condition);
     printf("\n");
     printf("then\n");
     ast_print(data.thenbranch);
-     printf("\n");
-  printf("over\n");
-  printf("else\n");
-  ast_print(data.elsebranch);
-  printf("\n");
-  printf("over\n");
-  return;
+    printf("\n");
+    printf("over\n");
+    printf("else\n");
+    ast_print(data.elsebranch);
+    printf("\n");
+    printf("over\n");
+    return;
   }
-  case WHILE_LOOP:{
-      struct WHILE_LOOP data = ast.data.WHILE_LOOP;
+  case WHILE_LOOP:
+  {
+    struct WHILE_LOOP data = ast.data.WHILE_LOOP;
     printf("While ");
     ast_print(data.condition);
     printf("\n");
     printf("then\n");
     ast_print(data.thenbranch);
-     printf("\n");
-  printf("over\n");
-  return;
-  }WHILE_LOOP;
-  case EMPTY:{
+    printf("\n");
+    printf("over\n");
+    return;
+  }
+
+    case Call:{
+      struct Call data = ast.data.Call;
+      ast_print(data.Callee);
+      printf("(");
+      ast_print(data.arguments);
+      printf(")");
+      return;
+    }
+  case EMPTY:
+  {
     return;
   }
   }

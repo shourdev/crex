@@ -26,7 +26,9 @@ struct AST
         VarAcess,
         AST_BLOCK,
         IF_STATEMENT,
-        WHILE_LOOP
+        WHILE_LOOP,
+        Call,
+        AST_ARG
     } tag;
     union
     {
@@ -65,6 +67,11 @@ struct AST
             AST *code;
             size_t len;
         } AST_BLOCK;
+           struct AST_ARG
+        {
+            AST *args;
+            size_t len;
+        } AST_ARG;
         struct EMPTY
         {
             char t;
@@ -98,6 +105,7 @@ struct AST
         struct VarDecl
         {
             char *name;
+            char* type;
             AST *expr;
         } VarDecl;
         struct VarAssign
@@ -118,6 +126,10 @@ struct AST
             AST* condition;
             AST* thenbranch;
         }WHILE_LOOP;
+        struct Call{
+            AST* Callee;
+            AST* arguments;
+        }Call;
     } data;
 };
 void ast_print(AST *ptr);
