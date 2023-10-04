@@ -166,6 +166,14 @@ void ast_print(AST *ptr)
     printf(")");
     ast_print(data.code);
     printf("over\n");
+    return;
+    
+  }
+  case FunctionARG:{
+    struct FunctionARG data = ast.data.FunctionARG;
+printf("%s %s",data.type,data.name);
+return;
+
   }
   case EMPTY:
   {

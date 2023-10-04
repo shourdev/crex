@@ -29,7 +29,8 @@ struct AST
         WHILE_LOOP,
         Call,
         AST_ARG,
-        Function
+        Function,
+            FunctionARG
     } tag;
     union
     {
@@ -68,7 +69,7 @@ struct AST
             AST *code;
             size_t len;
         } AST_BLOCK;
-           struct AST_ARG
+        struct AST_ARG
         {
             AST *args;
             size_t len;
@@ -106,7 +107,7 @@ struct AST
         struct VarDecl
         {
             char *name;
-            char* type;
+            char *type;
             AST *expr;
         } VarDecl;
         struct VarAssign
@@ -118,24 +119,33 @@ struct AST
         {
             char *name;
         } VarAcess;
-        struct IF_STATEMENT{
-            AST* condition;
-            AST* thenbranch;
-            AST* elsebranch;
-        }IF_STATEMENT;
-        struct WHILE_LOOP{
-            AST* condition;
-            AST* thenbranch;
-        }WHILE_LOOP;
-        struct Call{
-            AST* Callee;
-            AST* arguments;
-        }Call;
-        struct Function{
-            char* name;
-            AST* args;
-            AST* code;
-        }Function;
+        struct IF_STATEMENT
+        {
+            AST *condition;
+            AST *thenbranch;
+            AST *elsebranch;
+        } IF_STATEMENT;
+        struct WHILE_LOOP
+        {
+            AST *condition;
+            AST *thenbranch;
+        } WHILE_LOOP;
+        struct Call
+        {
+            AST *Callee;
+            AST *arguments;
+        } Call;
+        struct Function
+        {
+            char *name;
+            AST *args;
+            AST *code;
+        } Function;
+        struct FunctionARG
+        {
+            char *name;
+            char *type;
+        } FunctionARG;
     } data;
 };
 void ast_print(AST *ptr);

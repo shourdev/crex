@@ -343,14 +343,14 @@ AST *exprstate()
 {
     AST *exp = expr();
 
-    consume(QUESTION, "Expected '?' after expression.");
+    consume(SEMI, "Expected ';' after expression.");
     return exp;
 }
 AST *printstatement()
 {
     AST *expr2 = expr();
 
-    consume(QUESTION, "Expected '?' after value.");
+    consume(SEMI, "Expected ';' after value.");
 
     AST *node = AST_NEW(PrintNode, expr2);
 
@@ -394,6 +394,25 @@ AST *statement()
     }
     return exprstate();
 }
+AST *functionargs()
+{
+    char *type;
+    if (match(STRING_KEY))
+    {
+        type = "string";
+    }
+    if (match(INT_KEY))
+    {
+        type = "int";
+    }
+    if (match(FLOAT_KEY))
+    {
+        type = "float";
+    }
+    char *name = peek().value;
+    getnexttoken();
+    return AST_NEW(FunctionARG, name, type);
+}
 AST *varDeclare()
 {
     char *type;
@@ -419,19 +438,26 @@ AST *varDeclare()
     // Functions
     if (match(OPEN_PAREN))
     {
-        AST *parameters = AST_NEW(EMPTY, 2);
+        AST *parameters = AST_NEW(AST_ARG,
+                                  AST_NEW(EMPTY, 2), );
+                                  
         if (!check(CLOSE_PAREN))
         {
             do
             {
-                ast_arg_add(parameters, varDeclare());
-            } while (COMMA);
+                ast_arg_add(parameters, functionargs());
+            } while (match(COMMA));
         }
-        consume(CLOSE_PAREN, "Expect");
+        consume(CLOSE_PAREN, "Expected closing paren");
+        if (match(SEMI))
+        {
+            AST *body = AST_NEW(EMPTY, 3);
+            return AST_NEW(Function, name, parameters, body);
+        }
         AST *body = block();
         return AST_NEW(Function, name, parameters, body);
     }
-    consume(QUESTION, "Expect '?' after variable declaration");
+    consume(SEMI, "Expect ';' after variable declaration");
     return AST_NEW(VarDecl, name, type, init);
 }
 AST *declaration()

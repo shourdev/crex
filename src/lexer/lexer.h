@@ -28,7 +28,7 @@ enum tokentype
   BANG,
   OR,
   PRINT_KEY,
-  QUESTION,
+  SEMI,
 IF,
  HASH,
  ELSE,
