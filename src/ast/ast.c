@@ -161,13 +161,13 @@ void ast_print(AST *ptr)
   case Function:
   {
     struct Function data = ast.data.Function;
-    printf("func %s(", data.name);
+    printf("%s %s(",data.type,data.name);
     ast_print(data.args);
     printf(")");
     ast_print(data.code);
     printf("over\n");
     return;
-    
+
   }
   case FunctionARG:{
     struct FunctionARG data = ast.data.FunctionARG;

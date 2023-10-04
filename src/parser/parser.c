@@ -440,7 +440,7 @@ AST *varDeclare()
     {
         AST *parameters = AST_NEW(AST_ARG,
                                   AST_NEW(EMPTY, 2), );
-                                  
+
         if (!check(CLOSE_PAREN))
         {
             do
@@ -452,10 +452,10 @@ AST *varDeclare()
         if (match(SEMI))
         {
             AST *body = AST_NEW(EMPTY, 3);
-            return AST_NEW(Function, name, parameters, body);
+            return AST_NEW(Function, name, parameters, body,type);
         }
         AST *body = block();
-        return AST_NEW(Function, name, parameters, body);
+        return AST_NEW(Function, name, parameters, body,type);
     }
     consume(SEMI, "Expect ';' after variable declaration");
     return AST_NEW(VarDecl, name, type, init);

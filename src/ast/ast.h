@@ -136,10 +136,11 @@ struct AST
             AST *arguments;
         } Call;
         struct Function
-        {
+        { 
             char *name;
             AST *args;
             AST *code;
+            char* type;
         } Function;
         struct FunctionARG
         {
