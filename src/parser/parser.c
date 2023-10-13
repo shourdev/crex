@@ -429,6 +429,10 @@ AST *functionargs()
     {
         type = "float";
     }
+    if (match(BOOL_KEY))
+    {
+        type = "bool";
+    }
     char *name = peek().value;
     getnexttoken();
     return AST_NEW(FunctionARG, name, type);
