@@ -124,11 +124,31 @@ This section parses all the expressions
 // Parses int,float, () etc
 AST *primary()
 {
-    if (match(INT) || match(FLOAT))
+    if (match(INT))
     {
 
         AST *numnode = AST_NEW(AST_NUM, previous().value);
         return numnode;
+    }
+    if (match(FLOAT))
+    {
+
+        AST *numnode = AST_NEW(AST_FLOAT, previous().value);
+        return numnode;
+    }
+    if (match(TRUE_kEY) || match(FALSE_kEY))
+    {
+        char *val;
+        if (previous().type == TRUE_kEY)
+        {
+            val = "true";
+        }
+        if (previous().type == FALSE_kEY)
+        {
+            val = "false";
+        }
+        AST *boolnode = AST_NEW(BOOL, val);
+        return boolnode;
     }
     if (match(STRING))
     {
@@ -428,6 +448,10 @@ AST *varDeclare()
     {
         type = "string";
     }
+    if (previous().type == BOOL_KEY)
+    {
+        type = "bool";
+    }
     char *name = peek().value;
     getnexttoken();
     AST *init = AST_NEW(EMPTY, 3);
@@ -452,17 +476,17 @@ AST *varDeclare()
         if (match(SEMI))
         {
             AST *body = AST_NEW(EMPTY, 3);
-            return AST_NEW(Function, name, parameters, body,type);
+            return AST_NEW(Function, name, parameters, body, type);
         }
         AST *body = block();
-        return AST_NEW(Function, name, parameters, body,type);
+        return AST_NEW(Function, name, parameters, body, type);
     }
     consume(SEMI, "Expect ';' after variable declaration");
     return AST_NEW(VarDecl, name, type, init);
 }
 AST *declaration()
 {
-    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY))
+    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY))
     {
         return varDeclare();
     }

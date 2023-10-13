@@ -153,6 +153,33 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+            if (strcmp(result, "bool") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = BOOL_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if (strcmp(result, "true") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = TRUE_kEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if (strcmp(result, "false") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = FALSE_kEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
             if (strcmp(result, "over") == 0)
             {
                 visited = 1;
@@ -180,7 +207,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-             if (strcmp(result, "else") == 0)
+            if (strcmp(result, "else") == 0)
             {
                 visited = 1;
                 isiden = 1;
@@ -189,7 +216,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-               if (strcmp(result, "while") == 0)
+            if (strcmp(result, "while") == 0)
             {
                 visited = 1;
                 isiden = 1;

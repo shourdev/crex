@@ -16,24 +16,26 @@ void ast_print(AST *ptr)
   {
   case AST_ROOT:
   {
-    printf("On Root: \n");
+ 
     struct AST_ROOT data = ast.data.AST_ROOT;
+    printf("{\n");
     for (size_t i = 0; i < data.len; i++)
     {
+
       ast_print(&data.code[i]);
     }
-
+printf("}\n");
     return;
   }
   case AST_BLOCK:
   {
-    printf("On Block: \n");
+    printf("{ \n");
     struct AST_BLOCK data = ast.data.AST_BLOCK;
     for (size_t i = 0; i < data.len; i++)
     {
       ast_print(&data.code[i]);
     }
-
+ printf("}\n");
     return;
   }
   case AST_ARG:
@@ -60,13 +62,13 @@ void ast_print(AST *ptr)
   {
     struct BinOpNode data = ast.data.BinOpNode;
 
-    printf("(");
+      
 
     ast_print(data.left);
 
     printf("%s", data.op);
     ast_print(data.right);
-    printf(")");
+   
 
     return;
   }
@@ -126,14 +128,14 @@ void ast_print(AST *ptr)
     printf("if ");
     ast_print(data.condition);
     printf("\n");
-    printf("then\n");
+ 
     ast_print(data.thenbranch);
     printf("\n");
-    printf("over\n");
+
     printf("else\n");
     ast_print(data.elsebranch);
     printf("\n");
-    printf("over\n");
+ 
     return;
   }
   case WHILE_LOOP:
@@ -165,7 +167,7 @@ void ast_print(AST *ptr)
     ast_print(data.args);
     printf(")");
     ast_print(data.code);
-    printf("over\n");
+
     return;
 
   }
@@ -174,6 +176,16 @@ void ast_print(AST *ptr)
 printf("%s %s",data.type,data.name);
 return;
 
+  }
+  case BOOL:{
+    struct BOOL data = ast.data.BOOL;
+    printf("%s",data.value);
+    return;
+  }
+  case AST_FLOAT:{
+    struct AST_FLOAT data = ast.data.AST_FLOAT;
+    printf("%s",data.value);
+    return;
   }
   case EMPTY:
   {

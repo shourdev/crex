@@ -32,7 +32,10 @@ enum tokentype
 IF,
  HASH,
  ELSE,
- WHILE_KEY
+ WHILE_KEY,
+ BOOL_KEY,
+ TRUE_kEY,
+ FALSE_kEY
 };
 typedef struct
 {
