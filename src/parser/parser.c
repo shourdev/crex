@@ -356,7 +356,7 @@ AST *assignment()
             char *name = exp.data.VarAcess.name;
             return AST_NEW(VarAssign, name, value);
         }
-      
+
         exit(1);
     }
     return expr;
@@ -447,6 +447,28 @@ AST *functionargs()
     getnexttoken();
     return AST_NEW(FunctionARG, name, type);
 }
+AST *functionparse(char *name, char *type)
+{
+    AST *parameters = AST_NEW(AST_ARG,
+                              AST_NEW(EMPTY, 2), );
+
+    if (!check(CLOSE_PAREN))
+    {
+        do
+        {
+            ast_arg_add(parameters, functionargs());
+        } while (match(COMMA));
+    }
+    consume(CLOSE_PAREN, "Expected closing paren");
+    if (match(SEMI))
+    {
+        AST *body = AST_NEW(EMPTY, 3);
+        return AST_NEW(Function, name, parameters, body, type);
+    }
+    AST *body = block();
+    return AST_NEW(Function, name, parameters, body, type);
+}
+
 AST *varDeclare()
 {
     char *type;
@@ -503,24 +525,7 @@ AST *varDeclare()
     // Functions
     if (match(OPEN_PAREN))
     {
-        AST *parameters = AST_NEW(AST_ARG,
-                                  AST_NEW(EMPTY, 2), );
-
-        if (!check(CLOSE_PAREN))
-        {
-            do
-            {
-                ast_arg_add(parameters, functionargs());
-            } while (match(COMMA));
-        }
-        consume(CLOSE_PAREN, "Expected closing paren");
-        if (match(SEMI))
-        {
-            AST *body = AST_NEW(EMPTY, 3);
-            return AST_NEW(Function, name, parameters, body, type);
-        }
-        AST *body = block();
-        return AST_NEW(Function, name, parameters, body, type);
+        return functionparse(name, type);
     }
     consume(SEMI, "Expect ';' after variable declaration");
     return AST_NEW(VarDecl, name, type, init);
