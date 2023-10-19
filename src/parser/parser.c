@@ -116,6 +116,15 @@ bool instanceofvar(AST *expr)
     }
     return false;
 }
+bool instanceoflist(AST *expr)
+{
+    AST ast = *expr;
+    if (ast.tag == VarAcess)
+    {
+        return true;
+    }
+    return false;
+}
 
 /*
 This section parses all the expressions
@@ -209,6 +218,7 @@ AST *call()
     }
     return expr2;
 }
+
 // Parses unary
 AST *unary()
 {
@@ -346,7 +356,7 @@ AST *assignment()
             char *name = exp.data.VarAcess.name;
             return AST_NEW(VarAssign, name, value);
         }
-        printf("Invalid assignment target.\n");
+      
         exit(1);
     }
     return expr;
@@ -455,6 +465,33 @@ AST *varDeclare()
     if (previous().type == BOOL_KEY)
     {
         type = "bool";
+    }
+    // Lists
+    if (peek().type == LEFT_SQUARE)
+    {
+        AST *arguments = AST_NEW(AST_ARG,
+                                 AST_NEW(EMPTY, 'f'), );
+        getnexttoken();
+        consume(RIGHT_SQUARE, "Expected ']' after '['");
+        char *name = peek().value;
+        getnexttoken();
+        if (match(EQUAL))
+        {
+            consume(LEFT_SQUARE, "Expected '[' after '='");
+
+            if (!check(RIGHT_SQUARE))
+            {
+                do
+                {
+
+                    ast_arg_add(arguments, expr());
+
+                } while (match(COMMA));
+            }
+            consume(RIGHT_SQUARE, "Expected ']' after expressions.");
+        }
+        consume(SEMI, "Expected ';'");
+        return AST_NEW(AST_LIST, arguments, type, name);
     }
     char *name = peek().value;
     getnexttoken();

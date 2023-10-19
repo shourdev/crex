@@ -16,7 +16,7 @@ void ast_print(AST *ptr)
   {
   case AST_ROOT:
   {
- 
+
     struct AST_ROOT data = ast.data.AST_ROOT;
     printf("{\n");
     for (size_t i = 0; i < data.len; i++)
@@ -24,7 +24,7 @@ void ast_print(AST *ptr)
 
       ast_print(&data.code[i]);
     }
-printf("}\n");
+    printf("}\n");
     return;
   }
   case AST_BLOCK:
@@ -35,7 +35,7 @@ printf("}\n");
     {
       ast_print(&data.code[i]);
     }
- printf("}\n");
+    printf("}\n");
     return;
   }
   case AST_ARG:
@@ -62,13 +62,10 @@ printf("}\n");
   {
     struct BinOpNode data = ast.data.BinOpNode;
 
-      
-
     ast_print(data.left);
 
     printf("%s", data.op);
     ast_print(data.right);
-   
 
     return;
   }
@@ -128,14 +125,14 @@ printf("}\n");
     printf("if ");
     ast_print(data.condition);
     printf("\n");
- 
+
     ast_print(data.thenbranch);
     printf("\n");
 
     printf("else\n");
     ast_print(data.elsebranch);
     printf("\n");
- 
+
     return;
   }
   case WHILE_LOOP:
@@ -163,28 +160,49 @@ printf("}\n");
   case Function:
   {
     struct Function data = ast.data.Function;
-    printf("%s %s(",data.type,data.name);
+    printf("%s %s(", data.type, data.name);
     ast_print(data.args);
     printf(")");
     ast_print(data.code);
 
     return;
-
   }
-  case FunctionARG:{
+  case FunctionARG:
+  {
     struct FunctionARG data = ast.data.FunctionARG;
-printf("%s %s",data.type,data.name);
-return;
-
-  }
-  case BOOL:{
-    struct BOOL data = ast.data.BOOL;
-    printf("%s",data.value);
+    printf("%s %s", data.type, data.name);
     return;
   }
-  case AST_FLOAT:{
+  case BOOL:
+  {
+    struct BOOL data = ast.data.BOOL;
+    printf("%s", data.value);
+    return;
+  }
+  case AST_FLOAT:
+  {
     struct AST_FLOAT data = ast.data.AST_FLOAT;
-    printf("%s",data.value);
+    printf("%s", data.value);
+    return;
+  }
+  case AST_LIST:
+  {
+    struct AST_LIST data = ast.data.AST_LIST;
+    printf("%s", data.type);
+    printf("[]");
+    printf("%s", data.name);
+    printf("= [");
+    ast_print(data.args);
+    printf("]");
+    return;
+  }
+  case Listac:
+  {
+    struct Listac data = ast.data.Listac;
+    ast_print(data.name);
+    printf("[");
+    ast_print(data.index);
+    printf("]");
     return;
   }
   case EMPTY:

@@ -401,6 +401,26 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+        // [
+        if (string[i] == '[')
+        {
+            isiden = 1;
+            tokens[token_index].type = LEFT_SQUARE;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
+        // ]
+        if (string[i] == ']')
+        {
+            isiden = 1;
+            tokens[token_index].type = RIGHT_SQUARE;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
         // Error Handling and spaces and lines and comments
         else
         { // Lines

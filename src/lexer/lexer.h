@@ -35,7 +35,9 @@ IF,
  WHILE_KEY,
  BOOL_KEY,
  TRUE_kEY,
- FALSE_kEY
+ FALSE_kEY,
+ LEFT_SQUARE,
+ RIGHT_SQUARE
 };
 typedef struct
 {

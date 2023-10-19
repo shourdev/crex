@@ -32,7 +32,9 @@ struct AST
         Function,
         FunctionARG,
         BOOL,
-        AST_FLOAT
+        AST_FLOAT,
+        AST_LIST,
+        Listac
     } tag;
     union
     {
@@ -137,6 +139,10 @@ struct AST
             AST *Callee;
             AST *arguments;
         } Call;
+        struct Listac{
+            AST* name;
+            AST* index;
+        }Listac;
         struct Function
         {
             char *name;
@@ -153,9 +159,18 @@ struct AST
         {
             char *value;
         } BOOL;
-        struct AST_FLOAT{
-            char* value;
-        }AST_FLOAT;
+        struct AST_FLOAT
+        {
+            char *value;
+        } AST_FLOAT;
+        struct AST_LIST
+        {
+            AST *args;
+
+            char *type;
+            char *name;
+             }AST_LIST;
+             
     } data;
 };
 void ast_print(AST *ptr);
