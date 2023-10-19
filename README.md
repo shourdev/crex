@@ -6,7 +6,7 @@ Not done yet.
 cout("Hello World");
 ```
 # Contents
-[Syntax](#syntax)
+[Syntax](#syntax) <br>
 [Data](#data) <br>
 [Expressions](#expressions) <br>
 [Conditionals](#conditionals) <br>
