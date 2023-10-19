@@ -157,4 +157,18 @@ Evaluates to true if either of the two expressions are true
 ## Misc stuff
 Assignment of variables (when you change value of a variable) is an expression in crex like languages like c. <br>
 # Conditionals
+Conditionals in crex are if and else statements. <br>
+First use the if keyword followed by a ( the expression, which must evaluate to 1 or true, then followed by the ) if the condition is true or 1 the if block will run if not then the else block will run and if their is any other if that matches the condition that will run. 
+```
+if (2+2==4)
+cout("Yes true");
+#
+if (2+2==5)
+cout("HOW!");
+#
+else
+cout("Maths is broken or something!");
+#
+```
+In this code if 2+2 is 4 it will print yes true if 2+2 is 5 it will print "HOW!" and if none of these if are evaluated than the else will be run
 
