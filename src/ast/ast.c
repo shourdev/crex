@@ -2,12 +2,19 @@
 #include <stdio.h>
 #include "ast.h"
 #include <string.h>
+#include <stdbool.h>
 AST *ast_new(AST ast)
 {
   AST *ptr = malloc(sizeof(AST));
   if (ptr)
     *ptr = ast;
   return ptr;
+}
+void printtype(type type){
+printf("%s",type.type);
+if(type.islist==true){
+  printf("[]");
+}
 }
 void ast_print(AST *ptr)
 {
@@ -160,7 +167,8 @@ void ast_print(AST *ptr)
   case Function:
   {
     struct Function data = ast.data.Function;
-    printf("%s %s(", data.type, data.name);
+   printtype(data.type);
+   printf(" %s(",data.name);
     ast_print(data.args);
     printf(")");
     ast_print(data.code);
@@ -199,11 +207,17 @@ void ast_print(AST *ptr)
   case Listac:
   {
     struct Listac data = ast.data.Listac;
-    ast_print(data.name);
+    ast_print(data.parent);
     printf("[");
     ast_print(data.index);
     printf("]");
     return;
+  }
+  case ListAssign:{
+    struct ListAssign data = ast.data.ListAssign;
+    ast_print(data.listnode);
+    printf("=");
+    ast_print(data.value);
   }
   case EMPTY:
   {

@@ -1,9 +1,15 @@
 #ifndef AST_H_INCLUDED
 #define AST_H_INCLUDED
-
+#include <stdbool.h>
 #define AST_NEW(tag, ...) \
     ast_new((AST){tag, {.tag = (struct tag){__VA_ARGS__}}})
-
+struct type
+{
+    bool islist;
+    bool isstruct;
+    char *type;
+};
+typedef struct type type;
 typedef struct AST AST;
 struct AST
 {
@@ -35,7 +41,8 @@ struct AST
         BOOL,
         AST_FLOAT,
         AST_LIST,
-        Listac
+        Listac,
+        ListAssign
     } tag;
     union
     {
@@ -140,16 +147,17 @@ struct AST
             AST *Callee;
             AST *arguments;
         } Call;
-        struct Listac{
-            AST* name;
-            AST* index;
-        }Listac;
+        struct Listac
+        {
+            AST *parent;
+            AST *index;
+        } Listac;
         struct Function
         {
             char *name;
             AST *args;
             AST *code;
-            char *type;
+            type type;
         } Function;
         struct FunctionARG
         {
@@ -170,8 +178,13 @@ struct AST
 
             char *type;
             char *name;
-             }AST_LIST;
-             
+        } AST_LIST;
+        struct ListAssign
+        {
+            AST *listnode;
+            AST *value;
+        } ListAssign;
+
     } data;
 };
 void ast_print(AST *ptr);

@@ -119,7 +119,7 @@ bool instanceofvar(AST *expr)
 bool instanceoflist(AST *expr)
 {
     AST ast = *expr;
-    if (ast.tag == VarAcess)
+    if (ast.tag == Listac)
     {
         return true;
     }
@@ -218,7 +218,24 @@ AST *call()
     }
     return expr2;
 }
-
+AST *list()
+{
+    AST *expr2 = call();
+    while (true)
+    {
+        if (match(LEFT_SQUARE))
+        {
+            AST *index = expr();
+            consume(RIGHT_SQUARE, "Expected ']' after index expression.");
+            expr2 = AST_NEW(Listac, expr2, index);
+        }
+        else
+        {
+            break;
+        }
+    }
+    return expr2;
+}
 // Parses unary
 AST *unary()
 {
@@ -238,7 +255,7 @@ AST *unary()
         AST *expr = AST_NEW(UnaryNode, op, right);
         return expr;
     }
-    return call();
+    return list();
 }
 
 // Parses multiplication and div
@@ -343,6 +360,7 @@ AST * or ()
     }
     return left;
 }
+// =
 AST *assignment()
 {
     AST *expr = or ();
@@ -356,7 +374,11 @@ AST *assignment()
             char *name = exp.data.VarAcess.name;
             return AST_NEW(VarAssign, name, value);
         }
-
+        if (instanceoflist(expr))
+        {
+            return AST_NEW(ListAssign, expr, value);
+        }
+        printf("Error");
         exit(1);
     }
     return expr;
@@ -447,8 +469,19 @@ AST *functionargs()
     getnexttoken();
     return AST_NEW(FunctionARG, name, type);
 }
-AST *functionparse(char *name, char *type)
+AST *functionparse(char *name, char *type3, bool islist)
 {
+    type type2;
+    if (islist == true)
+    {
+        type2.islist = true;
+    }
+    else
+    {
+        type2.islist = false;
+    }
+    type2.isstruct = false;
+    type2.type = type3;
     AST *parameters = AST_NEW(AST_ARG,
                               AST_NEW(EMPTY, 2), );
 
@@ -463,10 +496,10 @@ AST *functionparse(char *name, char *type)
     if (match(SEMI))
     {
         AST *body = AST_NEW(EMPTY, 3);
-        return AST_NEW(Function, name, parameters, body, type);
+        return AST_NEW(Function, name, parameters, body, type2);
     }
     AST *body = block();
-    return AST_NEW(Function, name, parameters, body, type);
+    return AST_NEW(Function, name, parameters, body, type2);
 }
 
 AST *varDeclare()
@@ -512,6 +545,10 @@ AST *varDeclare()
             }
             consume(RIGHT_SQUARE, "Expected ']' after expressions.");
         }
+        if (match(OPEN_PAREN))
+        {
+            return functionparse(name, type, true);
+        }
         consume(SEMI, "Expected ';'");
         return AST_NEW(AST_LIST, arguments, type, name);
     }
@@ -525,7 +562,7 @@ AST *varDeclare()
     // Functions
     if (match(OPEN_PAREN))
     {
-        return functionparse(name, type);
+        return functionparse(name, type, false);
     }
     consume(SEMI, "Expect ';' after variable declaration");
     return AST_NEW(VarDecl, name, type, init);
