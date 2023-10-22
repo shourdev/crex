@@ -107,24 +107,6 @@ Token consume(enum tokentype type, char *message)
     }
     error(peek(), message);
 }
-bool instanceofvar(AST *expr)
-{
-    AST ast = *expr;
-    if (ast.tag == VarAcess)
-    {
-        return true;
-    }
-    return false;
-}
-bool instanceoflist(AST *expr)
-{
-    AST ast = *expr;
-    if (ast.tag == Listac)
-    {
-        return true;
-    }
-    return false;
-}
 
 /*
 This section parses all the expressions
@@ -311,7 +293,7 @@ AST *term()
 AST *rel()
 {
     AST *left = term();
-    while (match(GREATER) || match(SMALLER) || match(EQUALSTO))
+    while (match(GREATER) || match(SMALLER) || match(EQUALSTO)||match(NOTEQUAL))
     {
         char *op;
         if (previous().type == GREATER)
@@ -326,7 +308,10 @@ AST *rel()
         {
             op = "==";
         }
-
+        if (previous().type == NOTEQUAL)
+        {
+            op = "!=";
+        }
         AST *right = term();
 
         left = AST_NEW(BinOpNode, left, op, right);
@@ -487,7 +472,7 @@ AST *functionparse(char *name, type type)
             ast_arg_add(parameters, functionargs());
         } while (match(COMMA));
     }
-    consume(CLOSE_PAREN, "Expected closing paren");
+    consume(CLOSE_PAREN, "Expected closing paren after function parameters");
     if (match(SEMI))
     {
         AST *body = AST_NEW(EMPTY, 3);

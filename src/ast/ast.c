@@ -203,13 +203,16 @@ void ast_print(AST *ptr)
   case Listac:
   {
     struct Listac data = ast.data.Listac;
+
     ast_print(data.parent);
     printf("[");
+
     ast_print(data.index);
     printf("]");
     return;
   }
-  case Assign:{
+  case Assign:
+  {
     struct Assign data = ast.data.Assign;
     ast_print(data.target);
     printf("=");
