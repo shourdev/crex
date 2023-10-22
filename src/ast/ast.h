@@ -29,7 +29,6 @@ struct AST
         AndNode,
         PrintNode,
         VarDecl,
-        VarAssign,
         VarAcess,
         AST_BLOCK,
         IF_STATEMENT,
@@ -42,7 +41,8 @@ struct AST
         AST_FLOAT,
         AST_LIST,
         Listac,
-        ListAssign
+        Assign
+
     } tag;
     union
     {
@@ -122,11 +122,7 @@ struct AST
             type type;
             AST *expr;
         } VarDecl;
-        struct VarAssign
-        {
-            char *name;
-            AST *value;
-        } VarAssign;
+
         struct VarAcess
         {
             char *name;
@@ -179,11 +175,11 @@ struct AST
             type type;
             char *name;
         } AST_LIST;
-        struct ListAssign
+        struct Assign
         {
-            AST *listnode;
-            AST *value;
-        } ListAssign;
+            AST *target;
+            AST *expr;
+        }Assign;
 
     } data;
 };

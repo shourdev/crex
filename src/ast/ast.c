@@ -115,14 +115,7 @@ void ast_print(AST *ptr)
     ast_print(data.expr);
     return;
   }
-  case VarAssign:
-  {
-    struct VarAssign data = ast.data.VarAssign;
-    printf("%s", data.name);
-    printf("=");
-    ast_print(data.value);
-    return;
-  }
+
   case VarAcess:
   {
     struct VarAcess data = ast.data.VarAcess;
@@ -216,13 +209,13 @@ void ast_print(AST *ptr)
     printf("]");
     return;
   }
-  case ListAssign:
-  {
-    struct ListAssign data = ast.data.ListAssign;
-    ast_print(data.listnode);
+  case Assign:{
+    struct Assign data = ast.data.Assign;
+    ast_print(data.target);
     printf("=");
-    ast_print(data.value);
+    ast_print(data.expr);
   }
+
   case EMPTY:
   {
     return;

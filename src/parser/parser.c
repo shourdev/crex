@@ -366,20 +366,10 @@ AST *assignment()
     AST *expr = or ();
     if (match(EQUAL))
     {
-        char *op = "=";
+
         AST *value = assignment();
-        if (instanceofvar(expr))
-        {
-            AST exp = *expr;
-            char *name = exp.data.VarAcess.name;
-            return AST_NEW(VarAssign, name, value);
-        }
-        if (instanceoflist(expr))
-        {
-            return AST_NEW(ListAssign, expr, value);
-        }
-        printf("Error");
-        exit(1);
+
+        return AST_NEW(Assign, expr, value);
     }
     return expr;
 }
@@ -448,26 +438,41 @@ AST *statement()
 }
 AST *functionargs()
 {
-    char *type;
+    type type;
+    type.islist = false;
+    type.isstruct = false;
     if (match(STRING_KEY))
     {
-        type = "string";
+        type.type = "string";
     }
     if (match(INT_KEY))
     {
-        type = "int";
+        type.type = "int";
     }
     if (match(FLOAT_KEY))
     {
-        type = "float";
+        type.type = "float";
     }
     if (match(BOOL_KEY))
     {
-        type = "bool";
+        type.type = "bool";
+    }
+
+    if (match(LEFT_SQUARE))
+    {
+        type.islist = true;
+        consume(RIGHT_SQUARE, "Expected ']'");
+        char *name = peek().value;
+        getnexttoken();
+        AST *arguments = AST_NEW(AST_ARG,
+                                 AST_NEW(EMPTY, 'f'), );
+        return AST_NEW(AST_LIST, arguments, type, name);
     }
     char *name = peek().value;
     getnexttoken();
-    return AST_NEW(FunctionARG, name, type);
+    AST *arguments = AST_NEW(AST_ARG,
+                             AST_NEW(EMPTY, 'f'), );
+    return AST_NEW(VarDecl, name, type, arguments);
 }
 AST *functionparse(char *name, type type)
 {
