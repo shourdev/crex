@@ -119,7 +119,7 @@ struct AST
         struct VarDecl
         {
             char *name;
-            char *type;
+            type type;
             AST *expr;
         } VarDecl;
         struct VarAssign
@@ -176,7 +176,7 @@ struct AST
         {
             AST *args;
 
-            char *type;
+            type type;
             char *name;
         } AST_LIST;
         struct ListAssign

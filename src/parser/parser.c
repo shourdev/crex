@@ -469,19 +469,9 @@ AST *functionargs()
     getnexttoken();
     return AST_NEW(FunctionARG, name, type);
 }
-AST *functionparse(char *name, char *type3, bool islist)
+AST *functionparse(char *name, type type)
 {
-    type type2;
-    if (islist == true)
-    {
-        type2.islist = true;
-    }
-    else
-    {
-        type2.islist = false;
-    }
-    type2.isstruct = false;
-    type2.type = type3;
+
     AST *parameters = AST_NEW(AST_ARG,
                               AST_NEW(EMPTY, 2), );
 
@@ -496,34 +486,38 @@ AST *functionparse(char *name, char *type3, bool islist)
     if (match(SEMI))
     {
         AST *body = AST_NEW(EMPTY, 3);
-        return AST_NEW(Function, name, parameters, body, type2);
+        return AST_NEW(Function, name, parameters, body, type);
     }
     AST *body = block();
-    return AST_NEW(Function, name, parameters, body, type2);
+    return AST_NEW(Function, name, parameters, body, type);
 }
 
 AST *varDeclare()
 {
-    char *type;
+    type type;
+
     if (previous().type == INT_KEY)
     {
-        type = "int";
+        type.type = "int";
     }
     if (previous().type == FLOAT_KEY)
     {
-        type = "float";
+        type.type = "float";
     }
     if (previous().type == STRING_KEY)
     {
-        type = "string";
+        type.type = "string";
     }
     if (previous().type == BOOL_KEY)
     {
-        type = "bool";
+        type.type = "bool";
     }
+    type.islist = false;
+    type.isstruct = false;
     // Lists
     if (peek().type == LEFT_SQUARE)
     {
+        type.islist = true;
         AST *arguments = AST_NEW(AST_ARG,
                                  AST_NEW(EMPTY, 'f'), );
         getnexttoken();
@@ -547,7 +541,7 @@ AST *varDeclare()
         }
         if (match(OPEN_PAREN))
         {
-            return functionparse(name, type, true);
+            return functionparse(name, type);
         }
         consume(SEMI, "Expected ';'");
         return AST_NEW(AST_LIST, arguments, type, name);
@@ -562,7 +556,7 @@ AST *varDeclare()
     // Functions
     if (match(OPEN_PAREN))
     {
-        return functionparse(name, type, false);
+        return functionparse(name, type);
     }
     consume(SEMI, "Expect ';' after variable declaration");
     return AST_NEW(VarDecl, name, type, init);

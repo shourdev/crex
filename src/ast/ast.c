@@ -10,11 +10,13 @@ AST *ast_new(AST ast)
     *ptr = ast;
   return ptr;
 }
-void printtype(type type){
-printf("%s",type.type);
-if(type.islist==true){
-  printf("[]");
-}
+void printtype(type type)
+{
+  printf("%s", type.type);
+  if (type.islist == true)
+  {
+    printf("[]");
+  }
 }
 void ast_print(AST *ptr)
 {
@@ -108,7 +110,8 @@ void ast_print(AST *ptr)
   {
 
     struct VarDecl data = ast.data.VarDecl;
-    printf("%s %s = ", data.type, data.name);
+    printtype(data.type);
+    printf(" %s = ", data.name);
     ast_print(data.expr);
     return;
   }
@@ -167,8 +170,8 @@ void ast_print(AST *ptr)
   case Function:
   {
     struct Function data = ast.data.Function;
-   printtype(data.type);
-   printf(" %s(",data.name);
+    printtype(data.type);
+    printf(" %s(", data.name);
     ast_print(data.args);
     printf(")");
     ast_print(data.code);
@@ -196,8 +199,8 @@ void ast_print(AST *ptr)
   case AST_LIST:
   {
     struct AST_LIST data = ast.data.AST_LIST;
-    printf("%s", data.type);
-    printf("[]");
+    printtype(data.type);
+
     printf("%s", data.name);
     printf("= [");
     ast_print(data.args);
@@ -213,7 +216,8 @@ void ast_print(AST *ptr)
     printf("]");
     return;
   }
-  case ListAssign:{
+  case ListAssign:
+  {
     struct ListAssign data = ast.data.ListAssign;
     ast_print(data.listnode);
     printf("=");
