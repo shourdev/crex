@@ -195,9 +195,9 @@ void ast_print(AST *ptr)
     printtype(data.type);
 
     printf("%s", data.name);
-    printf("= [");
+    printf("=");
     ast_print(data.args);
-    printf("]");
+  
     return;
   }
   case Listac:
@@ -218,7 +218,12 @@ void ast_print(AST *ptr)
     printf("=");
     ast_print(data.expr);
   }
-
+case Square:{
+  struct Square data = ast.data.Square;
+  printf("[");
+  ast_print(data.arguments);
+  printf("]");
+}
   case EMPTY:
   {
     return;

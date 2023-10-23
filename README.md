@@ -59,9 +59,13 @@ Structs will be in the [structs]() <br>
 Lists is a sequence of several variables grouped under one name called the list <br>
 Int lists
 ```
-int[] mylist = [2,4];
+int[] mylist;
+addelementonindex(mylist,0,4);
 ```
-This stores 2 and 4. Lists index starts from 0 so 2 is stored in the 0 index while 4 in the 1 index. <br>
+This stores 4 in the 0 index, using addelementonindex function you can add list element, only one however, as you give the index. You can use the addlistelements to add multiple elements. <br>
+```
+addlistelements(mylist,3,52,25);
+```
 Float
 ```
 float[] mylist = [2.2,3.4];

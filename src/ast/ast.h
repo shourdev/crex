@@ -41,7 +41,9 @@ struct AST
         AST_FLOAT,
         AST_LIST,
         Listac,
-        Assign
+        Assign,
+        listelements,
+        Square
 
     } tag;
     union
@@ -180,6 +182,10 @@ struct AST
             AST *target;
             AST *expr;
         }Assign;
+        struct Square{
+            AST* arguments;
+        }Square;
+       
 
     } data;
 };

@@ -157,11 +157,25 @@ AST *primary()
     if (match(OPEN_PAREN))
     {
 
-        AST *expr2 = and();
+        AST *expr2 = expr();
 
         consume(CLOSE_PAREN, "Expect ')' after expression.");
 
         return expr2;
+    }
+    if (match(LEFT_SQUARE))
+    {
+        AST *arguments = AST_NEW(AST_ARG,
+                                 AST_NEW(EMPTY, 'f'), );
+        if (!check(RIGHT_SQUARE))
+        {
+            do
+            {
+                ast_arg_add(arguments, expr());
+            } while (match(COMMA));
+        }
+        consume(RIGHT_SQUARE,"Expected ']'");
+        return AST_NEW(Square,arguments);
     }
 }
 AST *finishcall(AST *callee)
@@ -293,7 +307,7 @@ AST *term()
 AST *rel()
 {
     AST *left = term();
-    while (match(GREATER) || match(SMALLER) || match(EQUALSTO)||match(NOTEQUAL))
+    while (match(GREATER) || match(SMALLER) || match(EQUALSTO) || match(NOTEQUAL))
     {
         char *op;
         if (previous().type == GREATER)
@@ -508,26 +522,15 @@ AST *varDeclare()
     if (peek().type == LEFT_SQUARE)
     {
         type.islist = true;
-        AST *arguments = AST_NEW(AST_ARG,
-                                 AST_NEW(EMPTY, 'f'), );
+        AST *arguments;
         getnexttoken();
         consume(RIGHT_SQUARE, "Expected ']' after '['");
         char *name = peek().value;
         getnexttoken();
         if (match(EQUAL))
         {
-            consume(LEFT_SQUARE, "Expected '[' after '='");
 
-            if (!check(RIGHT_SQUARE))
-            {
-                do
-                {
-
-                    ast_arg_add(arguments, expr());
-
-                } while (match(COMMA));
-            }
-            consume(RIGHT_SQUARE, "Expected ']' after expressions.");
+            arguments = expr();
         }
         if (match(OPEN_PAREN))
         {
