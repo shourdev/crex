@@ -44,7 +44,8 @@ struct AST
         Assign,
         listelements,
         Square,
-        Return_Node
+        Return_Node,
+        Break_Node
 
     } tag;
     union
@@ -189,6 +190,9 @@ struct AST
         struct Return_Node{
             AST* expression;
         }Return_Node;
+        struct Break_Node{
+
+        }Break_Node;
 
     } data;
 };

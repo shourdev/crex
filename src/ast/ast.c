@@ -217,17 +217,24 @@ void ast_print(AST *ptr)
     ast_print(data.target);
     printf("=");
     ast_print(data.expr);
+    return;
   }
 case Square:{
   struct Square data = ast.data.Square;
   printf("[");
   ast_print(data.arguments);
   printf("]");
+  return;
 }
 case Return_Node:{
   struct Return_Node data = ast.data.Return_Node;
   printf("return ");
   ast_print(data.expression);
+  return;
+  }
+  case Break_Node:{
+    printf("break");
+    return;
   }
   case EMPTY:
   {

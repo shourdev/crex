@@ -39,7 +39,8 @@ IF,
  LEFT_SQUARE,
  RIGHT_SQUARE,
  NOTEQUAL,
- RETURN
+ RETURN,
+ BREAK
 };
 typedef struct
 {

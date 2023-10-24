@@ -111,7 +111,7 @@ Token *lexer(char *string, int *num_tokens)
             }
         }
         // Identifiers
-        if (isalpha(string[i])||string[i]=='_')
+        if (isalpha(string[i]) || string[i] == '_')
         {
             int visited = 0;
             char *result = NULL;
@@ -225,10 +225,20 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            if(strcmp(result,"return")==0){
+            if (strcmp(result, "return") == 0)
+            {
                 visited = 1;
                 isiden = 1;
                 tokens[token_index].type = RETURN;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if (strcmp(result, "break") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = BREAK;
                 tokens[token_index].value = NULL;
                 tokens[token_index].line = line;
                 token_index++;
@@ -370,7 +380,7 @@ Token *lexer(char *string, int *num_tokens)
             i++;
         }
         // Bang
-        if (string[i] == '!'&&string[i+1]!='=')
+        if (string[i] == '!' && string[i + 1] != '=')
         {
             isiden = 1;
             tokens[token_index].type = BANG;
@@ -430,7 +440,8 @@ Token *lexer(char *string, int *num_tokens)
             i++;
         }
         // !=
-        if(string[i]=='!'&&string[i+1]=='='){
+        if (string[i] == '!' && string[i + 1] == '=')
+        {
             isiden = 1;
             tokens[token_index].type = NOTEQUAL;
             tokens[token_index].value = NULL;

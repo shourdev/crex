@@ -430,6 +430,10 @@ AST *returnstatement()
     consume(SEMI, "Expected ';' after expression");
     return AST_NEW(Return_Node, expr2);
 }
+AST* breakstatement(){
+    consume(SEMI,"Expected ';' after break statement");
+    return AST_NEW(Break_Node);
+}
 AST *statement()
 {
     if (match(PRINT_KEY))
@@ -448,6 +452,9 @@ AST *statement()
     if (match(RETURN))
     {
         return returnstatement();
+    }
+    if(match(BREAK)){
+        return breakstatement();
     }
     return exprstate();
 }
