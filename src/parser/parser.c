@@ -174,8 +174,8 @@ AST *primary()
                 ast_arg_add(arguments, expr());
             } while (match(COMMA));
         }
-        consume(RIGHT_SQUARE,"Expected ']'");
-        return AST_NEW(Square,arguments);
+        consume(RIGHT_SQUARE, "Expected ']'");
+        return AST_NEW(Square, arguments);
     }
 }
 AST *finishcall(AST *callee)
@@ -418,6 +418,18 @@ AST *ifstatement()
     }
     return AST_NEW(IF_STATEMENT, condition, then, elsebranch);
 }
+AST *returnstatement()
+{
+    if (peek().type == SEMI)
+    {
+        getnexttoken();
+        AST *expr2 = AST_NEW(EMPTY, 2);
+        return AST_NEW(Return_Node, expr2);
+    }
+    AST *expr2 = expr();
+    consume(SEMI, "Expected ';' after expression");
+    return AST_NEW(Return_Node, expr2);
+}
 AST *statement()
 {
     if (match(PRINT_KEY))
@@ -432,6 +444,10 @@ AST *statement()
     if (match(WHILE_KEY))
     {
         return whilestatement();
+    }
+    if (match(RETURN))
+    {
+        return returnstatement();
     }
     return exprstate();
 }

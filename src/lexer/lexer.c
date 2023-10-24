@@ -111,7 +111,7 @@ Token *lexer(char *string, int *num_tokens)
             }
         }
         // Identifiers
-        if (isalpha(string[i]))
+        if (isalpha(string[i])||string[i]=='_')
         {
             int visited = 0;
             char *result = NULL;
@@ -221,6 +221,14 @@ Token *lexer(char *string, int *num_tokens)
                 visited = 1;
                 isiden = 1;
                 tokens[token_index].type = WHILE_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if(strcmp(result,"return")==0){
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = RETURN;
                 tokens[token_index].value = NULL;
                 tokens[token_index].line = line;
                 token_index++;

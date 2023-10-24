@@ -224,6 +224,11 @@ case Square:{
   ast_print(data.arguments);
   printf("]");
 }
+case Return_Node:{
+  struct Return_Node data = ast.data.Return_Node;
+  printf("return ");
+  ast_print(data.expression);
+  }
   case EMPTY:
   {
     return;

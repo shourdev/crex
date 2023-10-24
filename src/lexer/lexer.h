@@ -38,7 +38,8 @@ IF,
  FALSE_kEY,
  LEFT_SQUARE,
  RIGHT_SQUARE,
- NOTEQUAL
+ NOTEQUAL,
+ RETURN
 };
 typedef struct
 {

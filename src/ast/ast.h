@@ -43,7 +43,8 @@ struct AST
         Listac,
         Assign,
         listelements,
-        Square
+        Square,
+        Return_Node
 
     } tag;
     union
@@ -185,7 +186,9 @@ struct AST
         struct Square{
             AST* arguments;
         }Square;
-       
+        struct Return_Node{
+            AST* expression;
+        }Return_Node;
 
     } data;
 };
