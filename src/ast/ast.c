@@ -1,3 +1,6 @@
+/*
+This contains function used to make the ast, and also to walk the ast
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include "ast.h"
@@ -75,6 +78,7 @@ void ast_print(AST *ptr)
 
     printf("%s", data.op);
     ast_print(data.right);
+    
 
     return;
   }
@@ -113,6 +117,7 @@ void ast_print(AST *ptr)
     printtype(data.type);
     printf(" %s = ", data.name);
     ast_print(data.expr);
+
     return;
   }
 
@@ -235,6 +240,11 @@ case Return_Node:{
   case Break_Node:{
     printf("break");
     return;
+  }
+  case ExprStatement:{
+    struct ExprStatement data = ast.data.ExprStatement;
+    ast_print(data.expression);
+    
   }
   case EMPTY:
   {

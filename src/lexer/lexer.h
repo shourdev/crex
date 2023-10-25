@@ -1,3 +1,6 @@
+/*
+Mainly contains all the different types of tokens
+*/
 #ifndef LEXER_H_INCLUDED
 #define LEXER_H_INCLUDED
 enum tokentype

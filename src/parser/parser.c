@@ -1,8 +1,11 @@
-#include "parser.h"
+/*
+This is code for the crex parser. This is a recursive descent parser.
+*/
 #include <stdio.h>
 #include <stdlib.h>
-#include "../ast/ast.h"
 #include <stdbool.h>
+#include "parser.h"
+#include "../ast/ast.h"
 // tokens2 is an array of tokens, and curtoken stores the current token in the tokens2 index
 Token *tokens2;
 Token curtoken;
@@ -385,7 +388,8 @@ AST *exprstate()
     AST *exp = expr();
 
     consume(SEMI, "Expected ';' after expression.");
-    return exp;
+
+    return AST_NEW(ExprStatement,exp);
 }
 AST *printstatement()
 {
@@ -605,7 +609,7 @@ void parsestatement()
         ast_root_add(root, tree);
     }
 }
-void parse(Token *tokens)
+AST* parse(Token *tokens)
 {
     tokens2 = tokens;
     getnexttoken();
@@ -614,5 +618,5 @@ void parse(Token *tokens)
     AST *tree;
 
     parsestatement();
-    ast_print(root);
+    return root;
 }

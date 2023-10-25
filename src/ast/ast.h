@@ -1,14 +1,23 @@
+/*
+This is the ast data structre
+*/
 #ifndef AST_H_INCLUDED
 #define AST_H_INCLUDED
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <string.h>
 #include <stdbool.h>
 #define AST_NEW(tag, ...) \
     ast_new((AST){tag, {.tag = (struct tag){__VA_ARGS__}}})
+
 struct type
 {
     bool islist;
     bool isstruct;
     char *type;
 };
+
 typedef struct type type;
 typedef struct AST AST;
 struct AST
@@ -45,7 +54,8 @@ struct AST
         listelements,
         Square,
         Return_Node,
-        Break_Node
+        Break_Node,
+        ExprStatement
 
     } tag;
     union
@@ -183,20 +193,27 @@ struct AST
         {
             AST *target;
             AST *expr;
-        }Assign;
-        struct Square{
-            AST* arguments;
-        }Square;
-        struct Return_Node{
-            AST* expression;
-        }Return_Node;
-        struct Break_Node{
+        } Assign;
+        struct Square
+        {
+            AST *arguments;
+        } Square;
+        struct Return_Node
+        {
+            AST *expression;
+        } Return_Node;
+        struct Break_Node
+        {
 
-        }Break_Node;
+        } Break_Node;
+        struct ExprStatement
+        {
+            AST *expression;
+        } ExprStatement;
 
     } data;
 };
 void ast_print(AST *ptr);
 AST *ast_new(AST ast);
-
+void printtype(type type);
 #endif

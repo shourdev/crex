@@ -3,7 +3,8 @@ Copyright (c) 2023 Shourjjo Majumder
 https://github.com/shourdev/crex
 
 This is the main file of the crex compiler.
-It contains all CLI related code.
+This is the driver file.
+This calls the function to tokenize,parse,semantically analyse and generate code.
 */
 #include "./lexer/lexer.h"
 #include <stdio.h>
@@ -12,8 +13,8 @@ It contains all CLI related code.
 #include <stdlib.h>
 #include <stdbool.h>
 #include "./parser/parser.h"
-
-
+#include "./ast/ast.h"
+#include "./code-gen/gen.h"
 FILE *write;
 char *read_file(const char *filename)
 {
@@ -61,9 +62,9 @@ int main()
     char *file_content = read_file("main.crf");
 
     int num_tokens = 0;
- Token* tokens = lexer(file_content, &num_tokens);
+    Token *tokens = lexer(file_content, &num_tokens);
 
-parse(tokens);
-
+    AST *tree = parse(tokens);
+    caller(tree);
     free(tokens);
 }
