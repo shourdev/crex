@@ -471,7 +471,16 @@ AST *struct_decl()
     AST *expr2 = AST_NEW(EMPTY, 2);
     consume(IDENTFIER, "Expected identifier after struct keyword");
     type.type = previous().value;
-
+    if (match(LEFT_SQUARE))
+    {
+        type.islist = true;
+        consume(RIGHT_SQUARE,"Expected ']'");
+        char* name;
+        name = peek().value;
+        getnexttoken();
+        consume(SEMI,"expected ;");
+        return AST_NEW(AST_LIST,AST_NEW(EMPTY,2),type,name);
+    }
     char *name = peek().value;
     getnexttoken();
 
