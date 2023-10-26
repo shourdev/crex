@@ -78,7 +78,6 @@ void ast_print(AST *ptr)
 
     printf("%s", data.op);
     ast_print(data.right);
-    
 
     return;
   }
@@ -93,14 +92,6 @@ void ast_print(AST *ptr)
   {
     struct StringNode data = ast.data.StringNode;
     printf("%s", data.value);
-    return;
-  }
-  case AndNode:
-  {
-    struct AndNode data = ast.data.AndNode;
-    ast_print(data.left);
-    printf("%s", data.op);
-    ast_print(data.right);
     return;
   }
   case PrintNode:
@@ -202,7 +193,7 @@ void ast_print(AST *ptr)
     printf("%s", data.name);
     printf("=");
     ast_print(data.args);
-  
+
     return;
   }
   case Listac:
@@ -224,27 +215,35 @@ void ast_print(AST *ptr)
     ast_print(data.expr);
     return;
   }
-case Square:{
-  struct Square data = ast.data.Square;
-  printf("[");
-  ast_print(data.arguments);
-  printf("]");
-  return;
-}
-case Return_Node:{
-  struct Return_Node data = ast.data.Return_Node;
-  printf("return ");
-  ast_print(data.expression);
-  return;
+  case Square:
+  {
+    struct Square data = ast.data.Square;
+    printf("[");
+    ast_print(data.arguments);
+    printf("]");
+    return;
   }
-  case Break_Node:{
+  case Return_Node:
+  {
+    struct Return_Node data = ast.data.Return_Node;
+    printf("return ");
+    ast_print(data.expression);
+    return;
+  }
+  case Break_Node:
+  {
     printf("break");
     return;
   }
-  case ExprStatement:{
+  case ExprStatement:
+  {
     struct ExprStatement data = ast.data.ExprStatement;
     ast_print(data.expression);
-    
+    return;
+  }
+  case NULL_NODE:{
+    printf("null");
+    return;
   }
   case EMPTY:
   {

@@ -43,7 +43,9 @@ IF,
  RIGHT_SQUARE,
  NOTEQUAL,
  RETURN,
- BREAK
+ BREAK,
+ VOID_KEY,
+ NULL_KEY
 };
 typedef struct
 {

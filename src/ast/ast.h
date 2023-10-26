@@ -35,7 +35,6 @@ struct AST
         EMPTY,
         UnaryNode,
         StringNode,
-        AndNode,
         PrintNode,
         VarDecl,
         VarAcess,
@@ -55,7 +54,8 @@ struct AST
         Square,
         Return_Node,
         Break_Node,
-        ExprStatement
+        ExprStatement,
+        NULL_NODE
 
     } tag;
     union
@@ -119,13 +119,7 @@ struct AST
         {
             char *value;
         } StringNode;
-        struct AndNode
-        {
-            AST *left;
-            char *op;
-            AST *right;
 
-        } AndNode;
         struct PrintNode
         {
             AST *expr;
@@ -210,6 +204,9 @@ struct AST
         {
             AST *expression;
         } ExprStatement;
+        struct NULL_NODE{
+            
+        }NULL_NODE;
 
     } data;
 };

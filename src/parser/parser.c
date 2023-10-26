@@ -144,6 +144,11 @@ AST *primary()
         AST *boolnode = AST_NEW(BOOL, val);
         return boolnode;
     }
+    if (match(NULL_KEY))
+    {
+        AST *nullnode = AST_NEW(NULL_NODE);
+        return nullnode;
+    }
     if (match(STRING))
     {
 
@@ -389,7 +394,7 @@ AST *exprstate()
 
     consume(SEMI, "Expected ';' after expression.");
 
-    return AST_NEW(ExprStatement,exp);
+    return AST_NEW(ExprStatement, exp);
 }
 AST *printstatement()
 {
@@ -434,8 +439,9 @@ AST *returnstatement()
     consume(SEMI, "Expected ';' after expression");
     return AST_NEW(Return_Node, expr2);
 }
-AST* breakstatement(){
-    consume(SEMI,"Expected ';' after break statement");
+AST *breakstatement()
+{
+    consume(SEMI, "Expected ';' after break statement");
     return AST_NEW(Break_Node);
 }
 AST *statement()
@@ -457,7 +463,8 @@ AST *statement()
     {
         return returnstatement();
     }
-    if(match(BREAK)){
+    if (match(BREAK))
+    {
         return breakstatement();
     }
     return exprstate();
@@ -482,6 +489,10 @@ AST *functionargs()
     if (match(BOOL_KEY))
     {
         type.type = "bool";
+    }
+    if (match(VOID_KEY))
+    {
+        type.type = "void";
     }
 
     if (match(LEFT_SQUARE))
@@ -543,6 +554,10 @@ AST *varDeclare()
     {
         type.type = "bool";
     }
+    if (previous().type == VOID_KEY)
+    {
+        type.type = "void";
+    }
     type.islist = false;
     type.isstruct = false;
     // Lists
@@ -583,7 +598,7 @@ AST *varDeclare()
 }
 AST *declaration()
 {
-    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY))
+    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY))
     {
         return varDeclare();
     }
@@ -609,7 +624,7 @@ void parsestatement()
         ast_root_add(root, tree);
     }
 }
-AST* parse(Token *tokens)
+AST *parse(Token *tokens)
 {
     tokens2 = tokens;
     getnexttoken();
