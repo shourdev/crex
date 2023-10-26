@@ -468,6 +468,15 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             i++;
         }
+        // . 
+        if(string[i]=='.'){
+            isiden = 1;
+            tokens[token_index].type = DOT;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
         // Error Handling and spaces and lines and comments
         else
         { // Lines

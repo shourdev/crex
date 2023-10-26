@@ -55,7 +55,8 @@ struct AST
         Return_Node,
         Break_Node,
         ExprStatement,
-        NULL_NODE
+        NULL_NODE,
+        STRUCT_ACC
 
     } tag;
     union
@@ -207,6 +208,10 @@ struct AST
         struct NULL_NODE{
             
         }NULL_NODE;
+        struct STRUCT_ACC{
+            AST* left;
+            AST* right;
+        }STRUCT_ACC;
 
     } data;
 };

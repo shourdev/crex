@@ -241,8 +241,17 @@ void ast_print(AST *ptr)
     ast_print(data.expression);
     return;
   }
-  case NULL_NODE:{
+  case NULL_NODE:
+  {
     printf("null");
+    return;
+  }
+  case STRUCT_ACC:
+  {
+    struct STRUCT_ACC data = ast.data.STRUCT_ACC;
+    ast_print(data.left);
+    printf(".");
+    ast_print(data.right);
     return;
   }
   case EMPTY:

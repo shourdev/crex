@@ -240,6 +240,23 @@ AST *list()
     }
     return expr2;
 }
+AST *dot()
+{
+    AST *left = list();
+    while (true)
+    {
+        if (match(DOT))
+        {
+            AST *right = list();
+            left = AST_NEW(STRUCT_ACC, left, right);
+        }
+        else
+        {
+            break;
+        }
+    }
+    return left;
+}
 // Parses unary
 AST *unary()
 {
@@ -259,7 +276,7 @@ AST *unary()
         AST *expr = AST_NEW(UnaryNode, op, right);
         return expr;
     }
-    return list();
+    return dot();
 }
 
 // Parses multiplication and div
