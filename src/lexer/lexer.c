@@ -261,6 +261,15 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+            if (strcmp(result, "struct") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = STRUCT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
             else
             {
                 if (visited == 0)
@@ -468,8 +477,9 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             i++;
         }
-        // . 
-        if(string[i]=='.'){
+        // .
+        if (string[i] == '.')
+        {
             isiden = 1;
             tokens[token_index].type = DOT;
             tokens[token_index].value = NULL;

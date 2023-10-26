@@ -29,6 +29,8 @@ AST *ifstatement();
 AST *printstatement();
 AST *exprstate();
 AST *whilestatement();
+
+AST *functionparse(char *name, type type);
 bool isatend();
 // Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
@@ -461,6 +463,30 @@ AST *breakstatement()
     consume(SEMI, "Expected ';' after break statement");
     return AST_NEW(Break_Node);
 }
+AST *struct_decl()
+{
+    type type;
+    type.isstruct = true;
+    type.islist = false;
+    AST *expr2 = AST_NEW(EMPTY, 2);
+    consume(IDENTFIER, "Expected identifier after struct keyword");
+    type.type = previous().value;
+
+    char *name = peek().value;
+    getnexttoken();
+
+    if (match(EQUAL))
+    {
+
+        expr2 = expr();
+    }
+    if (match(OPEN_PAREN))
+    {
+        return functionparse(name, type);
+    }
+    consume(SEMI, "Expect ';' after variable declaration");
+    return AST_NEW(VarDecl, name, type, expr2);
+}
 AST *statement()
 {
     if (match(PRINT_KEY))
@@ -484,10 +510,15 @@ AST *statement()
     {
         return breakstatement();
     }
+    if (match(STRUCT_KEY))
+    {
+        return struct_decl();
+    }
     return exprstate();
 }
 AST *functionargs()
 {
+    char *name;
     type type;
     type.islist = false;
     type.isstruct = false;
@@ -511,18 +542,23 @@ AST *functionargs()
     {
         type.type = "void";
     }
-
+    if (match(STRUCT_KEY))
+    {
+        type.isstruct = true;
+        consume(IDENTFIER, "Expected identifier after struct keyword");
+        type.type = previous().value;
+    }
     if (match(LEFT_SQUARE))
     {
         type.islist = true;
         consume(RIGHT_SQUARE, "Expected ']'");
-        char *name = peek().value;
+        name = peek().value;
         getnexttoken();
         AST *arguments = AST_NEW(AST_ARG,
                                  AST_NEW(EMPTY, 'f'), );
         return AST_NEW(AST_LIST, arguments, type, name);
     }
-    char *name = peek().value;
+    name = peek().value;
     getnexttoken();
     AST *arguments = AST_NEW(AST_ARG,
                              AST_NEW(EMPTY, 'f'), );

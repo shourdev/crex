@@ -46,7 +46,8 @@ IF,
  BREAK,
  VOID_KEY,
  NULL_KEY,
- DOT
+ DOT,
+ STRUCT_KEY
 };
 typedef struct
 {

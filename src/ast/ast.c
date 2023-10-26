@@ -15,6 +15,10 @@ AST *ast_new(AST ast)
 }
 void printtype(type type)
 {
+  if (type.isstruct == true)
+  {
+    printf("struct ");
+  }
   printf("%s", type.type);
   if (type.islist == true)
   {
