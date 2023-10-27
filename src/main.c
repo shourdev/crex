@@ -65,7 +65,9 @@ int main()
     Token *tokens = lexer(file_content, &num_tokens);
 
     AST *tree = parse(tokens);
-  //  caller(tree);
-  ast_print(tree);
+  caller(tree);
+ 
+  //ast_print(tree);
+ system("python3 code.py");
     free(tokens);
 }

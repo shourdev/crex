@@ -6,6 +6,9 @@
 #include "../ast/ast.h"
 #include "gen.h"
 FILE *code;
+bool isfuncarg = false;
+bool curgenforblock = false;
+
 bool isempty(AST *ptr)
 {
     AST ast = *ptr;
@@ -23,8 +26,9 @@ bool isempty(AST *ptr)
 }
 void caller(AST *ptr)
 {
-    code = fopen("code.js", "w");
+    code = fopen("code.py", "w");
     gencode(ptr);
+    fclose(code);
 }
 void gencode(AST *ptr)
 {
@@ -43,13 +47,16 @@ void gencode(AST *ptr)
     }
     case AST_BLOCK:
     {
-        fprintf(code, "{ \n");
+
         struct AST_BLOCK data = ast.data.AST_BLOCK;
         for (size_t i = 0; i < data.len; i++)
         {
+
+            fprintf(code, "   ");
+
             gencode(&data.code[i]);
         }
-        fprintf(code, "}\n");
+
         return;
     }
     case AST_ARG:
@@ -97,27 +104,44 @@ void gencode(AST *ptr)
     case StringNode:
     {
         struct StringNode data = ast.data.StringNode;
-        fprintf(code, "%s", data.value);
+        fprintf(code, "\"%s\"", data.value);
         return;
     }
 
     case PrintNode:
     {
         struct PrintNode data = ast.data.PrintNode;
-        fprintf(code, "console.log(");
+        fprintf(code, "print( ");
         gencode(data.expr);
-        fprintf(code, ");");
+        fprintf(code, ")\n");
         return;
     }
     case VarDecl:
     {
 
         struct VarDecl data = ast.data.VarDecl;
-        printtype(data.type);
-        fprintf(code, "var %s = ", data.name);
-        gencode(data.expr);
-        fprintf(code, ";\n");
-        return;
+        // printtype(data.type);
+        fprintf(code, "%s", data.name);
+        if (isempty(data.expr))
+        { 
+            if (isfuncarg == true)
+            { 
+                return;
+            }
+            else
+            {
+                fprintf(code, "= None\n");
+               
+                return;
+            }
+        }
+        else
+        { 
+            fprintf(code, "=");
+            gencode(data.expr);
+            fprintf(code, "\n");
+            return;
+        }
     }
 
     case VarAcess:
@@ -131,7 +155,7 @@ void gencode(AST *ptr)
         struct IF_STATEMENT data = ast.data.IF_STATEMENT;
         fprintf(code, "if (");
         gencode(data.condition);
-        fprintf(code, ")\n");
+        fprintf(code, "):\n");
 
         gencode(data.thenbranch);
 
@@ -139,7 +163,7 @@ void gencode(AST *ptr)
         {
             return;
         }
-        fprintf(code, "else");
+        fprintf(code, "else:");
         gencode(data.elsebranch);
 
         return;
@@ -147,9 +171,9 @@ void gencode(AST *ptr)
     case WHILE_LOOP:
     {
         struct WHILE_LOOP data = ast.data.WHILE_LOOP;
-        printf("while(");
+        fprintf(code, "while(");
         gencode(data.condition);
-        printf(")");
+        fprintf(code, "):\n");
         gencode(data.thenbranch);
 
         return;
@@ -159,32 +183,35 @@ void gencode(AST *ptr)
     {
         struct Call data = ast.data.Call;
         gencode(data.Callee);
-        printf("(");
+        fprintf(code, "(");
         gencode(data.arguments);
-        printf(")");
+        fprintf(code, ")");
         return;
     }
     case Function:
     {
         struct Function data = ast.data.Function;
-      //  printtype(data.type);
-        printf(" function %s(", data.name);
+        //  printtype(data.type);
+        isfuncarg = true;
+        fprintf(code, "def %s(", data.name);
         gencode(data.args);
-        printf(")");
+        fprintf(code, "):\n");
         gencode(data.code);
 
         return;
     }
-    case FunctionARG:
-    {
-        struct FunctionARG data = ast.data.FunctionARG;
-        printf("%s %s", data.type, data.name);
-        return;
-    }
+
     case BOOL:
     {
         struct BOOL data = ast.data.BOOL;
-        printf("%s", data.value);
+        if (strcmp(data.value, "true") == 0)
+        {
+            fprintf(code, "True");
+        }
+        else
+        {
+            fprintf(code, "False");
+        }
         return;
     }
     case AST_FLOAT:
@@ -196,11 +223,12 @@ void gencode(AST *ptr)
     case AST_LIST:
     {
         struct AST_LIST data = ast.data.AST_LIST;
-        printtype(data.type);
 
-        printf("%s", data.name);
-        printf("=");
+        fprintf(code, "%s", data.name);
+        fprintf(code, "=");
+
         gencode(data.args);
+        fprintf(code, "\n");
 
         return;
     }
@@ -209,44 +237,55 @@ void gencode(AST *ptr)
         struct Listac data = ast.data.Listac;
 
         gencode(data.parent);
-        printf("[");
+        fprintf(code, "[");
 
         gencode(data.index);
-        printf("]");
+        fprintf(code, "]");
         return;
     }
     case Assign:
     {
         struct Assign data = ast.data.Assign;
         gencode(data.target);
-        printf("=");
+        fprintf(code, "=");
         gencode(data.expr);
         return;
     }
     case Square:
     {
         struct Square data = ast.data.Square;
-        printf("[");
+        fprintf(code, "[");
         gencode(data.arguments);
-        printf("]");
+        fprintf(code, "]");
         return;
     }
     case Return_Node:
     {
         struct Return_Node data = ast.data.Return_Node;
-        printf("return ");
+        fprintf(code, "return ");
         gencode(data.expression);
+        fprintf(code, "\n");
         return;
     }
     case Break_Node:
     {
-        printf("break");
+        fprintf(code, "break\n");
         return;
     }
     case ExprStatement:
     {
         struct ExprStatement data = ast.data.ExprStatement;
         gencode(data.expression);
+        fprintf(code,"\n");
+        return;
+    }
+    case STRUCT_ACC:
+    {
+        struct STRUCT_ACC data = ast.data.STRUCT_ACC;
+        gencode(data.left);
+        fprintf(code, ".");
+        gencode(data.right);
+        return;
     }
     case EMPTY:
     {

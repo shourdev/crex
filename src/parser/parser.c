@@ -474,27 +474,41 @@ AST *struct_decl()
     if (match(LEFT_SQUARE))
     {
         type.islist = true;
-        consume(RIGHT_SQUARE,"Expected ']'");
-        char* name;
+        consume(RIGHT_SQUARE, "Expected ']'");
+        char *name;
         name = peek().value;
         getnexttoken();
-        consume(SEMI,"expected ;");
-        return AST_NEW(AST_LIST,AST_NEW(EMPTY,2),type,name);
+        if (match(EQUAL))
+        {
+            expr2 = expr();
+        }
+        if (match(OPEN_PAREN))
+        {
+            return functionparse(name, type);
+        }
+        consume(SEMI, "expected ;");
+        return AST_NEW(AST_LIST, expr2, type, name);
     }
-    char *name = peek().value;
-    getnexttoken();
-
-    if (match(EQUAL))
+    if (peek().type == IDENTFIER)
     {
+        char *name = peek().value;
+        getnexttoken();
 
-        expr2 = expr();
+        if (match(EQUAL))
+        {
+
+            expr2 = expr();
+        }
+        if (match(OPEN_PAREN))
+        {
+            return functionparse(name, type);
+        }
+        consume(SEMI, "Expect ';' after variable declaration");
+        return AST_NEW(VarDecl, name, type, expr2);
     }
-    if (match(OPEN_PAREN))
-    {
-        return functionparse(name, type);
+    else{
+        
     }
-    consume(SEMI, "Expect ';' after variable declaration");
-    return AST_NEW(VarDecl, name, type, expr2);
 }
 AST *statement()
 {
@@ -563,14 +577,12 @@ AST *functionargs()
         consume(RIGHT_SQUARE, "Expected ']'");
         name = peek().value;
         getnexttoken();
-        AST *arguments = AST_NEW(AST_ARG,
-                                 AST_NEW(EMPTY, 'f'), );
+        AST *arguments = AST_NEW(EMPTY,2);
         return AST_NEW(AST_LIST, arguments, type, name);
     }
     name = peek().value;
     getnexttoken();
-    AST *arguments = AST_NEW(AST_ARG,
-                             AST_NEW(EMPTY, 'f'), );
+    AST *arguments = AST_NEW(EMPTY,2);
     return AST_NEW(VarDecl, name, type, arguments);
 }
 AST *functionparse(char *name, type type)

@@ -1,7 +1,7 @@
 string s = input();
 int ptr;
 int length = 65535;
-int[] memory;
+int[] memory = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 int c = 0;
 int i = 0;
 while(i<length(s))
