@@ -7,8 +7,14 @@
 #include "gen.h"
 FILE *code;
 bool isfuncarg = false;
-bool curgenforblock = false;
-
+int blockindent = 0;
+void spaceprint()
+{
+    for (int i = 0; i <= blockindent; i++)
+    {
+        fprintf(code, " ");
+    }
+}
 bool isempty(AST *ptr)
 {
     AST ast = *ptr;
@@ -49,14 +55,15 @@ void gencode(AST *ptr)
     {
 
         struct AST_BLOCK data = ast.data.AST_BLOCK;
+        blockindent = blockindent + 3;
         for (size_t i = 0; i < data.len; i++)
         {
 
-            fprintf(code, "   ");
+            spaceprint();
 
             gencode(&data.code[i]);
         }
-
+        blockindent = blockindent - 3;
         return;
     }
     case AST_ARG:
@@ -88,11 +95,27 @@ void gencode(AST *ptr)
         struct BinOpNode data = ast.data.BinOpNode;
 
         gencode(data.left);
+        if (strcmp(data.op, "||")==0)
+        {
+            fprintf(code, " or ");
+            gencode(data.right);
+            return;
+        }
+        if (strcmp(data.op, "&&")==0)
+        {
+            fprintf(code, " and ");
+            gencode(data.right);
+            return;
+        }
+        else
+        {
+            fprintf(code, "%s", data.op);
+            gencode(data.right);
+            return;
+        }
+        
 
-        fprintf(code, "%s", data.op);
-        gencode(data.right);
-
-        return;
+    
     }
     case UnaryNode:
     {
@@ -123,20 +146,20 @@ void gencode(AST *ptr)
         // printtype(data.type);
         fprintf(code, "%s", data.name);
         if (isempty(data.expr))
-        { 
+        {
             if (isfuncarg == true)
-            { 
+            {
                 return;
             }
             else
             {
                 fprintf(code, "= None\n");
-               
+
                 return;
             }
         }
         else
-        { 
+        {
             fprintf(code, "=");
             gencode(data.expr);
             fprintf(code, "\n");
@@ -163,7 +186,8 @@ void gencode(AST *ptr)
         {
             return;
         }
-        fprintf(code, "else:");
+        spaceprint();
+        fprintf(code, "else:\n");
         gencode(data.elsebranch);
 
         return;
@@ -276,7 +300,7 @@ void gencode(AST *ptr)
     {
         struct ExprStatement data = ast.data.ExprStatement;
         gencode(data.expression);
-        fprintf(code,"\n");
+        fprintf(code, "\n");
         return;
     }
     case STRUCT_ACC:
@@ -287,6 +311,7 @@ void gencode(AST *ptr)
         gencode(data.right);
         return;
     }
+   
     case EMPTY:
     {
         return;

@@ -31,6 +31,7 @@ AST *exprstate();
 AST *whilestatement();
 
 AST *functionparse(char *name, type type);
+AST* struct_decl();
 bool isatend();
 // Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
@@ -463,6 +464,24 @@ AST *breakstatement()
     consume(SEMI, "Expected ';' after break statement");
     return AST_NEW(Break_Node);
 }
+AST *parsestruct(char* name)
+{
+    AST *root = AST_NEW(AST_BLOCK,
+                        AST_NEW(EMPTY, 'f'), );
+    while (!check(HASH) && !isatend())
+    {
+        if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY))
+        {
+            ast_block_add(root, varDeclare());
+        }
+        if (match(STRUCT_KEY))
+        {
+            ast_block_add(root, struct_decl());
+        }
+    }
+    consume(HASH, "Expected '#' after block.");
+    return AST_NEW(AST_STRUCT,name,root);
+}
 AST *struct_decl()
 {
     type type;
@@ -506,8 +525,9 @@ AST *struct_decl()
         consume(SEMI, "Expect ';' after variable declaration");
         return AST_NEW(VarDecl, name, type, expr2);
     }
-    else{
-        
+    else
+    {
+        return parsestruct(previous().value);
     }
 }
 AST *statement()
@@ -577,12 +597,12 @@ AST *functionargs()
         consume(RIGHT_SQUARE, "Expected ']'");
         name = peek().value;
         getnexttoken();
-        AST *arguments = AST_NEW(EMPTY,2);
+        AST *arguments = AST_NEW(EMPTY, 2);
         return AST_NEW(AST_LIST, arguments, type, name);
     }
     name = peek().value;
     getnexttoken();
-    AST *arguments = AST_NEW(EMPTY,2);
+    AST *arguments = AST_NEW(EMPTY, 2);
     return AST_NEW(VarDecl, name, type, arguments);
 }
 AST *functionparse(char *name, type type)
@@ -636,9 +656,9 @@ AST *varDeclare()
     type.isstruct = false;
     // Lists
     if (peek().type == LEFT_SQUARE)
-    {
+    { 
         type.islist = true;
-        AST *arguments;
+        AST *arguments = AST_NEW(EMPTY,3);
         getnexttoken();
         consume(RIGHT_SQUARE, "Expected ']' after '['");
         char *name = peek().value;

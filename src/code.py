@@ -1,7 +1,11 @@
+array=[]
+array.append([])
+array.append([])
 code=input()
 i=0
-def intornot():
-   print( "haha yes")
 while(i<len(code)):
-   intornot()
-   i=i+1
+    if (code[i]=="+"):
+       array[0].append("Plus")
+       array[1].append("None")
+    i=i+1
+print( array[0][0])

@@ -56,7 +56,8 @@ struct AST
         Break_Node,
         ExprStatement,
         NULL_NODE,
-        STRUCT_ACC
+        STRUCT_ACC,
+        AST_STRUCT
 
     } tag;
     union
@@ -205,13 +206,20 @@ struct AST
         {
             AST *expression;
         } ExprStatement;
-        struct NULL_NODE{
-            
-        }NULL_NODE;
-        struct STRUCT_ACC{
-            AST* left;
-            AST* right;
-        }STRUCT_ACC;
+        struct NULL_NODE
+        {
+
+        } NULL_NODE;
+        struct STRUCT_ACC
+        {
+            AST *left;
+            AST *right;
+        } STRUCT_ACC;
+        struct AST_STRUCT
+        {
+            char *name;
+            AST *contents;
+        } AST_STRUCT;
 
     } data;
 };
