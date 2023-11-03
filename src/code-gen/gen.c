@@ -95,13 +95,13 @@ void gencode(AST *ptr)
         struct BinOpNode data = ast.data.BinOpNode;
 
         gencode(data.left);
-        if (strcmp(data.op, "||")==0)
+        if (strcmp(data.op, "||") == 0)
         {
             fprintf(code, " or ");
             gencode(data.right);
             return;
         }
-        if (strcmp(data.op, "&&")==0)
+        if (strcmp(data.op, "&&") == 0)
         {
             fprintf(code, " and ");
             gencode(data.right);
@@ -113,9 +113,6 @@ void gencode(AST *ptr)
             gencode(data.right);
             return;
         }
-        
-
-    
     }
     case UnaryNode:
     {
@@ -145,16 +142,42 @@ void gencode(AST *ptr)
         struct VarDecl data = ast.data.VarDecl;
         // printtype(data.type);
         fprintf(code, "%s", data.name);
+        if (data.type.isstruct == true)
+        {
+            if (isempty(data.expr))
+            {
+                if (isfuncarg == true)
+                {
+                    return;
+                }
+                else
+                {
+                    fprintf(code, " = %s()\n", data.type.type);
+                    return;
+                }
+            }
+            else
+            {
+                fprintf(code, " =");
+                gencode(data.expr);
+                fprintf(code, "\n");
+                return;
+            }
+        }
         if (isempty(data.expr))
         {
             if (isfuncarg == true)
             {
                 return;
             }
-            else
+            if (strcmp(data.type.type, "string") == 0)
             {
-                fprintf(code, "= None\n");
-
+                fprintf(code, " = \"null\"\n");
+                return;
+            }
+            if (strcmp(data.type.type, "int") == 0 || strcmp(data.type.type, "float") == 0)
+            {
+                fprintf(code, " = 0\n");
                 return;
             }
         }
@@ -206,6 +229,21 @@ void gencode(AST *ptr)
     case Call:
     {
         struct Call data = ast.data.Call;
+        // Std Lib functions
+        if (strcmp(data.Callee->data.VarAcess.name, "cout") == 0)
+        {
+            fprintf(code, "print(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "cin") == 0)
+        {
+            fprintf(code, "input(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
         gencode(data.Callee);
         fprintf(code, "(");
         gencode(data.arguments);
@@ -220,6 +258,7 @@ void gencode(AST *ptr)
         fprintf(code, "def %s(", data.name);
         gencode(data.args);
         fprintf(code, "):\n");
+        isfuncarg = false;
         gencode(data.code);
 
         return;
@@ -250,8 +289,14 @@ void gencode(AST *ptr)
 
         fprintf(code, "%s", data.name);
         fprintf(code, "=");
-
-        gencode(data.args);
+        if (isempty(data.args))
+        {
+            fprintf(code, "[]");
+        }
+        else
+        {
+            gencode(data.args);
+        }
         fprintf(code, "\n");
 
         return;
@@ -311,7 +356,13 @@ void gencode(AST *ptr)
         gencode(data.right);
         return;
     }
-   
+    case AST_STRUCT:
+    {
+        struct AST_STRUCT data = ast.data.AST_STRUCT;
+        fprintf(code, "class %s:\n", data.name);
+        gencode(data.contents);
+        return;
+    }
     case EMPTY:
     {
         return;
