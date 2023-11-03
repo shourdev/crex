@@ -244,6 +244,13 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
+        if (strcmp(data.Callee->data.VarAcess.name, "toint") == 0)
+        {
+            fprintf(code, "int(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
         gencode(data.Callee);
         fprintf(code, "(");
         gencode(data.arguments);

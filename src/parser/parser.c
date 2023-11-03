@@ -206,7 +206,7 @@ AST *finishcall(AST *callee)
             arg++;
         } while (match(COMMA));
     }
-    consume(CLOSE_PAREN, "Expect ')' after arguments.");
+   consume(CLOSE_PAREN, "Expect ')' after arguments.");
     return AST_NEW(Call, callee, arguments);
 }
 AST *call()
