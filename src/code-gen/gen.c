@@ -172,7 +172,7 @@ void gencode(AST *ptr)
             }
             if (strcmp(data.type.type, "string") == 0)
             {
-                fprintf(code, " = \"null\"\n");
+                fprintf(code, " = \"\"\n");
                 return;
             }
             if (strcmp(data.type.type, "int") == 0 || strcmp(data.type.type, "float") == 0)
@@ -230,11 +230,12 @@ void gencode(AST *ptr)
     {
         struct Call data = ast.data.Call;
         // Std Lib functions
+        // I/O
         if (strcmp(data.Callee->data.VarAcess.name, "cout") == 0)
         {
             fprintf(code, "print(");
             gencode(data.arguments);
-            fprintf(code, ")");
+            fprintf(code, ",end='')");
             return;
         }
         if (strcmp(data.Callee->data.VarAcess.name, "cin") == 0)
@@ -244,6 +245,7 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
+        // Types
         if (strcmp(data.Callee->data.VarAcess.name, "toint") == 0)
         {
             fprintf(code, "int(");
@@ -251,6 +253,28 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
+        if (strcmp(data.Callee->data.VarAcess.name, "tostr") == 0)
+        {
+            fprintf(code, "str(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "toflt") == 0)
+        {
+            fprintf(code, "float(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "strlen") == 0)
+        {
+            fprintf(code, "len(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+
         gencode(data.Callee);
         fprintf(code, "(");
         gencode(data.arguments);
@@ -295,13 +319,20 @@ void gencode(AST *ptr)
         struct AST_LIST data = ast.data.AST_LIST;
 
         fprintf(code, "%s", data.name);
-        fprintf(code, "=");
+
         if (isempty(data.args))
         {
+            if (isfuncarg == true)
+            {
+                return;
+            }
+            fprintf(code, "=");
             fprintf(code, "[]");
+          
         }
         else
         {
+            fprintf(code, "=");
             gencode(data.args);
         }
         fprintf(code, "\n");

@@ -52,11 +52,13 @@ char *read_file(const char *filename)
     return buffer;
 }
 
-int main()
+int main(int argc,char argv[])
 
 {
 
     FILE *FL;
+
+   
     FL = fopen("main.crf", "r");
 
     char *file_content = read_file("main.crf");
