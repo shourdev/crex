@@ -339,7 +339,7 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
-        if (strcmp(data.Callee->data.VarAcess.name, "strlen") == 0)
+        if (strcmp(data.Callee->data.VarAcess.name, "len") == 0)
         {
             fprintf(code, "len(");
             gencode(data.arguments);
