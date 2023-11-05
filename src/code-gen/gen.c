@@ -12,6 +12,7 @@ int blockindent = 0;
 bool iscout = false;
 bool iscin = false;
 bool istotype = false;
+bool isaddlist = false;
 void start()
 {
     stdlib = fopen("stdlib.py", "w");
@@ -44,6 +45,19 @@ void gencin()
     }
     iscin = true;
 }
+void genaddlist()
+{
+    if (isaddlist == false)
+    {
+        fprintf(stdlib, "def addlist(list,pos,element):\n");
+        fprintf(stdlib, "    list.insert(pos,element)\n");
+    }
+    else
+    {
+        return;
+    }
+    isaddlist = true;
+}
 void gentotype()
 {
     if (istotype == false)
@@ -60,7 +74,8 @@ void gentotype()
         fprintf(stdlib, "        print(type,\" is not a valid type!\")\n");
         fprintf(stdlib, "        exit()\n");
     }
-    else{
+    else
+    {
         return;
     }
     istotype = true;
@@ -312,6 +327,14 @@ void gencode(AST *ptr)
         {
             gentotype();
             fprintf(code, "totype(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "addlist") == 0)
+        {
+            genaddlist();
+            fprintf(code, "addlist(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
