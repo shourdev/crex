@@ -5,9 +5,66 @@
 #include "../parser/parser.h"
 #include "../ast/ast.h"
 #include "gen.h"
+FILE *stdlib;
 FILE *code;
 bool isfuncarg = false;
 int blockindent = 0;
+bool iscout = false;
+bool iscin = false;
+bool istotype = false;
+void start()
+{
+    stdlib = fopen("stdlib.py", "w");
+}
+void gencout()
+{
+    if (iscout == false)
+    {
+        fprintf(stdlib, "def cout(*args):\n");
+        fprintf(stdlib, "    for arg in args:\n");
+        fprintf(stdlib, "        print(arg,end='')\n");
+    }
+    else
+    {
+        return;
+    }
+
+    iscout = true;
+}
+void gencin()
+{
+    if (iscin == false)
+    {
+        fprintf(stdlib, "def cin():\n");
+        fprintf(stdlib, "    return input()\n");
+    }
+    else
+    {
+        return;
+    }
+    iscin = true;
+}
+void gentotype()
+{
+    if (istotype == false)
+    {
+        fprintf(stdlib, "def totype(type,val):\n");
+        fprintf(stdlib, "    if(type==\"int\"):\n");
+        fprintf(stdlib, "        return int(val)\n");
+        fprintf(stdlib, "    if(type==\"str\"):\n");
+        fprintf(stdlib, "        return str(val)\n");
+        fprintf(stdlib, "    if(type==\"float\"):\n");
+        fprintf(stdlib, "        return float(val)\n");
+        fprintf(stdlib, "    else:\n");
+        fprintf(stdlib, "        print(\"Crex Runtime Error!\")\n");
+        fprintf(stdlib, "        print(type,\" is not a valid type!\")\n");
+        fprintf(stdlib, "        exit()\n");
+    }
+    else{
+        return;
+    }
+    istotype = true;
+}
 void spaceprint()
 {
     for (int i = 0; i <= blockindent; i++)
@@ -33,8 +90,12 @@ bool isempty(AST *ptr)
 void caller(AST *ptr)
 {
     code = fopen("code.py", "w");
+    start();
+    fprintf(code, "from stdlib import*\n");
     gencode(ptr);
+
     fclose(code);
+    fclose(stdlib);
 }
 void gencode(AST *ptr)
 {
@@ -233,36 +294,24 @@ void gencode(AST *ptr)
         // I/O
         if (strcmp(data.Callee->data.VarAcess.name, "cout") == 0)
         {
-            fprintf(code, "print(");
+            gencout();
+            fprintf(code, "cout(");
             gencode(data.arguments);
-            fprintf(code, ",end='')");
+            fprintf(code, ")");
             return;
         }
         if (strcmp(data.Callee->data.VarAcess.name, "cin") == 0)
         {
-            fprintf(code, "input(");
+            gencin();
+            fprintf(code, "cin(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
         }
-        // Types
-        if (strcmp(data.Callee->data.VarAcess.name, "toint") == 0)
+        if (strcmp(data.Callee->data.VarAcess.name, "totype") == 0)
         {
-            fprintf(code, "int(");
-            gencode(data.arguments);
-            fprintf(code, ")");
-            return;
-        }
-        if (strcmp(data.Callee->data.VarAcess.name, "tostr") == 0)
-        {
-            fprintf(code, "str(");
-            gencode(data.arguments);
-            fprintf(code, ")");
-            return;
-        }
-        if (strcmp(data.Callee->data.VarAcess.name, "toflt") == 0)
-        {
-            fprintf(code, "float(");
+            gentotype();
+            fprintf(code, "totype(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
@@ -328,7 +377,6 @@ void gencode(AST *ptr)
             }
             fprintf(code, "=");
             fprintf(code, "[]");
-          
         }
         else
         {
