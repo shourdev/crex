@@ -14,6 +14,7 @@ bool iscin = false;
 bool isaddlist = false;
 bool isclear = false;
 bool issystem = false;
+bool isclose = false;
 void start()
 {
     stdlib = fopen("stdlib.py", "w");
@@ -59,14 +60,27 @@ void genaddlist()
     }
     isaddlist = true;
 }
-void gensystemcode(){
-    if(issystem==false){
-        fprintf(stdlib,"import os\n");
+void gensystemcode()
+{
+    if (issystem == false)
+    {
+        fprintf(stdlib, "import os\n");
+    }
+    else
+    {
+        return;
+    }
+    issystem = true;
+}
+void genclosecode(){
+    if(isclose==false){
+        fprintf(stdlib,"def close(f):\n");
+        fprintf(stdlib,"    f.close()\n");
     }
     else{
         return;
     }
-    issystem = true;
+    isclose = true;
 }
 void spaceprint()
 {
@@ -244,6 +258,11 @@ void gencode(AST *ptr)
                 fprintf(code, " = 0\n");
                 return;
             }
+            if (strcmp(data.type.type, "file") == 0)
+            {
+                fprintf(code, "= None\n");
+                return;
+            }
         }
         else
         {
@@ -358,7 +377,15 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
-
+        if (strcmp(data.Callee->data.VarAcess.name, "close") == 0)
+        {
+            genclosecode();
+            fprintf(code, "close(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        
         gencode(data.Callee);
         fprintf(code, "(");
         gencode(data.arguments);

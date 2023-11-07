@@ -470,7 +470,7 @@ AST *parsestruct(char* name)
                         AST_NEW(EMPTY, 'f'), );
     while (!check(HASH) && !isatend())
     {
-        if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY))
+        if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY)||match(FILE_KEY))
         {
             ast_block_add(root, varDeclare());
         }
@@ -585,6 +585,9 @@ AST *functionargs()
     {
         type.type = "void";
     }
+    if(match(FILE_KEY)){
+        type.type = "file";
+    }
     if (match(STRUCT_KEY))
     {
         type.isstruct = true;
@@ -652,6 +655,9 @@ AST *varDeclare()
     {
         type.type = "void";
     }
+    if(previous().type==FILE_KEY){
+        type.type = "file";
+    }
     type.islist = false;
     type.isstruct = false;
     // Lists
@@ -692,7 +698,7 @@ AST *varDeclare()
 }
 AST *declaration()
 {
-    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY))
+    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY)||match(FILE_KEY))
     {
         return varDeclare();
     }

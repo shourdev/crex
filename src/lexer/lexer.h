@@ -47,7 +47,8 @@ IF,
  VOID_KEY,
  NULL_KEY,
  DOT,
- STRUCT_KEY
+ STRUCT_KEY,
+ FILE_KEY
 };
 typedef struct
 {
