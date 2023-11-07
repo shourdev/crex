@@ -11,8 +11,9 @@ bool isfuncarg = false;
 int blockindent = 0;
 bool iscout = false;
 bool iscin = false;
-bool istotype = false;
 bool isaddlist = false;
+bool isclear = false;
+bool issystem = false;
 void start()
 {
     stdlib = fopen("stdlib.py", "w");
@@ -58,27 +59,14 @@ void genaddlist()
     }
     isaddlist = true;
 }
-void gentotype()
-{
-    if (istotype == false)
-    {
-        fprintf(stdlib, "def totype(type,val):\n");
-        fprintf(stdlib, "    if(type==\"int\"):\n");
-        fprintf(stdlib, "        return int(val)\n");
-        fprintf(stdlib, "    if(type==\"str\"):\n");
-        fprintf(stdlib, "        return str(val)\n");
-        fprintf(stdlib, "    if(type==\"float\"):\n");
-        fprintf(stdlib, "        return float(val)\n");
-        fprintf(stdlib, "    else:\n");
-        fprintf(stdlib, "        print(\"Crex Runtime Error!\")\n");
-        fprintf(stdlib, "        print(type,\" is not a valid type!\")\n");
-        fprintf(stdlib, "        exit()\n");
+void gensystemcode(){
+    if(issystem==false){
+        fprintf(stdlib,"import os\n");
     }
-    else
-    {
+    else{
         return;
     }
-    istotype = true;
+    issystem = true;
 }
 void spaceprint()
 {
@@ -323,10 +311,26 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
-        if (strcmp(data.Callee->data.VarAcess.name, "totype") == 0)
+        if (strcmp(data.Callee->data.VarAcess.name, "toint") == 0)
         {
-            gentotype();
-            fprintf(code, "totype(");
+
+            fprintf(code, "int(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "tostr") == 0)
+        {
+
+            fprintf(code, "str(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "tofloat") == 0)
+        {
+
+            fprintf(code, "float(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
@@ -342,6 +346,14 @@ void gencode(AST *ptr)
         if (strcmp(data.Callee->data.VarAcess.name, "len") == 0)
         {
             fprintf(code, "len(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "system") == 0)
+        {
+            gensystemcode();
+            fprintf(code, "os.system(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
