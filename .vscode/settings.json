@@ -10,7 +10,8 @@
         "stdio.h": "c",
         "ast.h": "c",
         "system_error": "c",
-        "gen.h": "c"
+        "gen.h": "c",
+        "output_file": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

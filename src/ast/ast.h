@@ -47,7 +47,6 @@ struct AST
         FunctionARG,
         BOOL,
         AST_FLOAT,
-        AST_LIST,
         Listac,
         Assign,
         listelements,
@@ -129,7 +128,6 @@ struct AST
         struct VarDecl
         {
             char *name;
-            type type;
             AST *expr;
         } VarDecl;
 
@@ -163,12 +161,11 @@ struct AST
             char *name;
             AST *args;
             AST *code;
-            type type;
         } Function;
         struct FunctionARG
         {
             char *name;
-            char *type;
+
         } FunctionARG;
         struct BOOL
         {
@@ -178,13 +175,7 @@ struct AST
         {
             char *value;
         } AST_FLOAT;
-        struct AST_LIST
-        {
-            AST *args;
 
-            type type;
-            char *name;
-        } AST_LIST;
         struct Assign
         {
             AST *target;

@@ -72,12 +72,15 @@ void gensystemcode()
     }
     issystem = true;
 }
-void genclosecode(){
-    if(isclose==false){
-        fprintf(stdlib,"def close(f):\n");
-        fprintf(stdlib,"    f.close()\n");
+void genclosecode()
+{
+    if (isclose == false)
+    {
+        fprintf(stdlib, "def close(f):\n");
+        fprintf(stdlib, "    f.close()\n");
     }
-    else{
+    else
+    {
         return;
     }
     isclose = true;
@@ -185,6 +188,13 @@ void gencode(AST *ptr)
             gencode(data.right);
             return;
         }
+        if (strcmp(data.op, "!") == 0)
+        {
+            fprintf(code, " not ");
+            gencode(data.right);
+
+            return;
+        }
         else
         {
             fprintf(code, "%s", data.op);
@@ -205,7 +215,11 @@ void gencode(AST *ptr)
         fprintf(code, "\"%s\"", data.value);
         return;
     }
-
+    case NULL_NODE:
+    {
+        fprintf(code,"None");
+        return;
+    }
     case PrintNode:
     {
         struct PrintNode data = ast.data.PrintNode;
@@ -218,59 +232,26 @@ void gencode(AST *ptr)
     {
 
         struct VarDecl data = ast.data.VarDecl;
-        // printtype(data.type);
+
         fprintf(code, "%s", data.name);
-        if (data.type.isstruct == true)
-        {
-            if (isempty(data.expr))
-            {
-                if (isfuncarg == true)
-                {
-                    return;
-                }
-                else
-                {
-                    fprintf(code, " = %s()\n", data.type.type);
-                    return;
-                }
-            }
-            else
-            {
-                fprintf(code, " =");
-                gencode(data.expr);
-                fprintf(code, "\n");
-                return;
-            }
-        }
         if (isempty(data.expr))
         {
             if (isfuncarg == true)
             {
                 return;
             }
-            if (strcmp(data.type.type, "string") == 0)
+            else
             {
-                fprintf(code, " = \"\"\n");
-                return;
-            }
-            if (strcmp(data.type.type, "int") == 0 || strcmp(data.type.type, "float") == 0)
-            {
-                fprintf(code, " = 0\n");
-                return;
-            }
-            if (strcmp(data.type.type, "file") == 0)
-            {
-                fprintf(code, "= None\n");
+                fprintf(code, " =");
+                fprintf(code, " None\n");
                 return;
             }
         }
-        else
-        {
-            fprintf(code, "=");
-            gencode(data.expr);
-            fprintf(code, "\n");
-            return;
-        }
+        fprintf(code, " =");
+
+        gencode(data.expr);
+        fprintf(code, "\n");
+        return;
     }
 
     case VarAcess:
@@ -385,7 +366,7 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
-        
+
         gencode(data.Callee);
         fprintf(code, "(");
         gencode(data.arguments);
@@ -422,33 +403,10 @@ void gencode(AST *ptr)
     case AST_FLOAT:
     {
         struct AST_FLOAT data = ast.data.AST_FLOAT;
-        printf("%s", data.value);
+        fprintf(code,"%s", data.value);
         return;
     }
-    case AST_LIST:
-    {
-        struct AST_LIST data = ast.data.AST_LIST;
 
-        fprintf(code, "%s", data.name);
-
-        if (isempty(data.args))
-        {
-            if (isfuncarg == true)
-            {
-                return;
-            }
-            fprintf(code, "=");
-            fprintf(code, "[]");
-        }
-        else
-        {
-            fprintf(code, "=");
-            gencode(data.args);
-        }
-        fprintf(code, "\n");
-
-        return;
-    }
     case Listac:
     {
         struct Listac data = ast.data.Listac;

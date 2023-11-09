@@ -67,9 +67,9 @@ int main(int argc,char argv[])
     Token *tokens = lexer(file_content, &num_tokens);
 
     AST *tree = parse(tokens);
-  caller(tree);
+ caller(tree);
  
-  //ast_print(tree);
+ // ast_print(tree);
  system("python3 code.py");
     free(tokens);
 }

@@ -30,8 +30,8 @@ AST *printstatement();
 AST *exprstate();
 AST *whilestatement();
 
-AST *functionparse(char *name, type type);
-AST* struct_decl();
+AST *functionparse(char *name);
+AST *struct_decl();
 bool isatend();
 // Root is kinda like a main function, in my language you need no main function so the root holds ast for those
 void ast_root_add(AST *root, AST *node)
@@ -206,7 +206,7 @@ AST *finishcall(AST *callee)
             arg++;
         } while (match(COMMA));
     }
-   consume(CLOSE_PAREN, "Expect ')' after arguments.");
+    consume(CLOSE_PAREN, "Expect ')' after arguments.");
     return AST_NEW(Call, callee, arguments);
 }
 AST *call()
@@ -464,71 +464,28 @@ AST *breakstatement()
     consume(SEMI, "Expected ';' after break statement");
     return AST_NEW(Break_Node);
 }
-AST *parsestruct(char* name)
+AST *parsestruct(char *name)
 {
     AST *root = AST_NEW(AST_BLOCK,
                         AST_NEW(EMPTY, 'f'), );
     while (!check(HASH) && !isatend())
     {
-        if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY)||match(FILE_KEY))
+        if (match(DECLKEY))
         {
             ast_block_add(root, varDeclare());
         }
-        if (match(STRUCT_KEY))
-        {
-            ast_block_add(root, struct_decl());
-        }
+        
     }
     consume(HASH, "Expected '#' after block.");
-    return AST_NEW(AST_STRUCT,name,root);
+    return AST_NEW(AST_STRUCT, name, root);
 }
 AST *struct_decl()
 {
-    type type;
-    type.isstruct = true;
-    type.islist = false;
+
     AST *expr2 = AST_NEW(EMPTY, 2);
     consume(IDENTFIER, "Expected identifier after struct keyword");
-    type.type = previous().value;
-    if (match(LEFT_SQUARE))
-    {
-        type.islist = true;
-        consume(RIGHT_SQUARE, "Expected ']'");
-        char *name;
-        name = peek().value;
-        getnexttoken();
-        if (match(EQUAL))
-        {
-            expr2 = expr();
-        }
-        if (match(OPEN_PAREN))
-        {
-            return functionparse(name, type);
-        }
-        consume(SEMI, "expected ;");
-        return AST_NEW(AST_LIST, expr2, type, name);
-    }
-    if (peek().type == IDENTFIER)
-    {
-        char *name = peek().value;
-        getnexttoken();
 
-        if (match(EQUAL))
-        {
-
-            expr2 = expr();
-        }
-        if (match(OPEN_PAREN))
-        {
-            return functionparse(name, type);
-        }
-        consume(SEMI, "Expect ';' after variable declaration");
-        return AST_NEW(VarDecl, name, type, expr2);
-    }
-    else
-    {
-        return parsestruct(previous().value);
-    }
+    return parsestruct(previous().value);
 }
 AST *statement()
 {
@@ -562,53 +519,13 @@ AST *statement()
 AST *functionargs()
 {
     char *name;
-    type type;
-    type.islist = false;
-    type.isstruct = false;
-    if (match(STRING_KEY))
-    {
-        type.type = "string";
-    }
-    if (match(INT_KEY))
-    {
-        type.type = "int";
-    }
-    if (match(FLOAT_KEY))
-    {
-        type.type = "float";
-    }
-    if (match(BOOL_KEY))
-    {
-        type.type = "bool";
-    }
-    if (match(VOID_KEY))
-    {
-        type.type = "void";
-    }
-    if(match(FILE_KEY)){
-        type.type = "file";
-    }
-    if (match(STRUCT_KEY))
-    {
-        type.isstruct = true;
-        consume(IDENTFIER, "Expected identifier after struct keyword");
-        type.type = previous().value;
-    }
-    if (match(LEFT_SQUARE))
-    {
-        type.islist = true;
-        consume(RIGHT_SQUARE, "Expected ']'");
-        name = peek().value;
-        getnexttoken();
-        AST *arguments = AST_NEW(EMPTY, 2);
-        return AST_NEW(AST_LIST, arguments, type, name);
-    }
+
     name = peek().value;
     getnexttoken();
     AST *arguments = AST_NEW(EMPTY, 2);
-    return AST_NEW(VarDecl, name, type, arguments);
+    return AST_NEW(VarDecl, name, arguments);
 }
-AST *functionparse(char *name, type type)
+AST *functionparse(char *name)
 {
 
     AST *parameters = AST_NEW(AST_ARG,
@@ -625,62 +542,15 @@ AST *functionparse(char *name, type type)
     if (match(SEMI))
     {
         AST *body = AST_NEW(EMPTY, 3);
-        return AST_NEW(Function, name, parameters, body, type);
+        return AST_NEW(Function, name, parameters, body);
     }
     AST *body = block();
-    return AST_NEW(Function, name, parameters, body, type);
+    return AST_NEW(Function, name, parameters, body);
 }
 
 AST *varDeclare()
 {
-    type type;
 
-    if (previous().type == INT_KEY)
-    {
-        type.type = "int";
-    }
-    if (previous().type == FLOAT_KEY)
-    {
-        type.type = "float";
-    }
-    if (previous().type == STRING_KEY)
-    {
-        type.type = "string";
-    }
-    if (previous().type == BOOL_KEY)
-    {
-        type.type = "bool";
-    }
-    if (previous().type == VOID_KEY)
-    {
-        type.type = "void";
-    }
-    if(previous().type==FILE_KEY){
-        type.type = "file";
-    }
-    type.islist = false;
-    type.isstruct = false;
-    // Lists
-    if (peek().type == LEFT_SQUARE)
-    { 
-        type.islist = true;
-        AST *arguments = AST_NEW(EMPTY,3);
-        getnexttoken();
-        consume(RIGHT_SQUARE, "Expected ']' after '['");
-        char *name = peek().value;
-        getnexttoken();
-        if (match(EQUAL))
-        {
-
-            arguments = expr();
-        }
-        if (match(OPEN_PAREN))
-        {
-            return functionparse(name, type);
-        }
-        consume(SEMI, "Expected ';'");
-        return AST_NEW(AST_LIST, arguments, type, name);
-    }
     char *name = peek().value;
     getnexttoken();
     AST *init = AST_NEW(EMPTY, 3);
@@ -691,14 +561,14 @@ AST *varDeclare()
     // Functions
     if (match(OPEN_PAREN))
     {
-        return functionparse(name, type);
+        return functionparse(name);
     }
     consume(SEMI, "Expect ';' after variable declaration");
-    return AST_NEW(VarDecl, name, type, init);
+    return AST_NEW(VarDecl, name, init);
 }
 AST *declaration()
 {
-    if (match(INT_KEY) || match(STRING_KEY) || match(FLOAT_KEY) || match(BOOL_KEY) || match(VOID_KEY)||match(FILE_KEY))
+    if (match(DECLKEY))
     {
         return varDeclare();
     }

@@ -109,8 +109,8 @@ void ast_print(AST *ptr)
   {
 
     struct VarDecl data = ast.data.VarDecl;
-    printtype(data.type);
-    printf(" %s = ", data.name);
+    
+    printf("decl %s = ", data.name);
     ast_print(data.expr);
 
     return;
@@ -163,7 +163,7 @@ void ast_print(AST *ptr)
   case Function:
   {
     struct Function data = ast.data.Function;
-    printtype(data.type);
+   
     printf(" %s(", data.name);
     ast_print(data.args);
     printf(")");
@@ -174,7 +174,7 @@ void ast_print(AST *ptr)
   case FunctionARG:
   {
     struct FunctionARG data = ast.data.FunctionARG;
-    printf("%s %s", data.type, data.name);
+    printf("%s", data.name);
     return;
   }
   case BOOL:
@@ -189,17 +189,7 @@ void ast_print(AST *ptr)
     printf("%s", data.value);
     return;
   }
-  case AST_LIST:
-  {
-    struct AST_LIST data = ast.data.AST_LIST;
-    printtype(data.type);
 
-    printf("%s", data.name);
-    printf("=");
-    ast_print(data.args);
-
-    return;
-  }
   case Listac:
   {
     struct Listac data = ast.data.Listac;

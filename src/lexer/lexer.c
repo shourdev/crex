@@ -270,11 +270,11 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            if (strcmp(result, "file") == 0)
+            if (strcmp(result, "decl") == 0)
             {
                 visited = 1;
                 isiden = 1;
-                tokens[token_index].type = FILE_KEY;
+                tokens[token_index].type = DECLKEY;
                 tokens[token_index].value = NULL;
                 tokens[token_index].line = line;
                 token_index++;
