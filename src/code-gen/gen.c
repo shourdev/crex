@@ -188,13 +188,7 @@ void gencode(AST *ptr)
             gencode(data.right);
             return;
         }
-        if (strcmp(data.op, "!") == 0)
-        {
-            fprintf(code, " not ");
-            gencode(data.right);
-
-            return;
-        }
+        
         else
         {
             fprintf(code, "%s", data.op);
@@ -205,6 +199,13 @@ void gencode(AST *ptr)
     case UnaryNode:
     {
         struct UnaryNode data = ast.data.UnaryNode;
+        if (strcmp(data.op, "!") == 0)
+        {
+            fprintf(code, " not ");
+            gencode(data.node);
+
+            return;
+        }
         fprintf(code, "%s", data.op);
         gencode(data.node);
         return;
