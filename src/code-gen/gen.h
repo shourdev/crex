@@ -3,6 +3,6 @@
 
 #include "../lexer/lexer.h"
 #include "../ast/ast.h"
-void gencode(AST* ptr);
+void gencode(AST *ptr);
 void caller(AST* ptr);
 #endif

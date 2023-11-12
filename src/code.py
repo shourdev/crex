@@ -1,3 +1,3 @@
 from stdlib import*
-if ( not False):
-    cout("hi")
+2+2
+2+3
