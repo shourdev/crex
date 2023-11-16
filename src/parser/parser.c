@@ -468,7 +468,8 @@ AST *parsestruct(char *name)
 {
     AST *root = AST_NEW(AST_BLOCK,
                         AST_NEW(EMPTY, 'f'), );
-    while (!check(HASH) && !isatend())
+                        consume(CURLY_OPEN,"Expected '{' starting of block.");
+    while (!check(CURLY_CLOSE) && !isatend())
     {
         if (match(DECLKEY))
         {
@@ -476,7 +477,7 @@ AST *parsestruct(char *name)
         }
         
     }
-    consume(HASH, "Expected '#' after block.");
+    consume(CURLY_CLOSE, "Expected '}' after block.");
     return AST_NEW(AST_STRUCT, name, root);
 }
 AST *struct_decl()
@@ -578,12 +579,13 @@ AST *block()
 {
     AST *root = AST_NEW(AST_BLOCK,
                         AST_NEW(EMPTY, 'f'), );
-    while (!check(HASH) && !isatend())
+    consume(CURLY_OPEN,"Expected { in starting of block");
+    while (!check(CURLY_CLOSE) && !isatend())
     {
         AST *code = declaration();
         ast_block_add(root, code);
     }
-    consume(HASH, "Expected '#' after block.");
+    consume(CURLY_CLOSE, "Expected '}' after block.");
     return root;
 }
 void parsestatement()

@@ -445,11 +445,20 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
-        // #
-        if (string[i] == '#')
+        // {
+        if (string[i] == '{')
         {
             isiden = 1;
-            tokens[token_index].type = HASH;
+            tokens[token_index].type = CURLY_OPEN;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
+        if (string[i] == '}')
+        {
+            isiden = 1;
+            tokens[token_index].type = CURLY_CLOSE;
             tokens[token_index].value = NULL;
             tokens[token_index].line = line;
             token_index++;

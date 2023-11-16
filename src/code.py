@@ -1,3 +1,4 @@
 from stdlib import*
-2+2
-2+3
+class test:
+    l = None
+    l2 = None
