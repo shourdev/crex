@@ -1,4 +1,4 @@
 from stdlib import*
-class test:
-    l = None
-    l2 = None
+test =2
+if (test*test*test==8):
+    cout("true")
