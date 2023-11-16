@@ -341,10 +341,30 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             isiden = 1;
         }
+        // Greater equal
+        else if(string[i]==">"&&string[i+1]=="="){
+            tokens[token_index].type = GREATER_EQUAL;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            isiden = 1;
+        }
+        
         // Smaller
         else if (string[i] == '<')
         {
             tokens[token_index].type = SMALLER;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+
+            isiden = 1;
+        }
+        else if (string[i] == '<'&&string[i+1]=="=")
+        {
+            tokens[token_index].type = SMALLER_EQUAL;
             tokens[token_index].value = NULL;
             tokens[token_index].line = line;
             token_index++;

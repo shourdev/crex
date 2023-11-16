@@ -335,7 +335,7 @@ AST *term()
 AST *rel()
 {
     AST *left = term();
-    while (match(GREATER) || match(SMALLER) || match(EQUALSTO) || match(NOTEQUAL))
+    while (match(GREATER) || match(SMALLER) || match(EQUALSTO) || match(NOTEQUAL)||match(SMALLER_EQUAL||match(GREATER_EQUAL)))
     {
         char *op;
         if (previous().type == GREATER)
@@ -353,6 +353,12 @@ AST *rel()
         if (previous().type == NOTEQUAL)
         {
             op = "!=";
+        }
+        if(previous().type==GREATER_EQUAL){
+            op = ">=";
+        }
+        if(previous().type==SMALLER_EQUAL){
+            op = "<=";
         }
         AST *right = term();
 
