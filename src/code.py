@@ -1,4 +1,7 @@
 from stdlib import*
-test =2
-if (test*test*test==8):
-    cout("true")
+def test():
+    def test2():
+       cout("hello")
+    return test
+var=test()
+var()

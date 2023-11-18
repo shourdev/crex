@@ -17,7 +17,7 @@ bool issystem = false;
 bool isclose = false;
 void start()
 {
-    stdlib = fopen("stdlib.py", "w");
+    stdlib = fopen("stdlib.lua", "w");
 }
 void gencout()
 {
@@ -109,7 +109,7 @@ bool isempty(AST *ptr)
 }
 void caller(AST *ptr)
 {
-    code = fopen("code.py", "w");
+    code = fopen("code.lua", "w");
     start();
     fprintf(code, "from stdlib import*\n");
     gencode(ptr);

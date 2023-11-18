@@ -23,7 +23,7 @@ AST *expr();
 // All the functions for parsing statements
 AST *block();
 AST *declaration();
-AST *varDeclare();
+AST *FuncDecl();
 AST *statement();
 AST *ifstatement();
 AST *printstatement();
@@ -335,7 +335,7 @@ AST *term()
 AST *rel()
 {
     AST *left = term();
-    while (match(GREATER) || match(SMALLER) || match(EQUALSTO) || match(NOTEQUAL)||match(SMALLER_EQUAL||match(GREATER_EQUAL)))
+    while (match(GREATER) || match(SMALLER) || match(EQUALSTO) || match(NOTEQUAL) || match(SMALLER_EQUAL || match(GREATER_EQUAL)))
     {
         char *op;
         if (previous().type == GREATER)
@@ -354,10 +354,12 @@ AST *rel()
         {
             op = "!=";
         }
-        if(previous().type==GREATER_EQUAL){
+        if (previous().type == GREATER_EQUAL)
+        {
             op = ">=";
         }
-        if(previous().type==SMALLER_EQUAL){
+        if (previous().type == SMALLER_EQUAL)
+        {
             op = "<=";
         }
         AST *right = term();
@@ -422,16 +424,7 @@ AST *exprstate()
 
     return AST_NEW(ExprStatement, exp);
 }
-AST *printstatement()
-{
-    AST *expr2 = expr();
 
-    consume(SEMI, "Expected ';' after value.");
-
-    AST *node = AST_NEW(PrintNode, expr2);
-
-    return node;
-}
 AST *whilestatement()
 {
     consume(OPEN_PAREN, "Expect '(' after 'while'");
@@ -470,37 +463,10 @@ AST *breakstatement()
     consume(SEMI, "Expected ';' after break statement");
     return AST_NEW(Break_Node);
 }
-AST *parsestruct(char *name)
-{
-    AST *root = AST_NEW(AST_BLOCK,
-                        AST_NEW(EMPTY, 'f'), );
-                        consume(CURLY_OPEN,"Expected '{' starting of block.");
-    while (!check(CURLY_CLOSE) && !isatend())
-    {
-        if (match(DECLKEY))
-        {
-            ast_block_add(root, varDeclare());
-        }
-        
-    }
-    consume(CURLY_CLOSE, "Expected '}' after block.");
-    return AST_NEW(AST_STRUCT, name, root);
-}
-AST *struct_decl()
-{
 
-    AST *expr2 = AST_NEW(EMPTY, 2);
-    consume(IDENTFIER, "Expected identifier after struct keyword");
-
-    return parsestruct(previous().value);
-}
 AST *statement()
 {
-    if (match(PRINT_KEY))
-    {
 
-        return printstatement();
-    }
     if (match(IF))
     {
         return ifstatement();
@@ -517,10 +483,7 @@ AST *statement()
     {
         return breakstatement();
     }
-    if (match(STRUCT_KEY))
-    {
-        return struct_decl();
-    }
+
     return exprstate();
 }
 AST *functionargs()
@@ -555,29 +518,20 @@ AST *functionparse(char *name)
     return AST_NEW(Function, name, parameters, body);
 }
 
-AST *varDeclare()
+AST *FuncDecl()
 {
 
     char *name = peek().value;
     getnexttoken();
-    AST *init = AST_NEW(EMPTY, 3);
-    if (match(EQUAL))
-    {
-        init = expr();
-    }
-    // Functions
-    if (match(OPEN_PAREN))
-    {
-        return functionparse(name);
-    }
-    consume(SEMI, "Expect ';' after variable declaration");
-    return AST_NEW(VarDecl, name, init);
+    consume(OPEN_PAREN, "Expected '(' after function name.");
+
+    return functionparse(name);
 }
 AST *declaration()
 {
-    if (match(DECLKEY))
+    if (match(FN_KEY))
     {
-        return varDeclare();
+        return FuncDecl();
     }
     return statement();
 }
@@ -585,7 +539,7 @@ AST *block()
 {
     AST *root = AST_NEW(AST_BLOCK,
                         AST_NEW(EMPTY, 'f'), );
-    consume(CURLY_OPEN,"Expected { in starting of block");
+    consume(CURLY_OPEN, "Expected { in starting of block");
     while (!check(CURLY_CLOSE) && !isatend())
     {
         AST *code = declaration();

@@ -125,43 +125,7 @@ Token *lexer(char *string, int *num_tokens)
             }
             result = realloc(result, (resultLength + 1) * sizeof(char));
             result[resultLength] = '\0';
-            if (strcmp(result, "int") == 0)
-            {
-                isiden = 1;
-
-                tokens[token_index].type = INT_KEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-                visited = 1;
-            }
-            if (strcmp(result, "string") == 0)
-            {
-                visited = 1;
-                isiden = 1;
-                tokens[token_index].type = STRING_KEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-            }
-            if (strcmp(result, "float") == 0)
-            {
-                visited = 1;
-                isiden = 1;
-                tokens[token_index].type = FLOAT_KEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-            }
-            if (strcmp(result, "bool") == 0)
-            {
-                visited = 1;
-                isiden = 1;
-                tokens[token_index].type = BOOL_KEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-            }
+        
             if (strcmp(result, "true") == 0)
             {
                 visited = 1;
@@ -180,24 +144,8 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            if (strcmp(result, "over") == 0)
-            {
-                visited = 1;
-                isiden = 1;
-                tokens[token_index].type = OVER_KEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-            }
-            if (strcmp(result, "print") == 0)
-            {
-                visited = 1;
-                isiden = 1;
-                tokens[token_index].type = PRINT_KEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-            }
+            
+            
             if (strcmp(result, "if") == 0)
             {
                 visited = 1;
@@ -243,15 +191,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            if (strcmp(result, "void") == 0)
-            {
-                visited = 1;
-                isiden = 1;
-                tokens[token_index].type = VOID_KEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-            }
+            
             if (strcmp(result, "null") == 0)
             {
                 visited = 1;
@@ -261,24 +201,16 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            if (strcmp(result, "struct") == 0)
+            if (strcmp(result, "fn") == 0)
             {
                 visited = 1;
                 isiden = 1;
-                tokens[token_index].type = STRUCT_KEY;
+                tokens[token_index].type = FN_KEY;
                 tokens[token_index].value = NULL;
                 tokens[token_index].line = line;
                 token_index++;
             }
-            if (strcmp(result, "decl") == 0)
-            {
-                visited = 1;
-                isiden = 1;
-                tokens[token_index].type = DECLKEY;
-                tokens[token_index].value = NULL;
-                tokens[token_index].line = line;
-                token_index++;
-            }
+            
             else
             {
                 if (visited == 0)
