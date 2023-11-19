@@ -52,7 +52,8 @@ IF,
  DECLKEY,
  GREATER_EQUAL,
  SMALLER_EQUAL,
- FN_KEY
+ FN_KEY,
+ DEC_KEY
 };
 typedef struct
 {

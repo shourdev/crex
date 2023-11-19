@@ -1,62 +1,178 @@
-bool isnum(string num)
-   if(num[0]=="0") return true; #
-   if(num[0]=="1") return true; #
-   if(num[0]=="2") return true; #
-   if(num[0]=="3") return true; #
-   if(num[0]=="4") return true; #
-   if(num[0]=="5") return true; #
-   if(num[0]=="6") return true; #
-   if(num[0]=="7") return true; #
-   if(num[0]=="8") return true; #
-   if(num[0]=="9") return true; #
-   else return false; # 
-#   
-struct token
-   string tokenname;
-   string tokenvalue;
-#
-struct token lexer(string code)
-   struct token[] tokens;
-   int token_index;
-   int i = 0;
-   while(1)
-      if(i!=len(code)&&isnum(code[i]))
-         string result;   
-         while(i!=len(code)&&isnum(code[i]))
-            result = result + code[i];
-            i = i+1; 
-         #
-         struct token num;
-         num.tokenname = "intliteral";
-         num.tokenvalue = result;
-         addlist(tokens,token_index,num);
-         token_index = token_index+1;
 
-      #
-      if(i!=len(code)&&code[i]=="+")
-         struct token add;
-         add.tokenname = "add";
-         add.tokenvalue = "";
-         addlist(tokens,token_index,add);
-         token_index = token_index+1;
+fn isnum(str){
+   if(str=="0"){
+      return true;
+   }
+   if(str=="1"){
+      return true;
+   }
+   if(str=="2"){
+      return true;
+   }
+   if(str=="3"){
+      return true;
+   }
+   if(str=="4"){
+      return true;
+   }
+   if(str=="5"){
+      return true;
+   }
+   if(str=="6"){
+      return true;
+   }
+   if(str=="7"){
+      return true;
+   }
+   if(str=="8"){
+      return true;
+   }
+   if(str=="9"){
+      return true;
+   }
+   return false;
+}
+fn tokenize(code){
+   i = 0;
+   tokens = [[],[]];
+   while(i<len(code)&&i!=len(code)){
+      if(i!=len(code)&&code[i]=="+"){
+         append(tokens[0],"+");
+         append(tokens[1],null);
          i = i+1;
-      #
-      if(i==len(code))
-         struct token eof;
-         eof.tokenname = "EOF";
-         eof.tokenvalue = "";
-         addlist(tokens,token_index,eof);
-         token_index = token_index+1;
-         break;
-      # 
+      }
+      if(i!=len(code)&&code[i]=="*"){
+         append(tokens[0],"*");
+         append(tokens[1],null);
+         i = i+1;
+      }
+      if(i!=len(code)&&code[i]=="-"){
+         append(tokens[0],"-");
+         append(tokens[1],null);
+         i = i+1;
+      }
+      if(i!=len(code)&&code[i]=="/"){
+         append(tokens[0],"+");
+         append(tokens[1],null);
+         i = i+1;
+      }
+      if(i!=len(code)&&isnum(code[i])){
+         
+         str = code[i];
+         i = i+1;
+         while(i!=len(code)&&isnum(code[i])){
+            str = str+code[i];
+            i = i+1;
+         }
 
-   # 
-   return tokens;    
-#
+        append(tokens[0],"number");
+         append(tokens[1],str);
+      }
+      else{
+         cout("Lexical error, unexpected symbol: ",code[i]);
+         exit();
+      }
+      
 
-struct token[] tokens = lexer("234+232+234+352+52");
-int i = 0;
-while(i<len(tokens))
-   cout("Token name: ",tokens[i].tokenname," Token value: ",tokens[i].tokenvalue,"\n");
-   i = i+1;
-#
+   }
+   return tokens;
+}
+
+
+$ AST DATA STRUCT $
+
+fn makeast(type,node){
+   ast = [];
+   append(ast,type);
+   append(ast,node);
+   return ast;
+}
+fn numbernode(number){
+   numnode = [];
+   append(numnode,number);
+   return makeast("number",numnode);
+}
+fn binop(left,op,right){
+   binopnode = [];
+   append(binopnode,left);
+   append(binopnode,op);
+   append(binopnode,right);
+   return makeast("binop",binopnode);
+}
+
+
+$ Parser $
+
+tokens2 = [];
+tokenindex = [0];
+
+fn primary(){
+   cout(tokens2[tokenindex[0]]);
+   if(tokens2[0][tokenindex[0]]=="number"){
+      tokenindex = tokenindex+1;
+      
+      return numbernode(tokens2[1][tokenindex[0]-1]);
+   }
+}
+fn factor(){
+   left = primary();
+   while(tokens2[0][tokenindex[0]]=="*"||tokens2[0][tokenindex[0]]=="/"){
+   
+   tokenindex[0] = tokenindex[0]+1;
+     right = primary();
+      left = binop(left,tokens2[0][tokenindex[0]-1],right);
+   }
+   return left;
+}
+fn term(){
+   left = factor();
+    while(tokens2[0][tokenindex[0]]=="+"||tokens2[0][tokenindex[0]]=="-"){
+      tokenindex[0] = tokenindex[0]+1;
+      right = factor();
+      left = binop(left,tokens2[0][tokenindex[0]-1],right);
+    }
+    return left;
+}
+
+fn parse(tokens){
+tokens2 = tokens;
+cout(tokens2);
+return term();
+}
+
+
+
+$ EVAL/INTERPRETER $
+
+fn number(ast){
+   return ast[1][0];
+}
+
+fn binopeval(ast){
+   left = evaluate(ast[1][0]);
+   right = evaluate(ast[1][2]);
+   
+   if(ast[1][1]=="+"){
+      return (left+right);
+   }
+   if(ast[1][1]=="*"){
+       return (left*right);
+   }
+   if(ast[1][1]=="-"){
+       return (left-right);
+   }
+   if(ast[1][1]=="/"){
+       return (left/right);
+   }
+}
+fn evaluate(ast){
+   if(ast[0]=="number"){
+     return number(ast);
+   }
+   if(ast[0]=="binop"){
+     return binopeval(ast);
+   }
+}
+
+code = input();
+evaluate(parse(tokenize(code)));
