@@ -17,7 +17,7 @@ bool issystem = false;
 bool isclose = false;
 void start()
 {
-    stdlib = fopen("stdlib.lua", "w");
+    stdlib = fopen("stdlib.py", "w");
 }
 void gencout()
 {
@@ -51,8 +51,8 @@ void genaddlist()
 {
     if (isaddlist == false)
     {
-        fprintf(stdlib, "def addlist(list,pos,element):\n");
-        fprintf(stdlib, "    list.insert(pos,element)\n");
+        fprintf(stdlib, "def append(list,element):\n");
+        fprintf(stdlib, "    list.append(element)\n");
     }
     else
     {
@@ -109,7 +109,7 @@ bool isempty(AST *ptr)
 }
 void caller(AST *ptr)
 {
-    code = fopen("code.lua", "w");
+    code = fopen("code.py", "w");
     start();
     fprintf(code, "from stdlib import*\n");
     gencode(ptr);
@@ -336,10 +336,10 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
-        if (strcmp(data.Callee->data.VarAcess.name, "addlist") == 0)
+        if (strcmp(data.Callee->data.VarAcess.name, "append") == 0)
         {
             genaddlist();
-            fprintf(code, "addlist(");
+            fprintf(code, "append(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
