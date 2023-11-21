@@ -521,25 +521,15 @@ AST *functionparse(char *name)
 AST *FuncDecl()
 {
 
-  
-     char *name = peek().value;
+    char *name = peek().value;
     getnexttoken();
-    AST *init = AST_NEW(EMPTY, 3);
-    if (match(EQUAL))
-    {
-        init = expr();
-    }
-    // Functions
-    if (match(OPEN_PAREN))
-    {
-        return functionparse(name);
-    }
-    consume(SEMI, "Expect ';' after variable declaration");
-    return AST_NEW(VarDecl, name, init);
+    consume(OPEN_PAREN, "Expected '(' after function name.");
+
+    return functionparse(name);
 }
 AST *declaration()
 {
-    if (match(DEC_KEY))
+    if (match(FN_KEY))
     {
         return FuncDecl();
     }
