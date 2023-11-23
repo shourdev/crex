@@ -274,6 +274,17 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             isiden = 1;
         }
+        // Colon
+        else if (string[i] == ':'&&string[i+1]=='=')
+        {
+            tokens[token_index].type = COLON;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            i++;
+            isiden = 1;
+        }
         // Greater equal
         else if(string[i]=='>'&&string[i+1]=='='){
             tokens[token_index].type = GREATER_EQUAL;

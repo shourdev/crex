@@ -15,76 +15,38 @@ bool isaddlist = false;
 bool isclear = false;
 bool issystem = false;
 bool isclose = false;
+bool vararg = false;
+char *varargname;
 void start()
 {
     stdlib = fopen("stdlib.py", "w");
 }
 void gencout()
 {
-    if (iscout == false)
-    {
-        fprintf(stdlib, "def cout(*args):\n");
-        fprintf(stdlib, "    for arg in args:\n");
-        fprintf(stdlib, "        print(arg,end='')\n");
-    }
-    else
-    {
-        return;
-    }
 
-    iscout = true;
+    fprintf(stdlib, "def cout(*args):\n");
+    fprintf(stdlib, "    for arg in args:\n");
+    fprintf(stdlib, "        print(arg,end='')\n");
 }
 void gencin()
 {
-    if (iscin == false)
-    {
-        fprintf(stdlib, "def cin():\n");
-        fprintf(stdlib, "    return input()\n");
-    }
-    else
-    {
-        return;
-    }
-    iscin = true;
+
+    fprintf(stdlib, "def cin():\n");
+    fprintf(stdlib, "    return input()\n");
 }
 void genaddlist()
 {
-    if (isaddlist == false)
-    {
-        fprintf(stdlib, "def append(list,element):\n");
-        fprintf(stdlib, "    list.append(element)\n");
-    }
-    else
-    {
-        return;
-    }
-    isaddlist = true;
+
+    fprintf(stdlib, "def append(list,element):\n");
+    fprintf(stdlib, "    list.append(element)\n");
 }
-void gensystemcode()
+void genpop()
 {
-    if (issystem == false)
-    {
-        fprintf(stdlib, "import os\n");
-    }
-    else
-    {
-        return;
-    }
-    issystem = true;
+
+    fprintf(stdlib, "def pop(list,index):\n");
+    fprintf(stdlib, "    list.append(element)\n");
 }
-void genclosecode()
-{
-    if (isclose == false)
-    {
-        fprintf(stdlib, "def close(f):\n");
-        fprintf(stdlib, "    f.close()\n");
-    }
-    else
-    {
-        return;
-    }
-    isclose = true;
-}
+
 void spaceprint()
 {
     for (int i = 0; i <= blockindent; i++)
@@ -164,13 +126,29 @@ void gencode(AST *ptr)
 
         return;
     }
+    case VAR_ARG:
+    {
+        struct VAR_ARG data = ast.data.VAR_ARG;
+        fprintf(code, "*%s", data.name);
+        vararg = true;
+        varargname = data.name;
+        return;
+    }
     case AST_NUM:
     {
         struct AST_NUM data = ast.data.AST_NUM;
         fprintf(code, "%s", data.val);
         return;
     }
-
+    case vardecnode:
+    {
+        struct vardecnode data = ast.data.vardecnode;
+        gencode(data.name);
+        fprintf(code, "= ");
+        gencode(data.expr);
+        fprintf(code, "\n");
+        return;
+    }
     case BinOpNode:
     {
         struct BinOpNode data = ast.data.BinOpNode;
@@ -188,7 +166,7 @@ void gencode(AST *ptr)
             gencode(data.right);
             return;
         }
-        
+
         else
         {
             fprintf(code, "%s", data.op);
@@ -218,7 +196,7 @@ void gencode(AST *ptr)
     }
     case NULL_NODE:
     {
-        fprintf(code,"None");
+        fprintf(code, "None");
         return;
     }
     case PrintNode:
@@ -227,31 +205,6 @@ void gencode(AST *ptr)
         fprintf(code, "print( ");
         gencode(data.expr);
         fprintf(code, ")\n");
-        return;
-    }
-    case VarDecl:
-    {
-
-        struct VarDecl data = ast.data.VarDecl;
-
-        fprintf(code, "%s", data.name);
-        if (isempty(data.expr))
-        {
-            if (isfuncarg == true)
-            {
-                return;
-            }
-            else
-            {
-                fprintf(code, " =");
-                fprintf(code, " None\n");
-                return;
-            }
-        }
-        fprintf(code, " =");
-
-        gencode(data.expr);
-        fprintf(code, "\n");
         return;
     }
 
@@ -336,7 +289,23 @@ void gencode(AST *ptr)
             fprintf(code, ")");
             return;
         }
+        if (strcmp(data.Callee->data.VarAcess.name, "tolist") == 0)
+        {
+
+            fprintf(code, "tolist(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
         if (strcmp(data.Callee->data.VarAcess.name, "append") == 0)
+        {
+            genaddlist();
+            fprintf(code, "append(");
+            gencode(data.arguments);
+            fprintf(code, ")");
+            return;
+        }
+        if (strcmp(data.Callee->data.VarAcess.name, "pop") == 0)
         {
             genaddlist();
             fprintf(code, "append(");
@@ -347,22 +316,6 @@ void gencode(AST *ptr)
         if (strcmp(data.Callee->data.VarAcess.name, "len") == 0)
         {
             fprintf(code, "len(");
-            gencode(data.arguments);
-            fprintf(code, ")");
-            return;
-        }
-        if (strcmp(data.Callee->data.VarAcess.name, "system") == 0)
-        {
-            gensystemcode();
-            fprintf(code, "os.system(");
-            gencode(data.arguments);
-            fprintf(code, ")");
-            return;
-        }
-        if (strcmp(data.Callee->data.VarAcess.name, "close") == 0)
-        {
-            genclosecode();
-            fprintf(code, "close(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
@@ -383,6 +336,14 @@ void gencode(AST *ptr)
         gencode(data.args);
         fprintf(code, "):\n");
         isfuncarg = false;
+        if (vararg == true)
+        {
+            vararg = false;
+            blockindent += 3;
+            spaceprint();
+            blockindent -= 3;
+            fprintf(code, "%s = list(%s)\n", varargname, varargname);
+        }
         gencode(data.code);
 
         return;
@@ -404,7 +365,7 @@ void gencode(AST *ptr)
     case AST_FLOAT:
     {
         struct AST_FLOAT data = ast.data.AST_FLOAT;
-        fprintf(code,"%s", data.value);
+        fprintf(code, "%s", data.value);
         return;
     }
 

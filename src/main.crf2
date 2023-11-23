@@ -1,4 +1,4 @@
-
+$ A simple math eval in crex $
 fn isnum(str){
    if(str=="0"){
       return true;
@@ -32,28 +32,30 @@ fn isnum(str){
    }
    return false;
 }
+fn maketoken(type,value){
+   token = [];
+   append(token,type);
+   append(token,value);
+   return token;
+}
 fn tokenize(code){
    i = 0;
-   tokens = [[],[]];
+   tokens = [];
    while(i<len(code)&&i!=len(code)){
       if(i!=len(code)&&code[i]=="+"){
-         append(tokens[0],"+");
-         append(tokens[1],null);
+         append(tokens,maketoken("+",null));
          i = i+1;
       }
       if(i!=len(code)&&code[i]=="*"){
-         append(tokens[0],"*");
-         append(tokens[1],null);
+         append(tokens,maketoken("*",null));
          i = i+1;
       }
       if(i!=len(code)&&code[i]=="-"){
-         append(tokens[0],"-");
-         append(tokens[1],null);
+         append(tokens,maketoken("-",null));
          i = i+1;
       }
       if(i!=len(code)&&code[i]=="/"){
-         append(tokens[0],"+");
-         append(tokens[1],null);
+         append(tokens,maketoken("/",null));
          i = i+1;
       }
       if(i!=len(code)&&isnum(code[i])){
@@ -65,9 +67,9 @@ fn tokenize(code){
             i = i+1;
          }
 
-        append(tokens[0],"number");
-         append(tokens[1],str);
+         append(tokens,maketoken("number",str));
       }
+      
       else{
          cout("Lexical error, unexpected symbol: ",code[i]);
          exit();
@@ -75,6 +77,7 @@ fn tokenize(code){
       
 
    }
+   append(tokens,maketoken("EOF",null));
    return tokens;
 }
 
@@ -92,6 +95,12 @@ fn numbernode(number){
    append(numnode,number);
    return makeast("number",numnode);
 }
+fn unarynode(op,node){
+   unarynode = [];
+   append(unarynode,op);
+   append(unarynode,node);
+   return makeast("unary",unarynode);
+}
 fn binop(left,op,right){
    binopnode = [];
    append(binopnode,left);
@@ -103,47 +112,73 @@ fn binop(left,op,right){
 
 $ Parser $
 
-tokens2 = [];
+tokenslist = [];
 tokenindex = [0];
 
+fn peek(){
+   return tokenslist[0][tokenindex[0]];
+}
+fn previous(){
+   return tokenslist[0][tokenindex[0]-1];
+}
+fn isatend(){
+   return peek()[0] == "EOF";
+}
+fn match(tokentype){
+   if(!(isatend())&&peek()[0]==tokentype){
+      tokenindex[0] = tokenindex[0]+1;
+      return true;
+   }
+   return false;
+}
 fn primary(){
-   cout(tokens2[tokenindex[0]]);
-   if(tokens2[0][tokenindex[0]]=="number"){
-      tokenindex = tokenindex+1;
-      
-      return numbernode(tokens2[1][tokenindex[0]-1]);
+   if(match("number")){
+     
+      return numbernode(int(previous()[1]));
+   }
+}
+fn unary(){
+   if(match("-")){
+      left = primary();
+      return unarynode("-",left); 
+   }
+   else{
+      return primary();
    }
 }
 fn factor(){
-   left = primary();
-   while(tokens2[0][tokenindex[0]]=="*"||tokens2[0][tokenindex[0]]=="/"){
-   
-   tokenindex[0] = tokenindex[0]+1;
-     right = primary();
-      left = binop(left,tokens2[0][tokenindex[0]-1],right);
+   left = unary();
+   while(match("*")||match("/")){
+      op = previous()[0];
+      right = unary();
+     
+      left = binop(left,op,right);
    }
-   return left;
+   return left;  
+   
 }
 fn term(){
    left = factor();
-    while(tokens2[0][tokenindex[0]]=="+"||tokens2[0][tokenindex[0]]=="-"){
-      tokenindex[0] = tokenindex[0]+1;
+   while(match("+")||match("-")){
+      op = previous()[0];
       right = factor();
-      left = binop(left,tokens2[0][tokenindex[0]-1],right);
-    }
-    return left;
+      
+      left = binop(left,op,right);
+   }
+   return left;
 }
-
 fn parse(tokens){
-tokens2 = tokens;
-cout(tokens2);
-return term();
+
+   append(tokenslist,tokens);
+   return term();
 }
-
-
 
 $ EVAL/INTERPRETER $
-
+fn unaryeval(ast){
+   if (ast[1][0]=="-"){
+      return -evaluate(ast[1][1]);
+   }
+}
 fn number(ast){
    return ast[1][0];
 }
@@ -153,10 +188,10 @@ fn binopeval(ast){
    right = evaluate(ast[1][2]);
    
    if(ast[1][1]=="+"){
-      return (left+right);
+      return (left)+(right);
    }
    if(ast[1][1]=="*"){
-       return (left*right);
+       return (left)*(right);
    }
    if(ast[1][1]=="-"){
        return (left-right);
@@ -169,10 +204,15 @@ fn evaluate(ast){
    if(ast[0]=="number"){
      return number(ast);
    }
+   if(ast[0]=="unary"){
+      return unaryeval(ast);
+   }
    if(ast[0]=="binop"){
+      
      return binopeval(ast);
    }
 }
+cout("Enter the expression:");
+cout(evaluate(parse(tokenize(cin()))));
 
-code = input();
-evaluate(parse(tokenize(code)));
+

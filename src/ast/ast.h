@@ -56,7 +56,9 @@ struct AST
         ExprStatement,
         NULL_NODE,
         STRUCT_ACC,
-        AST_STRUCT
+        AST_STRUCT,
+        VAR_ARG,
+        vardecnode
 
     } tag;
     union
@@ -105,6 +107,11 @@ struct AST
         {
             char t;
         } EMPTY;
+        struct vardecnode
+        {
+            AST *name;
+            AST *expr;
+        } vardecnode;
         struct BinOpNode
         {
             AST *left;
@@ -156,6 +163,10 @@ struct AST
             AST *parent;
             AST *index;
         } Listac;
+        struct VAR_ARG
+        {
+            char *name;
+        } VAR_ARG;
         struct Function
         {
             char *name;

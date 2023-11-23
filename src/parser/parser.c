@@ -398,20 +398,33 @@ AST * or ()
 // =
 AST *assignment()
 {
-    AST *expr = or ();
+    AST *expr2 = or ();
     if (match(EQUAL))
     {
 
-        AST *value = assignment();
+        AST *value = expr();
 
-        return AST_NEW(Assign, expr, value);
+        return AST_NEW(Assign, expr2, value);
     }
-    return expr;
+    return expr2;
+}
+// :=
+AST *vardec()
+{
+    AST *expr2 = assignment ();
+    if (match(COLON))
+    {
+
+        AST *value = expr();
+
+        return AST_NEW(vardecnode, expr2, value);
+    }
+    return expr2;
 }
 AST *expr()
 {
 
-    return assignment();
+    return vardec();
 }
 /*
 This section parses all the statements
@@ -493,6 +506,9 @@ AST *functionargs()
     name = peek().value;
     getnexttoken();
     AST *arguments = AST_NEW(EMPTY, 2);
+    if(match(MUL_OP)){
+        return AST_NEW(VAR_ARG,name);
+    }
     return AST_NEW(VarDecl, name, arguments);
 }
 AST *functionparse(char *name)
