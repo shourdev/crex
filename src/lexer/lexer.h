@@ -53,7 +53,8 @@ IF,
  GREATER_EQUAL,
  SMALLER_EQUAL,
  FN_KEY,
- COLON
+ COLON,
+ THIS
 };
 typedef struct
 {

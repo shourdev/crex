@@ -125,7 +125,7 @@ Token *lexer(char *string, int *num_tokens)
             }
             result = realloc(result, (resultLength + 1) * sizeof(char));
             result[resultLength] = '\0';
-        
+
             if (strcmp(result, "true") == 0)
             {
                 visited = 1;
@@ -144,8 +144,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            
-            
+
             if (strcmp(result, "if") == 0)
             {
                 visited = 1;
@@ -191,7 +190,7 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            
+
             if (strcmp(result, "null") == 0)
             {
                 visited = 1;
@@ -210,8 +209,25 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
-            
-            
+            if (strcmp(result, "this") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = THIS;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if (strcmp(result, "struct") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = STRUCT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+
             else
             {
                 if (visited == 0)
@@ -275,7 +291,7 @@ Token *lexer(char *string, int *num_tokens)
             isiden = 1;
         }
         // Colon
-        else if (string[i] == ':'&&string[i+1]=='=')
+        else if (string[i] == ':' && string[i + 1] == '=')
         {
             tokens[token_index].type = COLON;
             tokens[token_index].value = NULL;
@@ -286,7 +302,8 @@ Token *lexer(char *string, int *num_tokens)
             isiden = 1;
         }
         // Greater equal
-        else if(string[i]=='>'&&string[i+1]=='='){
+        else if (string[i] == '>' && string[i + 1] == '=')
+        {
             tokens[token_index].type = GREATER_EQUAL;
             tokens[token_index].value = NULL;
             tokens[token_index].line = line;
@@ -294,7 +311,7 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             isiden = 1;
         }
-        
+
         // Smaller
         else if (string[i] == '<')
         {
@@ -306,7 +323,7 @@ Token *lexer(char *string, int *num_tokens)
 
             isiden = 1;
         }
-        else if (string[i] == '<'&&string[i+1]=='=')
+        else if (string[i] == '<' && string[i + 1] == '=')
         {
             tokens[token_index].type = SMALLER_EQUAL;
             tokens[token_index].value = NULL;
@@ -419,6 +436,7 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+        // }
         if (string[i] == '}')
         {
             isiden = 1;
@@ -428,6 +446,7 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+
         // [
         if (string[i] == '[')
         {

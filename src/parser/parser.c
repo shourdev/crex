@@ -127,6 +127,10 @@ AST *primary()
         AST *numnode = AST_NEW(AST_NUM, previous().value);
         return numnode;
     }
+    if (match(THIS))
+    {
+        return AST_NEW(AST_THIS);
+    }
     if (match(FLOAT))
     {
 
@@ -411,7 +415,7 @@ AST *assignment()
 // :=
 AST *vardec()
 {
-    AST *expr2 = assignment ();
+    AST *expr2 = assignment();
     if (match(COLON))
     {
 
@@ -437,7 +441,13 @@ AST *exprstate()
 
     return AST_NEW(ExprStatement, exp);
 }
-
+AST *struct_decl()
+{
+    char *name = peek().value;
+    getnexttoken();
+    AST *body = block();
+    return AST_NEW(AST_STRUCT, name, body);
+}
 AST *whilestatement()
 {
     consume(OPEN_PAREN, "Expect '(' after 'while'");
@@ -496,19 +506,21 @@ AST *statement()
     {
         return breakstatement();
     }
-
+    if (match(STRUCT_KEY))
+    {
+        return struct_decl();
+    }
     return exprstate();
 }
 AST *functionargs()
 {
+   
     char *name;
 
     name = peek().value;
     getnexttoken();
     AST *arguments = AST_NEW(EMPTY, 2);
-    if(match(MUL_OP)){
-        return AST_NEW(VAR_ARG,name);
-    }
+
     return AST_NEW(VarDecl, name, arguments);
 }
 AST *functionparse(char *name)

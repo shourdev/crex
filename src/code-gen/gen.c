@@ -336,14 +336,7 @@ void gencode(AST *ptr)
         gencode(data.args);
         fprintf(code, "):\n");
         isfuncarg = false;
-        if (vararg == true)
-        {
-            vararg = false;
-            blockindent += 3;
-            spaceprint();
-            blockindent -= 3;
-            fprintf(code, "%s = list(%s)\n", varargname, varargname);
-        }
+        
         gencode(data.code);
 
         return;
@@ -429,6 +422,10 @@ void gencode(AST *ptr)
         struct AST_STRUCT data = ast.data.AST_STRUCT;
         fprintf(code, "class %s:\n", data.name);
         gencode(data.contents);
+        return;
+    }
+    case AST_THIS:{
+        fprintf(code,"self");
         return;
     }
     case EMPTY:

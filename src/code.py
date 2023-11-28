@@ -1,5 +1,9 @@
 from stdlib import*
-test= 2
+class test:
+    test= 2
 
-test=2
-cout(test)
+    def meth():
+       cout("meth",self.test)
+obj= test()
+
+obj.meth()

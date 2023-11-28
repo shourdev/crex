@@ -58,7 +58,8 @@ struct AST
         STRUCT_ACC,
         AST_STRUCT,
         VAR_ARG,
-        vardecnode
+        vardecnode,
+        AST_THIS
 
     } tag;
     union
@@ -222,6 +223,9 @@ struct AST
             char *name;
             AST *contents;
         } AST_STRUCT;
+        struct AST_THIS{
+
+        }AST_THIS;
 
     } data;
 };
