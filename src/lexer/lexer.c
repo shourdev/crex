@@ -209,6 +209,33 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+            if (strcmp(result, "int") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = INT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if (strcmp(result, "str") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = STRING_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if (strcmp(result, "float") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = FLOAT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
             if (strcmp(result, "this") == 0)
             {
                 visited = 1;
@@ -218,11 +245,29 @@ Token *lexer(char *string, int *num_tokens)
                 tokens[token_index].line = line;
                 token_index++;
             }
+            if (strcmp(result, "over") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = OVER_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
             if (strcmp(result, "struct") == 0)
             {
                 visited = 1;
                 isiden = 1;
                 tokens[token_index].type = STRUCT_KEY;
+                tokens[token_index].value = NULL;
+                tokens[token_index].line = line;
+                token_index++;
+            }
+            if (strcmp(result, "var") == 0)
+            {
+                visited = 1;
+                isiden = 1;
+                tokens[token_index].type = VAR_KEY;
                 tokens[token_index].value = NULL;
                 tokens[token_index].line = line;
                 token_index++;
@@ -365,6 +410,15 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+        if (string[i] == ':')
+        {
+            isiden = 1;
+            tokens[token_index].type = COLON;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
         // Closing paren
         if (string[i] == ')')
         {
@@ -416,11 +470,21 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             i++;
         }
-        // ?
+        // ;
         if (string[i] == ';')
         {
             isiden = 1;
             tokens[token_index].type = SEMI;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
+        // ?
+        if (string[i] == '?')
+        {
+            isiden = 1;
+            tokens[token_index].type = questionmark;
             tokens[token_index].value = NULL;
             tokens[token_index].line = line;
             token_index++;
@@ -488,11 +552,23 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+        // :=
+        if (string[i] == ':'&&string[i]=='=')
+        {
+            isiden = 1;
+            tokens[token_index].type = COLONEQUAL;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            i++;
+        }
         // Error Handling and spaces and lines and comments
         else
         { // Lines
             if (string[i] == '\n')
             {
+            
 
                 line++;
             }

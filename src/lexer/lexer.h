@@ -54,7 +54,10 @@ IF,
  SMALLER_EQUAL,
  FN_KEY,
  COLON,
- THIS
+ THIS,
+ VAR_KEY,
+ questionmark,
+ COLONEQUAL
 };
 typedef struct
 {

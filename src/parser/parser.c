@@ -113,7 +113,18 @@ Token consume(enum tokentype type, char *message)
     }
     error(peek(), message);
 }
-
+void statementsep()
+{
+    if (isatend() || match(NEWLINE))
+    {
+        return;
+    }
+    else
+    {
+        error(peek(), "error");
+        exit(1);
+    }
+}
 /*
 This section parses all the expressions
 */
@@ -155,6 +166,29 @@ AST *primary()
     {
         AST *nullnode = AST_NEW(NULL_NODE);
         return nullnode;
+    }
+    if (match(STRING_KEY))
+    {
+        AST *stringnode = AST_NEW(STRING_KEY_NODE);
+        return stringnode;
+    }
+    if (match(INT_KEY))
+    {
+        AST *intnode = AST_NEW(INT_KEY_NODE);
+        return intnode;
+    }
+    if (match(FLOAT_KEY))
+    {
+        AST *floatnode = AST_NEW(FLOAT_KEY_NODE);
+        return floatnode;
+    }
+    if (match(BOOL_KEY))
+    {
+        return AST_NEW(BOOL_KEY_NODE);
+    }
+    if (match(VOID_KEY))
+    {
+        return AST_NEW(VOID_KEY_NODE);
     }
     if (match(STRING))
     {
@@ -264,6 +298,26 @@ AST *dot()
     }
     return left;
 }
+
+AST *colon()
+{
+    AST *left = dot();
+    if (match(COLON))
+    {
+        AST *right = dot();
+        left = AST_NEW(COLON_NODE, left, right);
+    }
+    return left;
+}
+AST *question()
+{
+    AST *left = colon();
+    if (match(questionmark))
+    {
+        return AST_NEW(questionnode, left);
+    }
+    return left;
+}
 // Parses unary
 AST *unary()
 {
@@ -283,7 +337,7 @@ AST *unary()
         AST *expr = AST_NEW(UnaryNode, op, right);
         return expr;
     }
-    return dot();
+    return question();
 }
 
 // Parses multiplication and div
@@ -399,10 +453,23 @@ AST * or ()
     }
     return left;
 }
+// :=
+AST *infer()
+{
+    AST *expr2 = or ();
+    if (match(COLONEQUAL))
+    {
+
+        AST *value = expr();
+
+        return AST_NEW(infernode, expr2, value);
+    }
+    return expr2;
+}
 // =
 AST *assignment()
 {
-    AST *expr2 = or ();
+    AST *expr2 = infer();
     if (match(EQUAL))
     {
 
@@ -412,23 +479,11 @@ AST *assignment()
     }
     return expr2;
 }
-// :=
-AST *vardec()
-{
-    AST *expr2 = assignment();
-    if (match(COLON))
-    {
 
-        AST *value = expr();
-
-        return AST_NEW(vardecnode, expr2, value);
-    }
-    return expr2;
-}
 AST *expr()
 {
 
-    return vardec();
+    return assignment();
 }
 /*
 This section parses all the statements
@@ -437,7 +492,7 @@ AST *exprstate()
 {
     AST *exp = expr();
 
-    consume(SEMI, "Expected ';' after expression.");
+    consume(SEMI, "Expected ';'");
 
     return AST_NEW(ExprStatement, exp);
 }
@@ -450,40 +505,38 @@ AST *struct_decl()
 }
 AST *whilestatement()
 {
-    consume(OPEN_PAREN, "Expect '(' after 'while'");
+    consume(OPEN_PAREN, "Expected '('");
     AST *condition = expr();
-    consume(CLOSE_PAREN, "Expect ')' after condition");
+    consume(CLOSE_PAREN, "Expected ')'");
     AST *body = block();
     return AST_NEW(WHILE_LOOP, condition, body);
 }
 AST *ifstatement()
 {
-    consume(OPEN_PAREN, "Expect '(' after 'if'");
+    consume(OPEN_PAREN, "Expected '('");
     AST *condition = expr();
-    consume(CLOSE_PAREN, "Expect ')' after condition");
+    consume(CLOSE_PAREN, "Expected ')'");
+
     AST *then = block();
     AST *elsebranch = AST_NEW(EMPTY, 2);
+
     if (match(ELSE))
     {
+
         elsebranch = block();
     }
     return AST_NEW(IF_STATEMENT, condition, then, elsebranch);
 }
 AST *returnstatement()
 {
-    if (peek().type == SEMI)
-    {
-        getnexttoken();
-        AST *expr2 = AST_NEW(EMPTY, 2);
-        return AST_NEW(Return_Node, expr2);
-    }
+
     AST *expr2 = expr();
-    consume(SEMI, "Expected ';' after expression");
+    consume(SEMI, "Expected ';'");
     return AST_NEW(Return_Node, expr2);
 }
 AST *breakstatement()
 {
-    consume(SEMI, "Expected ';' after break statement");
+    consume(SEMI, "Expected ';'");
     return AST_NEW(Break_Node);
 }
 
@@ -510,11 +563,15 @@ AST *statement()
     {
         return struct_decl();
     }
+    if (match(FN_KEY))
+    {
+        return FuncDecl();
+    }
     return exprstate();
 }
 AST *functionargs()
 {
-   
+
     char *name;
 
     name = peek().value;
@@ -533,17 +590,24 @@ AST *functionparse(char *name)
     {
         do
         {
-            ast_arg_add(parameters, functionargs());
+            ast_arg_add(parameters, expr());
         } while (match(COMMA));
     }
+
     consume(CLOSE_PAREN, "Expected closing paren after function parameters");
-    if (match(SEMI))
+    AST *type = AST_NEW(EMPTY, 2);
+    if (peek().type == GREATER)
     {
-        AST *body = AST_NEW(EMPTY, 3);
-        return AST_NEW(Function, name, parameters, body);
+        type = expr();
+    }
+    if (peek().type == SEMI)
+    {
+        getnexttoken();
+        AST *body = AST_NEW(EMPTY, 2);
+        return AST_NEW(Function, name, type, parameters, body);
     }
     AST *body = block();
-    return AST_NEW(Function, name, parameters, body);
+    return AST_NEW(Function, name, type, parameters, body);
 }
 
 AST *FuncDecl()
@@ -555,25 +619,23 @@ AST *FuncDecl()
 
     return functionparse(name);
 }
+
 AST *declaration()
 {
-    if (match(FN_KEY))
-    {
-        return FuncDecl();
-    }
     return statement();
 }
 AST *block()
 {
     AST *root = AST_NEW(AST_BLOCK,
                         AST_NEW(EMPTY, 'f'), );
-    consume(CURLY_OPEN, "Expected { in starting of block");
+    consume(CURLY_OPEN, "Expected '{'");
     while (!check(CURLY_CLOSE) && !isatend())
     {
         AST *code = declaration();
         ast_block_add(root, code);
     }
     consume(CURLY_CLOSE, "Expected '}' after block.");
+
     return root;
 }
 void parsestatement()

@@ -16,6 +16,7 @@ struct type
     bool islist;
     bool isstruct;
     char *type;
+    int listdim;
 };
 
 typedef struct type type;
@@ -59,7 +60,15 @@ struct AST
         AST_STRUCT,
         VAR_ARG,
         vardecnode,
-        AST_THIS
+        AST_THIS,
+        STRING_KEY_NODE,
+        VOID_KEY_NODE,
+        BOOL_KEY_NODE,
+        INT_KEY_NODE,
+        FLOAT_KEY_NODE,
+        COLON_NODE,
+        questionnode,
+        infernode
 
     } tag;
     union
@@ -89,6 +98,10 @@ struct AST
             AST *left;
             AST *right;
         } AST_GREATER;
+        struct COLON_NODE{
+            AST* left;
+            AST* right;
+        }COLON_NODE;
         struct AST_ROOT
         {
             AST *code;
@@ -110,7 +123,9 @@ struct AST
         } EMPTY;
         struct vardecnode
         {
-            AST *name;
+            char *name;
+            AST* type;
+            
             AST *expr;
         } vardecnode;
         struct BinOpNode
@@ -124,6 +139,9 @@ struct AST
             char *op;
             AST *node;
         } UnaryNode;
+        struct questionnode{
+            AST* nod;
+        }questionnode;
         struct StringNode
         {
             char *value;
@@ -136,13 +154,32 @@ struct AST
         struct VarDecl
         {
             char *name;
+            
             AST *expr;
         } VarDecl;
-
+        struct infernode{
+            AST* var;
+            AST* expr;
+        }infernode;
         struct VarAcess
         {
             char *name;
         } VarAcess;
+        struct STRING_KEY_NODE{
+
+        }STRING_KEY_NODE;
+        struct INT_KEY_NODE{
+
+        }INT_KEY_NODE;
+        struct BOOL_KEY_NODE{
+
+        }BOOL_KEY_NODE;
+        struct FLOAT_KEY_NODE{
+
+        }FLOAT_KEY_NODE;
+        struct VOID_KEY_NODE{
+
+        }VOID_KEY_NODE;
         struct IF_STATEMENT
         {
             AST *condition;
@@ -171,6 +208,7 @@ struct AST
         struct Function
         {
             char *name;
+            AST* type;
             AST *args;
             AST *code;
         } Function;

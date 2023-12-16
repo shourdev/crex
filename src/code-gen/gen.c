@@ -143,7 +143,7 @@ void gencode(AST *ptr)
     case vardecnode:
     {
         struct vardecnode data = ast.data.vardecnode;
-        gencode(data.name);
+        fprintf(code,"%s",data.name);
         fprintf(code, "= ");
         gencode(data.expr);
         fprintf(code, "\n");
@@ -215,7 +215,7 @@ void gencode(AST *ptr)
         return;
     }
     case IF_STATEMENT:
-    {
+    { 
         struct IF_STATEMENT data = ast.data.IF_STATEMENT;
         fprintf(code, "if (");
         gencode(data.condition);
