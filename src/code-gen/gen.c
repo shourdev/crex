@@ -71,9 +71,11 @@ bool isempty(AST *ptr)
 }
 void caller(AST *ptr)
 {
-    code = fopen("code.py", "w");
+    code = fopen("code.go", "w");
     start();
-    fprintf(code, "from stdlib import*\n");
+    fprintf(code, "package main\n");
+    fprintf(code, "import \"fmt\"\n");
+    
     gencode(ptr);
 
     fclose(code);
@@ -98,15 +100,16 @@ void gencode(AST *ptr)
     {
 
         struct AST_BLOCK data = ast.data.AST_BLOCK;
-        blockindent = blockindent + 3;
+  fprintf(code, "{\n");
         for (size_t i = 0; i < data.len; i++)
         {
 
-            spaceprint();
+          
 
             gencode(&data.code[i]);
+          
         }
-        blockindent = blockindent - 3;
+  fprintf(code, "}\n");
         return;
     }
     case AST_ARG:
@@ -143,10 +146,14 @@ void gencode(AST *ptr)
     case vardecnode:
     {
         struct vardecnode data = ast.data.vardecnode;
-        fprintf(code,"%s",data.name);
-        fprintf(code, "= ");
+        fprintf(code,"var ");
         gencode(data.expr);
-        fprintf(code, "\n");
+        fprintf(code,"\n");
+        return;
+    }
+    case paren:{
+        struct paren data = ast.data.paren;
+        gencode(data.stuff);
         return;
     }
     case BinOpNode:
@@ -156,13 +163,13 @@ void gencode(AST *ptr)
         gencode(data.left);
         if (strcmp(data.op, "||") == 0)
         {
-            fprintf(code, " or ");
+            fprintf(code, " || ");
             gencode(data.right);
             return;
         }
         if (strcmp(data.op, "&&") == 0)
         {
-            fprintf(code, " and ");
+            fprintf(code, " && ");
             gencode(data.right);
             return;
         }
@@ -179,7 +186,7 @@ void gencode(AST *ptr)
         struct UnaryNode data = ast.data.UnaryNode;
         if (strcmp(data.op, "!") == 0)
         {
-            fprintf(code, " not ");
+            fprintf(code, " ! ");
             gencode(data.node);
 
             return;
@@ -196,17 +203,10 @@ void gencode(AST *ptr)
     }
     case NULL_NODE:
     {
-        fprintf(code, "None");
+        fprintf(code, "nil");
         return;
     }
-    case PrintNode:
-    {
-        struct PrintNode data = ast.data.PrintNode;
-        fprintf(code, "print( ");
-        gencode(data.expr);
-        fprintf(code, ")\n");
-        return;
-    }
+    
 
     case VarAcess:
     {
@@ -215,11 +215,11 @@ void gencode(AST *ptr)
         return;
     }
     case IF_STATEMENT:
-    { 
+    {
         struct IF_STATEMENT data = ast.data.IF_STATEMENT;
         fprintf(code, "if (");
         gencode(data.condition);
-        fprintf(code, "):\n");
+        fprintf(code, ")\n");
 
         gencode(data.thenbranch);
 
@@ -228,7 +228,7 @@ void gencode(AST *ptr)
             return;
         }
         spaceprint();
-        fprintf(code, "else:\n");
+        fprintf(code, "else\n");
         gencode(data.elsebranch);
 
         return;
@@ -238,7 +238,7 @@ void gencode(AST *ptr)
         struct WHILE_LOOP data = ast.data.WHILE_LOOP;
         fprintf(code, "while(");
         gencode(data.condition);
-        fprintf(code, "):\n");
+        fprintf(code, ")\n");
         gencode(data.thenbranch);
 
         return;
@@ -252,7 +252,7 @@ void gencode(AST *ptr)
         if (strcmp(data.Callee->data.VarAcess.name, "cout") == 0)
         {
             gencout();
-            fprintf(code, "cout(");
+            fprintf(code, "fmt.Println(");
             gencode(data.arguments);
             fprintf(code, ")");
             return;
@@ -330,14 +330,9 @@ void gencode(AST *ptr)
     case Function:
     {
         struct Function data = ast.data.Function;
-        //  printtype(data.type);
-        isfuncarg = true;
-        fprintf(code, "def %s(", data.name);
-        gencode(data.args);
-        fprintf(code, "):\n");
-        isfuncarg = false;
-        
-        gencode(data.code);
+        fprintf(code, "func ");
+        gencode(data.signature);
+        gencode(data.block);
 
         return;
     }
@@ -347,12 +342,18 @@ void gencode(AST *ptr)
         struct BOOL data = ast.data.BOOL;
         if (strcmp(data.value, "true") == 0)
         {
-            fprintf(code, "True");
+            fprintf(code, "true");
         }
         else
         {
-            fprintf(code, "False");
+            fprintf(code, "false");
         }
+        return;
+    }
+    case returnarrow:{
+        struct returnarrow data = ast.data.returnarrow;
+        gencode(data.left);
+        gencode(data.right);
         return;
     }
     case AST_FLOAT:
@@ -420,17 +421,51 @@ void gencode(AST *ptr)
     case AST_STRUCT:
     {
         struct AST_STRUCT data = ast.data.AST_STRUCT;
-        fprintf(code, "class %s:\n", data.name);
+       fprintf(code,"type ");
+       gencode(data.sign);
+       fprintf(code," struct");
         gencode(data.contents);
         return;
     }
-    case AST_THIS:{
-        fprintf(code,"self");
+    case AST_THIS:
+    {
+        fprintf(code, "self");
         return;
+    }
+    case STRING_KEY_NODE:{
+        fprintf(code, " string ");
+        return;
+    }
+    case BOOL_KEY_NODE:{
+        fprintf(code," bool ");
+        return;
+    
+    }
+    case AST_STRUCT_INIT:{
+        struct AST_STRUCT_INIT data = ast.data.AST_STRUCT_INIT;
+        gencode(data.structexpr);
+        gencode(data.init);
+        return;
+    }
+    case INT_KEY_NODE:{
+        fprintf(code," int64 ");
+        return;
+    }
+    case FLOAT_KEY_NODE:{
+        fprintf(code," float64 ");
+        return;
+    }
+    case COLON_NODE:{
+        struct COLON_NODE data = ast.data.COLON_NODE;
+        gencode(data.left);
+         gencode(data.right);
+        
+       
     }
     case EMPTY:
     {
         return;
     }
+    
     }
 }

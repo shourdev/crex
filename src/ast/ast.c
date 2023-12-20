@@ -164,10 +164,7 @@ void ast_print(AST *ptr)
   {
     struct Function data = ast.data.Function;
    
-    printf(" %s(", data.name);
-    ast_print(data.args);
-    printf(")");
-    ast_print(data.code);
+    
 
     return;
   }

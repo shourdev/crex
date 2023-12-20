@@ -70,6 +70,6 @@ int main(int argc,char argv[])
     caller(tree);
  
  // ast_print(tree);
-    system("python3 code.py");
+    system("go run code.go");
     free(tokens);
 }

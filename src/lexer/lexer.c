@@ -286,7 +286,7 @@ Token *lexer(char *string, int *num_tokens)
             }
         }
         // - Operator
-        if (string[i] == '-')
+        if (string[i] == '-' && string[i+1]!='{')
         {
             tokens[token_index].type = MINUS;
             tokens[token_index].value = NULL;
@@ -346,6 +346,7 @@ Token *lexer(char *string, int *num_tokens)
             i++;
             isiden = 1;
         }
+
         // Greater equal
         else if (string[i] == '>' && string[i + 1] == '=')
         {
@@ -429,6 +430,35 @@ Token *lexer(char *string, int *num_tokens)
             token_index++;
             i++;
         }
+        // ~{
+        if(string[i]=='?'&&string[i+1]=='{'){
+            isiden = 1;
+            tokens[token_index].type = leftstructint;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
+        // }~
+        if(string[i]=='}'&&string[i+1]=='?'){
+            isiden = 1;
+            tokens[token_index].type = rightstructint;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+        }
+        // ->
+        if (string[i] == '-' && string[i + 1] == '>')
+        {
+            isiden = 1;
+            tokens[token_index].type = RETURNOPERATOR;
+            tokens[token_index].value = NULL;
+            tokens[token_index].line = line;
+            token_index++;
+            i++;
+            i++;
+        }
         // Comma
         if (string[i] == ',')
         {
@@ -501,7 +531,7 @@ Token *lexer(char *string, int *num_tokens)
             i++;
         }
         // }
-        if (string[i] == '}')
+        if (string[i] == '}'&&string[i+1]!='-')
         {
             isiden = 1;
             tokens[token_index].type = CURLY_CLOSE;
@@ -553,7 +583,7 @@ Token *lexer(char *string, int *num_tokens)
             i++;
         }
         // :=
-        if (string[i] == ':'&&string[i]=='=')
+        if (string[i] == ':' && string[i] == '=')
         {
             isiden = 1;
             tokens[token_index].type = COLONEQUAL;
@@ -568,7 +598,6 @@ Token *lexer(char *string, int *num_tokens)
         { // Lines
             if (string[i] == '\n')
             {
-            
 
                 line++;
             }

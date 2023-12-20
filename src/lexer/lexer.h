@@ -57,7 +57,10 @@ IF,
  THIS,
  VAR_KEY,
  questionmark,
- COLONEQUAL
+ COLONEQUAL,
+ RETURNOPERATOR,
+ leftstructint,
+ rightstructint
 };
 typedef struct
 {

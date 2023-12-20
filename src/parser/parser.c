@@ -206,11 +206,18 @@ AST *primary()
     if (match(OPEN_PAREN))
     {
 
-        AST *expr2 = expr();
+        AST *arguments = AST_NEW(AST_ARG,
+                                 AST_NEW(EMPTY, 'f'), );
+        if (!check(CLOSE_PAREN))
+        {
+            do
+            {
+                ast_arg_add(arguments, expr());
+            } while (match(COMMA));
+        }
+        consume(CLOSE_PAREN, "Expected ')'");
 
-        consume(CLOSE_PAREN, "Expect ')' after expression.");
-
-        return expr2;
+        return AST_NEW(paren, arguments);
     }
     if (match(LEFT_SQUARE))
     {
@@ -263,6 +270,7 @@ AST *call()
     }
     return expr2;
 }
+
 AST *list()
 {
     AST *expr2 = call();
@@ -427,6 +435,7 @@ AST *rel()
 
     return left;
 }
+
 // &&
 AST * and ()
 {
@@ -453,23 +462,11 @@ AST * or ()
     }
     return left;
 }
-// :=
-AST *infer()
-{
-    AST *expr2 = or ();
-    if (match(COLONEQUAL))
-    {
 
-        AST *value = expr();
-
-        return AST_NEW(infernode, expr2, value);
-    }
-    return expr2;
-}
 // =
 AST *assignment()
 {
-    AST *expr2 = infer();
+    AST *expr2 = and();
     if (match(EQUAL))
     {
 
@@ -498,10 +495,9 @@ AST *exprstate()
 }
 AST *struct_decl()
 {
-    char *name = peek().value;
-    getnexttoken();
+    AST *sign = expr();
     AST *body = block();
-    return AST_NEW(AST_STRUCT, name, body);
+    return AST_NEW(AST_STRUCT, sign, body);
 }
 AST *whilestatement()
 {
@@ -539,7 +535,12 @@ AST *breakstatement()
     consume(SEMI, "Expected ';'");
     return AST_NEW(Break_Node);
 }
-
+AST *var()
+{
+    AST *node = expr();
+    consume(SEMI, "Expected ';'");
+    return AST_NEW(vardecnode, node);
+}
 AST *statement()
 {
 
@@ -567,6 +568,10 @@ AST *statement()
     {
         return FuncDecl();
     }
+    if (match(VAR_KEY))
+    {
+        return var();
+    }
     return exprstate();
 }
 AST *functionargs()
@@ -580,44 +585,18 @@ AST *functionargs()
 
     return AST_NEW(VarDecl, name, arguments);
 }
-AST *functionparse(char *name)
-{
-
-    AST *parameters = AST_NEW(AST_ARG,
-                              AST_NEW(EMPTY, 2), );
-
-    if (!check(CLOSE_PAREN))
-    {
-        do
-        {
-            ast_arg_add(parameters, expr());
-        } while (match(COMMA));
-    }
-
-    consume(CLOSE_PAREN, "Expected closing paren after function parameters");
-    AST *type = AST_NEW(EMPTY, 2);
-    if (peek().type == GREATER)
-    {
-        type = expr();
-    }
-    if (peek().type == SEMI)
-    {
-        getnexttoken();
-        AST *body = AST_NEW(EMPTY, 2);
-        return AST_NEW(Function, name, type, parameters, body);
-    }
-    AST *body = block();
-    return AST_NEW(Function, name, type, parameters, body);
-}
 
 AST *FuncDecl()
 {
 
-    char *name = peek().value;
-    getnexttoken();
-    consume(OPEN_PAREN, "Expected '(' after function name.");
-
-    return functionparse(name);
+    AST *signature = expr();
+    AST *body = AST_NEW(EMPTY, 3);
+    if (match(SEMI))
+    {
+        return AST_NEW(Function, signature, body);
+    }
+    body = block();
+    return AST_NEW(Function, signature, body);
 }
 
 AST *declaration()

@@ -34,6 +34,7 @@ struct AST
         AST_ROOT,
         BinOpNode,
         EMPTY,
+        AST_STRUCT_INIT,
         UnaryNode,
         StringNode,
         PrintNode,
@@ -68,7 +69,9 @@ struct AST
         FLOAT_KEY_NODE,
         COLON_NODE,
         questionnode,
-        infernode
+        infernode,
+        returnarrow,
+        paren
 
     } tag;
     union
@@ -88,6 +91,9 @@ struct AST
             AST *left;
             AST *right;
         } AST_MUL;
+        struct paren{
+            AST* stuff;
+        }paren;
         struct AST_DIV
         {
             AST *left;
@@ -123,10 +129,7 @@ struct AST
         } EMPTY;
         struct vardecnode
         {
-            char *name;
-            AST* type;
-            
-            AST *expr;
+            AST* expr;
         } vardecnode;
         struct BinOpNode
         {
@@ -134,6 +137,10 @@ struct AST
             char *op;
             AST *right;
         } BinOpNode;
+        struct returnarrow{
+            AST* left;
+            AST* right;
+        }returnarrow;
         struct UnaryNode
         {
             char *op;
@@ -207,10 +214,8 @@ struct AST
         } VAR_ARG;
         struct Function
         {
-            char *name;
-            AST* type;
-            AST *args;
-            AST *code;
+          AST* signature;
+          AST* block;
         } Function;
         struct FunctionARG
         {
@@ -258,12 +263,16 @@ struct AST
         } STRUCT_ACC;
         struct AST_STRUCT
         {
-            char *name;
+            AST* sign;
             AST *contents;
         } AST_STRUCT;
         struct AST_THIS{
 
         }AST_THIS;
+        struct AST_STRUCT_INIT{
+            AST* structexpr;
+            AST* init;
+        }AST_STRUCT_INIT;
 
     } data;
 };
