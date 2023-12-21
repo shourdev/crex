@@ -1,6 +1,13 @@
 package main
 import "fmt"
-type test struct{
-var test int64 
-var test2 int64 
+type nest struct{
+	field int
+}
+type mystruct struct{
+	myfield int
+	nested nest 
+}
+func main(){
+	structinst := mystruct{42,nest{23}}
+	fmt.Println(structinst)
 }

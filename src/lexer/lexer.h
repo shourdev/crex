@@ -60,7 +60,8 @@ IF,
  COLONEQUAL,
  RETURNOPERATOR,
  leftstructint,
- rightstructint
+ rightstructint,
+ AS_KEY
 };
 typedef struct
 {

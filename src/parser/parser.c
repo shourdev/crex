@@ -317,12 +317,13 @@ AST *colon()
     }
     return left;
 }
-AST *question()
+AST *as()
 {
     AST *left = colon();
-    if (match(questionmark))
+    if (match(AS_KEY))
     {
-        return AST_NEW(questionnode, left);
+        AST* right = colon();
+        left = AST_NEW(asnode,left,right);
     }
     return left;
 }
@@ -345,7 +346,7 @@ AST *unary()
         AST *expr = AST_NEW(UnaryNode, op, right);
         return expr;
     }
-    return question();
+    return as();
 }
 
 // Parses multiplication and div

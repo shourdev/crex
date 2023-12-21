@@ -75,7 +75,7 @@ void caller(AST *ptr)
     start();
     fprintf(code, "package main\n");
     fprintf(code, "import \"fmt\"\n");
-    
+
     gencode(ptr);
 
     fclose(code);
@@ -100,16 +100,13 @@ void gencode(AST *ptr)
     {
 
         struct AST_BLOCK data = ast.data.AST_BLOCK;
-  fprintf(code, "{\n");
+        fprintf(code, "{\n");
         for (size_t i = 0; i < data.len; i++)
         {
 
-          
-
             gencode(&data.code[i]);
-          
         }
-  fprintf(code, "}\n");
+        fprintf(code, "}\n");
         return;
     }
     case AST_ARG:
@@ -146,12 +143,13 @@ void gencode(AST *ptr)
     case vardecnode:
     {
         struct vardecnode data = ast.data.vardecnode;
-        fprintf(code,"var ");
+        fprintf(code, "var ");
         gencode(data.expr);
-        fprintf(code,"\n");
+        fprintf(code, "\n");
         return;
     }
-    case paren:{
+    case paren:
+    {
         struct paren data = ast.data.paren;
         gencode(data.stuff);
         return;
@@ -206,7 +204,6 @@ void gencode(AST *ptr)
         fprintf(code, "nil");
         return;
     }
-    
 
     case VarAcess:
     {
@@ -350,7 +347,8 @@ void gencode(AST *ptr)
         }
         return;
     }
-    case returnarrow:{
+    case returnarrow:
+    {
         struct returnarrow data = ast.data.returnarrow;
         gencode(data.left);
         gencode(data.right);
@@ -421,9 +419,9 @@ void gencode(AST *ptr)
     case AST_STRUCT:
     {
         struct AST_STRUCT data = ast.data.AST_STRUCT;
-       fprintf(code,"type ");
-       gencode(data.sign);
-       fprintf(code," struct");
+        fprintf(code, "type ");
+        gencode(data.sign);
+        fprintf(code, " struct");
         gencode(data.contents);
         return;
     }
@@ -432,40 +430,52 @@ void gencode(AST *ptr)
         fprintf(code, "self");
         return;
     }
-    case STRING_KEY_NODE:{
+    case STRING_KEY_NODE:
+    {
         fprintf(code, " string ");
         return;
     }
-    case BOOL_KEY_NODE:{
-        fprintf(code," bool ");
+    case BOOL_KEY_NODE:
+    {
+        fprintf(code, " bool ");
         return;
-    
     }
-    case AST_STRUCT_INIT:{
+    case AST_STRUCT_INIT:
+    {
         struct AST_STRUCT_INIT data = ast.data.AST_STRUCT_INIT;
         gencode(data.structexpr);
         gencode(data.init);
         return;
     }
-    case INT_KEY_NODE:{
-        fprintf(code," int64 ");
+    case INT_KEY_NODE:
+    {
+        fprintf(code, " int64 ");
         return;
     }
-    case FLOAT_KEY_NODE:{
-        fprintf(code," float64 ");
+    case FLOAT_KEY_NODE:
+    {
+        fprintf(code, " float64 ");
         return;
     }
-    case COLON_NODE:{
+    case COLON_NODE:
+    {
         struct COLON_NODE data = ast.data.COLON_NODE;
         gencode(data.left);
-         gencode(data.right);
-        
-       
+        gencode(data.right);
+        return;
+    }
+    case asnode:
+    {
+        struct asnode data = ast.data.asnode;
+        gencode(data.type);
+        fprintf(code, "(");
+        gencode(data.nod);
+        fprintf(code, ")");
+        return;
     }
     case EMPTY:
     {
         return;
     }
-    
     }
 }

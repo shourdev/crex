@@ -68,7 +68,7 @@ struct AST
         INT_KEY_NODE,
         FLOAT_KEY_NODE,
         COLON_NODE,
-        questionnode,
+        asnode,
         infernode,
         returnarrow,
         paren
@@ -146,9 +146,10 @@ struct AST
             char *op;
             AST *node;
         } UnaryNode;
-        struct questionnode{
+        struct asnode{
             AST* nod;
-        }questionnode;
+            AST* type;
+        }asnode;
         struct StringNode
         {
             char *value;
